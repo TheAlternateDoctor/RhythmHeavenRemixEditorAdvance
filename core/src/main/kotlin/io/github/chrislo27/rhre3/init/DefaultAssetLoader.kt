@@ -117,6 +117,7 @@ class DefaultAssetLoader : AssetRegistry.IAssetLoader {
         AssetRegistry.loadAsset<Texture>("ui_icon_nametag", "images/ui/icons/nametag.png")
         AssetRegistry.loadAsset<Texture>("ui_icon_photo", "images/ui/icons/photo.png", linearTexture())
         AssetRegistry.loadAsset<Texture>("ui_icon_bouncy_road_mania", "images/ui/icons/bouncy_road_mania_32.png")
+        AssetRegistry.loadAsset<Texture>("ui_icon_polyrhythm_mania", "images/ui/icons/polyrhythm_mania_32.png")
         AssetRegistry.loadAsset<Texture>("ui_stripe_board", "images/ui/stripe_board.png", linearTexture())
         AssetRegistry.loadAsset<Texture>("ui_breaking", "images/ui/breaking.png")
         AssetRegistry.loadAsset<Texture>("ui_transparent_checkerboard", "images/ui/transparent_checkerboard.png")
