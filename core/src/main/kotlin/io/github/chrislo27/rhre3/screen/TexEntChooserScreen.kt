@@ -87,8 +87,8 @@ class TexEntChooserScreen(main: RHRE3Application, val entity: TextureEntity)
         if (!isChooserOpen) {
             GlobalScope.launch {
                 isChooserOpen = true
-                val filter = TinyFDWrapper.FileExtFilter(Localization["screen.texent.fileFilter"] + "(.png, .jpg, .bmp)", "*.png", "*.jpg", "*.bmp")
-                TinyFDWrapper.openFile(Localization["screen.texent.fileChooserTitle"], attemptRememberDirectory(main, PreferenceKeys.FILE_CHOOSER_TEXENT) ?: getDefaultDirectory(), filter) { file ->
+                // val filter = TinyFDWrapper.FileExtFilter(Localization["screen.texent.fileFilter"] + "(.png, .jpg, .bmp)", "*.png", "*.jpg", "*.bmp")
+                TinyFDWrapper.openFile(Localization["screen.texent.fileChooserTitle"], attemptRememberDirectory(main, PreferenceKeys.FILE_CHOOSER_TEXENT) ?: getDefaultDirectory(), null) { file ->
                     isChooserOpen = false
                     if (file != null && main.screen == this@TexEntChooserScreen) {
                         val initialDirectory = if (!file.isDirectory) file.parentFile else file

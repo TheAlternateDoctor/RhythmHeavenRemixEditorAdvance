@@ -102,8 +102,8 @@ class SaveRemixScreen(main: RHRE3Application)
             GlobalScope.launch {
                 isChooserOpen = true
                 val lastSaveFile = editor.lastSaveFile
-                val filter = TinyFDWrapper.FileExtFilter(Localization["screen.save.fileFilter"] + "(.${RHRE3.REMIX_FILE_EXTENSION})", "*.${RHRE3.REMIX_FILE_EXTENSION}")
-                TinyFDWrapper.saveFile(Localization["screen.save.fileChooserTitle"], lastSaveFile?.file() ?: lastSaveFile?.parent()?.file() ?: attemptRememberDirectory(main, PreferenceKeys.FILE_CHOOSER_SAVE) ?: getDefaultDirectory(), filter) { file ->
+                // val filter = TinyFDWrapper.FileExtFilter(Localization["screen.save.fileFilter"] + "(.${RHRE3.REMIX_FILE_EXTENSION})", "*.${RHRE3.REMIX_FILE_EXTENSION}")
+                TinyFDWrapper.saveFile(Localization["screen.save.fileChooserTitle"], lastSaveFile?.file() ?: lastSaveFile?.parent()?.file() ?: attemptRememberDirectory(main, PreferenceKeys.FILE_CHOOSER_SAVE) ?: getDefaultDirectory(), null) { file ->
                     isChooserOpen = false
                     if (file != null) {
                         val newInitialDirectory = if (!file.isDirectory) file.parentFile else file

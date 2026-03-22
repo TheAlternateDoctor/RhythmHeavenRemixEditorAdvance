@@ -416,8 +416,8 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
                         }
                         GlobalScope.launch {
                             val initialDirectory: File? = attemptRememberDirectory(editor.main, PreferenceKeys.FILE_CHOOSER_THEME_EDITOR_IMAGE) ?: getDefaultDirectory()
-                            val fileFilter = TinyFDWrapper.FileExtFilter(Localization["screen.open.fileFilterSupported"] + "(.png)", "*.png")
-                            TinyFDWrapper.openFile(Localization["editor.themeEditor.editTexture.select"], initialDirectory, fileFilter) { file ->
+                            // val fileFilter = TinyFDWrapper.FileExtFilter(Localization["screen.open.fileFilterSupported"] + "(.png)", "*.png")
+                            TinyFDWrapper.openFile(Localization["editor.themeEditor.editTexture.select"], initialDirectory, null) { file ->
                                 // Check that we are still open
                                 if (this@ThemeEditorStage.visible) {
                                     if (file != null) {
