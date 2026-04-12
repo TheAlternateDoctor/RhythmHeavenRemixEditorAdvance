@@ -1,10 +1,10 @@
 package io.github.chrislo27.rhre3.playalong
 
-import com.badlogic.gdx.controllers.PovDirection
-import com.badlogic.gdx.controllers.mappings.Xbox
+import com.badlogic.gdx.controllers.Controller
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeName
+import io.github.chrislo27.rhre3.playalong.ControllerInput
 
 
 data class ControllerMapping(var inUse: Boolean, val name: String,
@@ -13,25 +13,31 @@ data class ControllerMapping(var inUse: Boolean, val name: String,
                              var buttonLeft: ControllerInput = ControllerInput.None,
                              var buttonRight: ControllerInput = ControllerInput.None,
                              var buttonUp: ControllerInput = ControllerInput.None,
-                             var buttonDown: ControllerInput = ControllerInput.None) {
+                             var buttonDown: ControllerInput = ControllerInput.None,
+                             var buttonStart: ControllerInput = ControllerInput.None,
+                             var buttonSelect: ControllerInput = ControllerInput.None) {
 
     companion object {
         val INVALID = ControllerMapping(false, "<none>")
-        val XBOX = ControllerMapping(false, "XBOX something",
-                                     buttonA = ControllerInput.Button(Xbox.A), buttonB = ControllerInput.Button(Xbox.B),
-                                     buttonLeft = if (Xbox.DPAD_LEFT == -1) ControllerInput.Pov(0,  PovDirection.west) else ControllerInput.Button(Xbox.DPAD_LEFT),
-                                     buttonRight = if (Xbox.DPAD_RIGHT == -1) ControllerInput.Pov(0, PovDirection.east) else ControllerInput.Button(Xbox.DPAD_RIGHT),
-                                     buttonUp = if (Xbox.DPAD_UP == -1) ControllerInput.Pov(0, PovDirection.north) else ControllerInput.Button(Xbox.DPAD_UP),
-                                     buttonDown = if (Xbox.DPAD_DOWN == -1) ControllerInput.Pov(0, PovDirection.south) else ControllerInput.Button(Xbox.DPAD_DOWN))
+        fun convertGdx(controller: Controller): ControllerMapping{
+            val gdxMapping = controller.mapping
+            return ControllerMapping(false, controller.name,
+                    buttonA = ControllerInput.Button(gdxMapping.buttonA), buttonB = ControllerInput.Button(gdxMapping.buttonB),
+                    buttonLeft = ControllerInput.Button(gdxMapping.buttonDpadLeft),
+                    buttonRight = ControllerInput.Button(gdxMapping.buttonDpadRight),
+                    buttonUp = ControllerInput.Button(gdxMapping.buttonDpadUp),
+                    buttonDown = ControllerInput.Button(gdxMapping.buttonDpadDown),
+                    buttonSelect = ControllerInput.Button(gdxMapping.buttonBack),
+                    buttonStart = ControllerInput.Button(gdxMapping.buttonStart),
+            )
+        }
     }
-
 }
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes(
         JsonSubTypes.Type(ControllerInput.None::class),
-        JsonSubTypes.Type(ControllerInput.Button::class),
-        JsonSubTypes.Type(ControllerInput.Pov::class)
+        JsonSubTypes.Type(ControllerInput.Button::class)
              )
 sealed class ControllerInput {
     @JsonTypeName("none")
@@ -46,13 +52,6 @@ sealed class ControllerInput {
         override fun isNothing(): Boolean = code < 0
         override fun toString(): String {
             return "Button $code"
-        }
-    }
-    @JsonTypeName("pov")
-    class Pov(val povCode: Int, val direction: PovDirection) : ControllerInput() {
-        override fun isNothing(): Boolean = povCode < 0 || direction == PovDirection.center
-        override fun toString(): String {
-            return "PoV $povCode $direction"
         }
     }
 //    class Axis(val axisCode: Int, val range: ClosedRange<Float>) : ControllerInput() // Not implemented

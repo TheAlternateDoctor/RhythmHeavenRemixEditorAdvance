@@ -9,7 +9,6 @@ import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.controllers.Controllers
-import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Colors
 import com.badlogic.gdx.graphics.Texture
@@ -67,6 +66,8 @@ class PlayalongSettingsScreen(main: RHRE3Application, val lastScreen: Screen?)
     private val buttonRightMapButton: MapButton
     private val buttonUpMapButton: MapButton
     private val buttonDownMapButton: MapButton
+    private val buttonStartMapButton: MapButton
+    private val buttonSelectMapButton: MapButton
     private val allMapButtons: List<MapButton>
     private val cancelMappingButton: Button<PlayalongSettingsScreen>
     private val mappingLabel: TextLabel<PlayalongSettingsScreen>
@@ -111,14 +112,6 @@ class PlayalongSettingsScreen(main: RHRE3Application, val lastScreen: Screen?)
             }
             return false
         }
-
-        override fun povMoved(controller: Controller, povIndex: Int, value: PovDirection): Boolean {
-            if (controller == forController && input is ControllerInput.Pov && input.povCode == povIndex && input.direction == value && mappingListener == null) {
-                keyCalibration.fireInput()
-                return true
-            }
-            return false
-        }
     }
 
     inner class ControllerMappingListener(val mapButton: MapButton, val forController: Controller) : ControllerAdapter() {
@@ -130,20 +123,6 @@ class PlayalongSettingsScreen(main: RHRE3Application, val lastScreen: Screen?)
             if (controller == forController) {
                 used = true
                 onReceiveInput(ControllerInput.Button(buttonIndex))
-                Gdx.app.postRunnable {
-                    Controllers.removeListener(this)
-                }
-                return true
-            }
-            return false
-        }
-
-        override fun povMoved(controller: Controller, povIndex: Int, value: PovDirection): Boolean {
-            if (used)
-                return false
-            if (controller == forController && value != PovDirection.center) {
-                used = true
-                onReceiveInput(ControllerInput.Pov(povIndex, value))
                 Gdx.app.postRunnable {
                     Controllers.removeListener(this)
                 }
@@ -488,19 +467,31 @@ class PlayalongSettingsScreen(main: RHRE3Application, val lastScreen: Screen?)
             this.location.set(screenX = 0.5f + settingsPadding + squareWidth * 2, screenY = 0.125f + 0.0625f, screenWidth = squareWidth, screenHeight = squareHeight)
         }
         stage.centreStage.elements += buttonRightMapButton
-        buttonBMapButton = MapButton(PlayalongChars.FILLED_B,
-                                     { it.buttonB }, { i, m -> m.buttonB = i },
+        buttonSelectMapButton = MapButton(PlayalongChars.FILLED_ROUND_MINUS,
+                                     { it.buttonSelect }, { i, m -> m.buttonSelect = i },
                                      palette, stage.centreStage, stage.centreStage).apply {
-            this.location.set(screenX = 0.5f + settingsPadding + squareWidth * 3.25f, screenY = 0.125f + 0.125f * (1f / 3), screenWidth = squareWidth, screenHeight = squareHeight)
+            this.location.set(screenX = 0.5f + settingsPadding + squareWidth * 3.25f, screenY = 0.125f + 0.0625f, screenWidth = squareWidth, screenHeight = squareHeight)
+        }
+        stage.centreStage.elements += buttonSelectMapButton
+        buttonStartMapButton = MapButton(PlayalongChars.FILLED_ROUND_PLUS,
+            { it.buttonStart }, { i, m -> m.buttonStart = i },
+            palette, stage.centreStage, stage.centreStage).apply {
+            this.location.set(screenX = 0.5f + settingsPadding + squareWidth * 4.50f, screenY = 0.125f + 0.0625f, screenWidth = squareWidth, screenHeight = squareHeight)
+        }
+        stage.centreStage.elements += buttonStartMapButton
+        buttonBMapButton = MapButton(PlayalongChars.FILLED_B,
+            { it.buttonB }, { i, m -> m.buttonB = i },
+            palette, stage.centreStage, stage.centreStage).apply {
+            this.location.set(screenX = 0.5f + settingsPadding + squareWidth * 5.75f, screenY = 0.125f + 0.125f * (1f / 3), screenWidth = squareWidth, screenHeight = squareHeight)
         }
         stage.centreStage.elements += buttonBMapButton
         buttonAMapButton = MapButton(PlayalongChars.FILLED_A,
-                                     { it.buttonA }, { i, m -> m.buttonA = i },
-                                     palette, stage.centreStage, stage.centreStage).apply {
-            this.location.set(screenX = 0.5f + settingsPadding + squareWidth * 4.25f, screenY = 0.125f + 0.125f * (2f / 3), screenWidth = squareWidth, screenHeight = squareHeight)
+            { it.buttonA }, { i, m -> m.buttonA = i },
+            palette, stage.centreStage, stage.centreStage).apply {
+            this.location.set(screenX = 0.5f + settingsPadding + squareWidth * 6.75f, screenY = 0.125f + 0.125f * (2f / 3), screenWidth = squareWidth, screenHeight = squareHeight)
         }
         stage.centreStage.elements += buttonAMapButton
-        allMapButtons = listOf(buttonAMapButton, buttonBMapButton, buttonUpMapButton, buttonDownMapButton, buttonLeftMapButton, buttonRightMapButton)
+        allMapButtons = listOf(buttonAMapButton, buttonBMapButton, buttonUpMapButton, buttonDownMapButton, buttonLeftMapButton, buttonRightMapButton, buttonSelectMapButton, buttonStartMapButton)
         cancelMappingButton = Button(palette, stage.centreStage, stage.centreStage).apply {
             addLabel(TextLabel(palette, this, this.stage).apply {
                 this.isLocalizationKey = true
@@ -526,7 +517,7 @@ class PlayalongSettingsScreen(main: RHRE3Application, val lastScreen: Screen?)
             this.textAlign = Align.left or Align.center
             this.textWrapping = false
             this.fontScaleMultiplier = 0.75f
-            this.location.set(screenX = 0.725f, screenWidth = 0.275f, screenY = 0.125f + squareHeight, screenHeight = squareHeight * 1.5f)
+            this.location.set(screenX = 0.810f, screenWidth = 0.275f, screenY = 0.125f + squareHeight, screenHeight = squareHeight * 1.5f)
         }
         stage.centreStage.elements += mappingLabel
 
@@ -677,12 +668,6 @@ class PlayalongSettingsScreen(main: RHRE3Application, val lastScreen: Screen?)
             }
             is ControllerInput.Button -> {
                 if (controller.getButton(controllerInput.code)) {
-                    helperPressedControls.add(input)
-                }
-            }
-            is ControllerInput.Pov -> {
-                val dir = controller.getPov(controllerInput.povCode)
-                if (dir == controllerInput.direction) {
                     helperPressedControls.add(input)
                 }
             }

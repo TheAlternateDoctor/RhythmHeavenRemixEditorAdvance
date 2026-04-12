@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.Controllers
-import com.badlogic.gdx.controllers.mappings.Xbox
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import io.github.chrislo27.rhre3.PreferenceKeys
@@ -56,10 +55,8 @@ class Playalong(val remix: Remix) {
 
             activeControllerMappings = controllers.map { c ->
                 var existingMapping: ControllerMapping? = mappings.find { c.name == it.name }
-                if (existingMapping == null && Xbox.isXboxController(c)) {
-                    existingMapping = ControllerMapping.XBOX.copy(name = c.name)
-                }
-                c to (existingMapping ?: ControllerMapping.INVALID.copy(name = c.name))
+                var finalMapping: ControllerMapping? = if(existingMapping != null) existingMapping else ControllerMapping.convertGdx(c)
+                c to (finalMapping ?: ControllerMapping.INVALID.copy(name = c.name))
             }.toMap()
 
             val newMappings = playalongControllerMappings.toMutableList()

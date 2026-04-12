@@ -12,7 +12,7 @@ object RHRE3 {
 
     const val TITLE = "Rhythm Heaven Remix Editor"
     const val TITLE_3 = "Rhythm Heaven Remix Editor 3"
-    val VERSION: Version = Version(3, 20, 7, "")
+    val VERSION: Version = Version(3, 21, 0, "")
     val EXPERIMENTAL: Boolean = VERSION.suffix.matches("DEVELOPMENT|SNAPSHOT(?:.)*|RC\\d+".toRegex())
     val enableEarlyAccessMessage: Boolean = EXPERIMENTAL && VERSION.suffix != "DEVELOPMENT"
     const val WIDTH = 1280
@@ -30,7 +30,7 @@ object RHRE3 {
     }
     const val REMIX_FILE_EXTENSION = "rhre3"
 
-    const val GITHUB: String = "https://github.com/chrislo27/RhythmHeavenRemixEditor"
+    const val GITHUB: String = "https://github.com/TheAlternateDoctor/RhythmHeavenRemixEditor"
     const val GITHUB_RELEASES = "$GITHUB/releases"
     const val GITHUB_SHORTLINK: String = "https://rhre.dev"
     const val DATABASE_URL: String = "https://github.com/chrislo27/RHRE-database.git"
@@ -44,7 +44,7 @@ object RHRE3 {
     }
     val DATABASE_CURRENT_VERSION: String = "https://raw.githubusercontent.com/chrislo27/RHRE-database/$DATABASE_BRANCH/current.json"
     const val DATABASE_RELEASES = "https://github.com/chrislo27/RHRE-database/releases"
-    const val RELEASE_API_URL = "https://api.github.com/repos/chrislo27/RhythmHeavenRemixEditor/releases/latest"
+    const val RELEASE_API_URL = "https://api.github.com/repos/TheAlternateDoctor/RhythmHeavenRemixEditor/releases/latest"
     const val OUT_OF_MEMORY_DOC_LINK: String = "https://docs.rhre.dev/Out-of-memory-on-music/"
     const val DOCS_URL: String = "https://rhre.readthedocs.io/en/latest/"
 

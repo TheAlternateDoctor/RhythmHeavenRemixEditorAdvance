@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerListener
 import com.badlogic.gdx.controllers.Controllers
-import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Cursor
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -401,64 +400,8 @@ class RhythmGameScreen(main: RHRE3Application, val game: RhythmGame)
         return any && game.playState == PlayState.PLAYING
     }
 
-    override fun povMoved(controller: Controller, povCode: Int, value: PovDirection): Boolean {
-        val mapping = getMapping(controller) ?: return false
-        val buttonA = mapping.buttonA
-        val buttonB = mapping.buttonB
-        val buttonLeft = mapping.buttonLeft
-        val buttonRight = mapping.buttonRight
-        val buttonUp = mapping.buttonUp
-        val buttonDown = mapping.buttonDown
-        var any = false
-        val release = value == PovDirection.center
-        val inputSet = game.pressedInputs
-        fun trigger(inp: RhythmGame.InputButtons) {
-            val inSet = inp in inputSet
-            if (release && inSet) {
-                if (inputSet.remove(inp)) {
-                    game.onInput(inp, true)
-                }
-            } else if (!release && !inSet) {
-                if (inputSet.add(inp)) {
-                    game.onInput(inp, false)
-                }
-            }
-        }
-        if (buttonA is ControllerInput.Pov && buttonA.povCode == povCode && (buttonA.direction == value || release)) {
-            trigger(RhythmGame.InputButtons.A)
-            any = true
-        }
-        if (buttonB is ControllerInput.Pov && buttonB.povCode == povCode && (buttonB.direction == value || release)) {
-            trigger(RhythmGame.InputButtons.B)
-            any = true
-        }
-        if (buttonLeft is ControllerInput.Pov && buttonLeft.povCode == povCode && (buttonLeft.direction == value || release)) {
-            trigger(RhythmGame.InputButtons.LEFT)
-            any = true
-        }
-        if (buttonRight is ControllerInput.Pov && buttonRight.povCode == povCode && (buttonRight.direction == value || release)) {
-            trigger(RhythmGame.InputButtons.RIGHT)
-            any = true
-        }
-        if (buttonUp is ControllerInput.Pov && buttonUp.povCode == povCode && (buttonUp.direction == value || release)) {
-            trigger(RhythmGame.InputButtons.UP)
-            any = true
-        }
-        if (buttonDown is ControllerInput.Pov && buttonDown.povCode == povCode && (buttonDown.direction == value || release)) {
-            trigger(RhythmGame.InputButtons.DOWN)
-            any = true
-        }
-        return any && game.playState == PlayState.PLAYING
-    }
-
     // Below not implemented
     override fun axisMoved(controller: Controller, axisCode: Int, value: Float): Boolean = false
-
-    override fun accelerometerMoved(controller: Controller, accelerometerCode: Int, value: Vector3): Boolean = false
-
-    override fun xSliderMoved(controller: Controller, sliderCode: Int, value: Boolean): Boolean = false
-
-    override fun ySliderMoved(controller: Controller, sliderCode: Int, value: Boolean): Boolean = false
 
     override fun connected(controller: Controller) {
         Toolboks.LOGGER.info("[RhythmGameScreen] Controller ${controller.name} connected")
