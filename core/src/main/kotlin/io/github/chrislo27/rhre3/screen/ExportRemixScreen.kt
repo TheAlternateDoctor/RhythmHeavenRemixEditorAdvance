@@ -259,7 +259,7 @@ class ExportRemixScreen(main: RHRE3Application)
             remix.playState = PlayState.STOPPED
             
             if (success) {
-                val commentTag = "Made with Rhythm Heaven Remix Editor ${RHRE3.VERSION}"
+                val commentTag = "Made with Rhythm Heaven Remix Editor Advance ${RHRE3.VERSION}"
                 when (fileType) {
                     WAV -> {
                         // nothing

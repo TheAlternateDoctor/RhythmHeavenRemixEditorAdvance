@@ -40,7 +40,7 @@ class StartupStage(val screen: EditorScreen) : Stage<EditorScreen>(screen.stage,
 
         val palette = screen.main.uiPalette
         genericStage.centreStage.elements += TextLabel(palette, genericStage.centreStage, genericStage.centreStage).apply {
-            this.text = """Welcome to the Rhythm Heaven Remix Editor! (RHRE for short.) I hope you can enjoy this tool made by many members of the Rhythm Heaven community.
+            this.text = """Welcome to Rhythm Heaven Remix Editor Advance! (RHREadv for short.) I hope you can enjoy this tool made by many members of the Rhythm Heaven community.
                 |
                 |Please refer to the [CYAN]Online Documentation[], accessible in your web browser left-clicking the button below. You should start with the [CYAN]README[] and [CYAN]Starting a remix[] sections.
                 |

@@ -233,12 +233,12 @@ class AutoUpdaterScreen(main: RHRE3Application)
                 extractFolder.mkdir()
                 zipFile.extractAll(extractFolder.canonicalPath)
                 zipFileLoc.deleteOnExit()
-                val mainFolder = extractFolder.resolve("Rhythm Heaven Remix Editor/")
-                if (!mainFolder.exists()) error("'Rhythm Heaven Remix Editor' directory did not exist after extraction.  Download manually at https://rhre.dev/releases/latest")
-                if (!mainFolder.isDirectory) error("Extracted 'Rhythm Heaven Remix Editor' was not a directory.  Download manually at https://rhre.dev/releases/latest")
+                val mainFolder = extractFolder.resolve("Rhythm Heaven Remix Editor Advance/")
+                if (!mainFolder.exists()) error("'Rhythm Heaven Remix Editor Advance' directory did not exist after extraction.  Download manually at https://rhre.dev/releases/latest")
+                if (!mainFolder.isDirectory) error("Extracted 'Rhythm Heaven Remix Editor Advance' was not a directory.  Download manually at https://rhre.dev/releases/latest")
                 // Copy over allowed files
                 val fileList = mainFolder.listFiles()!!.toList()
-                val newJarFile = fileList.firstOrNull { it.isDirectory && it.name == "bin" }?.listFiles()?.firstOrNull { it.name == "RHRE.jar" } ?: error("RHRE.jar was not found after extraction. Download manually at https://rhre.dev/releases/latest")
+                val newJarFile = fileList.firstOrNull { it.isDirectory && it.name == "bin" }?.listFiles()?.firstOrNull { it.name == "RHREadv.jar" } ?: error("RHREadv.jar was not found after extraction. Download manually at https://rhre.dev/releases/latest")
                 fileList.filter {
                     (it.isDirectory && it.name in listOf("oss_licenses", "bin")) || (it.isFile && it.extension == "txt")
                 }.forEach { f ->

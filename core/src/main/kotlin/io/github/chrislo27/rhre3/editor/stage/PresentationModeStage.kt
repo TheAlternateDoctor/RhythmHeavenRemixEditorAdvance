@@ -61,7 +61,7 @@ class PresentationModeStage(val editor: Editor, val palette: UIPalette, parent: 
             this.textWrapping = false
             this.isLocalizationKey = false
             this.textAlign = Align.center
-            this.text = "Made with the Rhythm Heaven Remix Editor, which is licensed under GPL-3.0"
+            this.text = "Made with Rhythm Heaven Remix Editor Advance, which is licensed under GPL-3.0"
             this.fontScaleMultiplier = fontScale
         }
 

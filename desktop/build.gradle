@@ -30,7 +30,7 @@ repositories {
 }
 
 shadowJar {
-    archiveBaseName = "RHRE"
+    archiveBaseName = "RHREadv"
     // classifier = "distribution"
     archiveVersion = this.version
 }

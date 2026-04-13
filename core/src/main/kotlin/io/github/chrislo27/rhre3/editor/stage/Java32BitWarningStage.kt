@@ -43,7 +43,7 @@ class Java32BitWarningStage(val screen: EditorScreen) : Stage<EditorScreen>(scre
             this.text = """A 32-bit version of the Java Runtime Environment was detected.
                 |
                 |Please note that only 64-bit versions of Java are supported for use with
-                |the Rhythm Heaven Remix Editor. You may experience crashes due to running out of memory on a 32-bit Java version.
+                |Rhythm Heaven Remix Editor Advance. You may experience crashes due to running out of memory on a 32-bit Java version.
                 |
                 |Please open the link below and download & install the appropriate 64-bit Java version.
                 |Be sure to uninstall your existing Java installation first.
