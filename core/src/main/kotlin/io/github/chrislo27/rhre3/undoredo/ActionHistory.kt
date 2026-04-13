@@ -1,4 +1,4 @@
-package io.github.chrislo27.rhre3.oopsies
+package io.github.chrislo27.rhre3.undoredo
 
 import java.util.*
 

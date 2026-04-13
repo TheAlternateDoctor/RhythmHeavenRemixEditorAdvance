@@ -3,7 +3,7 @@ package io.github.chrislo27.rhre3.editor.action
 import com.badlogic.gdx.math.Rectangle
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.entity.Entity
-import io.github.chrislo27.rhre3.oopsies.ReversibleAction
+import io.github.chrislo27.rhre3.undoredo.ReversibleAction
 import io.github.chrislo27.rhre3.track.Remix
 
 

@@ -39,7 +39,7 @@ import io.github.chrislo27.rhre3.entity.model.special.SubtitleEntity
 import io.github.chrislo27.rhre3.entity.model.special.TextureEntity
 import io.github.chrislo27.rhre3.midi.MidiHandler
 import io.github.chrislo27.rhre3.modding.ModdingUtils
-import io.github.chrislo27.rhre3.oopsies.ActionGroup
+import io.github.chrislo27.rhre3.undoredo.ActionGroup
 import io.github.chrislo27.rhre3.patternstorage.ClipboardStoredPattern
 import io.github.chrislo27.rhre3.patternstorage.StoredPattern
 import io.github.chrislo27.rhre3.patternstorage.toEntityList
@@ -77,7 +77,6 @@ import io.github.chrislo27.rhre3.util.unscaleFont
 import io.github.chrislo27.toolboks.Toolboks
 import io.github.chrislo27.toolboks.i18n.Localization
 import io.github.chrislo27.toolboks.i18n.ToolboksBundle
-import io.github.chrislo27.toolboks.lazysound.LazySound
 import io.github.chrislo27.toolboks.registry.AssetRegistry
 import io.github.chrislo27.toolboks.registry.ScreenRegistry
 import io.github.chrislo27.toolboks.util.MathHelper
