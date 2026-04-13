@@ -1,6 +1,6 @@
 package io.github.chrislo27.rhre3.track.timesignature
 
-import io.github.chrislo27.rhre3.oopsies.ReversibleAction
+import io.github.chrislo27.rhre3.undoredo.ReversibleAction
 import io.github.chrislo27.rhre3.track.Remix
 
 

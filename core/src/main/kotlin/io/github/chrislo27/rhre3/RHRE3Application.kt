@@ -15,7 +15,6 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.Align
 import io.github.chrislo27.rhre3.analytics.AnalyticsHandler
 import io.github.chrislo27.rhre3.init.DefaultAssetLoader
-import io.github.chrislo27.rhre3.lc.LC
 import io.github.chrislo27.rhre3.midi.MidiHandler
 import io.github.chrislo27.rhre3.modding.ModdingGame
 import io.github.chrislo27.rhre3.modding.ModdingUtils
@@ -395,8 +394,6 @@ class RHRE3Application(logger: Logger, logToFile: File?)
                 e.printStackTrace()
             }
         }
-        
-        LC(this).all()
     }
     
     fun fetchGithubVersion() {

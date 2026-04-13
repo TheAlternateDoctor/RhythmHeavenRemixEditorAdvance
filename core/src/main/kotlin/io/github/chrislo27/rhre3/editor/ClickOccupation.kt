@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2
 import io.github.chrislo27.rhre3.entity.Entity
 import io.github.chrislo27.rhre3.entity.model.ModelEntity
 import io.github.chrislo27.rhre3.entity.model.special.EndRemixEntity
-import io.github.chrislo27.rhre3.oopsies.ReversibleAction
+import io.github.chrislo27.rhre3.undoredo.ReversibleAction
 import io.github.chrislo27.rhre3.track.Remix
 import io.github.chrislo27.rhre3.track.tracker.Tracker
 import io.github.chrislo27.toolboks.util.MathHelper

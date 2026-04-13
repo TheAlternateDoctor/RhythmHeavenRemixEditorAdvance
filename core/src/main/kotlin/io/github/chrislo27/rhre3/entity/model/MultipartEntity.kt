@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Rectangle
 import io.github.chrislo27.rhre3.RHRE3Application
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.entity.Entity
-import io.github.chrislo27.rhre3.oopsies.ReversibleAction
+import io.github.chrislo27.rhre3.undoredo.ReversibleAction
 import io.github.chrislo27.rhre3.sfxdb.datamodel.ContainerModel
 import io.github.chrislo27.rhre3.sfxdb.datamodel.Datamodel
 import io.github.chrislo27.rhre3.sfxdb.datamodel.impl.CuePointer

@@ -20,7 +20,7 @@ import io.github.chrislo27.rhre3.entity.model.ModelEntity
 import io.github.chrislo27.rhre3.entity.model.cue.CueEntity
 import io.github.chrislo27.rhre3.entity.model.multipart.EquidistantEntity
 import io.github.chrislo27.rhre3.entity.model.special.*
-import io.github.chrislo27.rhre3.oopsies.ActionHistory
+import io.github.chrislo27.rhre3.undoredo.ActionHistory
 import io.github.chrislo27.rhre3.playalong.Playalong
 import io.github.chrislo27.rhre3.rhre2.RemixObject
 import io.github.chrislo27.rhre3.sfxdb.Game
