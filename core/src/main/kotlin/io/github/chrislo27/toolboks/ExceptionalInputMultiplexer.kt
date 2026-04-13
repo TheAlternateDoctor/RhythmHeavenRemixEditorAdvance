@@ -47,9 +47,9 @@ open class ExceptionalInputMultiplexer(val exceptionHandler: (Throwable) -> Unit
         return false
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         try {
-            return super.scrolled(amount)
+            return super.scrolled(amountX, amountY)
         } catch (t: Throwable) {
             t.printStackTrace()
             exceptionHandler(t)

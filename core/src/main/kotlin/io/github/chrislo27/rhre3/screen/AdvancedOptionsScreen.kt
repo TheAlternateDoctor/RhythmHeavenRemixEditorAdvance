@@ -215,6 +215,10 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
                 }
                 Toolboks.LOGGER.info("Reloaded modding metadata ${if (!success) "un" else ""}successfully in ${nano / 1_000_000.0} ms")
             }
+            //Not implemented.
+            override fun scrolled(p0: Float, p1: Float): Boolean {
+                return false
+            }
 
         }.apply {
             this.addLabel(TextLabel(palette, this, this.stage).apply {
@@ -270,6 +274,10 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
             override fun onRightClick(xPercent: Float, yPercent: Float) {
                 super.onRightClick(xPercent, yPercent)
                 cycle(-1)
+            }
+            //Not implemented.
+            override fun scrolled(p0: Float, p1: Float): Boolean {
+                return false
             }
         }.apply {
             this.addLabel(TextLabel(palette, this, this.stage).apply {
@@ -414,6 +422,10 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
                 }
                 return false
             }
+            //Not implemented.
+            override fun scrolled(p0: Float, p1: Float): Boolean {
+                return false
+            }
         }.apply {
             this.location.set(screenX = -0.02f,
                               screenY = -buttonHeight * 0.275f,
@@ -482,6 +494,11 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
             it.fontScaleMultiplier = 0.8f
         }
     }
+
+    //Not implemented.
+    override fun scrolled(p0: Float, p1: Float): Boolean {
+        return false
+    }
 }
 
 class LinePuzzleEndScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Application, LinePuzzleEndScreen>(main), HidesVersionText {
@@ -503,4 +520,8 @@ class LinePuzzleEndScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applicat
     override fun dispose() {
     }
 
+    //Not implemented.
+    override fun scrolled(p0: Float, p1: Float): Boolean {
+        return false
+    }
 }

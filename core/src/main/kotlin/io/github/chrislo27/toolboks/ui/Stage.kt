@@ -266,13 +266,13 @@ open class Stage<S : ToolboksScreen<*, *>>(parent: UIElement<S>?, val camera: Or
         return false
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         if (!visible)
             return false
         updateTooltip()
         for (e in elementsReversed) {
             if (e.visible) {
-                if (e.scrolled(amount)) {
+                if (e.scrolled(amountX, amountY)) {
                     updateTooltip()
                     return true
                 }

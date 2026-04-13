@@ -190,20 +190,23 @@ class EventScreen(main: RHRE3Application)
                     val baseY = camera.viewportHeight * 0.8f
                     val years = NOW.year - RHRE3.RHRE_ANNIVERSARY.year
                     val rhre = "RHRE"
+                    val layoutRHRE = font.drawCompressed(batch,
+                        "[#FFFFFF00]$rhre",
+                        0f, baseY, camera.viewportWidth, Align.center)
+                    val rhreWidth = layoutRHRE.runs[0].width
                     val layout = font.drawCompressed(batch,
-                                                     "Happy $years${getNumberSuffix(years)} [X]$rhre[] Anniversary!",
+                                                     "Happy $years${getNumberSuffix(years)} [#FFFFFF00]$rhre[] Anniversary!",
                                                      0f, baseY, camera.viewportWidth, Align.center)
                     val logo = AssetRegistry.get<Texture>("logo_32")
-
-                    val indexOfR = layout.runs.indexOfFirst { it.color.a == 0.0f }
-                    if (indexOfR != -1) {
-                        val run = layout.runs[indexOfR]
-                        batch.setColor(1f, 1f, 1f, fontAlpha)
-                        batch.draw(logo, run.x, run.y + baseY - font.capHeight / 2 - run.width / 2, run.width,
-                                   run.width)
-                        batch.setColor(1f, 1f, 1f, 1f)
+                    val run = layout.runs[0]
+                    var logoPos = 0f
+                    for(i in 0..layout.colors[2]){
+                        logoPos+=run.xAdvances[i]
                     }
-
+                    logoPos += run.x
+                    batch.draw(logo, logoPos, run.y + baseY - font.capHeight / 2 - rhreWidth/ 2, rhreWidth,
+                        rhreWidth)
+                    batch.setColor(1f, 1f, 1f, 1f)
                     font.drawCompressed(batch, "Thank you for your continued support over the years.", 0f,
                                         baseY - font.lineHeight * 2, camera.viewportWidth, Align.center)
                     font.drawCompressed(batch, "Here's to more RHRE!", 0f,
@@ -212,20 +215,22 @@ class EventScreen(main: RHRE3Application)
                 EventType.XMAS -> {
                     val baseY = camera.viewportHeight * 0.8f
                     val rhre = "RHRE"
+                    val layoutRHRE = font.drawCompressed(batch,
+                        "[#FFFFFF00]$rhre",
+                        0f, baseY, camera.viewportWidth, Align.center)
+                    val rhreWidth = layoutRHRE.runs[0].width
                     val layout = font.drawCompressed(batch,
                                                      "Happy Holidays from us at the [X]$rhre[] team!",
                                                      0f, baseY, camera.viewportWidth, Align.center)
                     val logo = AssetRegistry.get<Texture>("logo_32")
-
-                    val indexOfR = layout.runs.indexOfFirst { it.color.a == 0.0f }
-                    if (indexOfR != -1) {
-                        val run = layout.runs[indexOfR]
-                        batch.setColor(1f, 1f, 1f, fontAlpha)
-                        batch.draw(logo, run.x, run.y + baseY - font.capHeight / 2 - run.width / 2, run.width,
-                                   run.width)
-                        batch.setColor(1f, 1f, 1f, 1f)
+                    val run = layout.runs[0]
+                    var logoPos = 0f
+                    for(i in 0..layout.colors[2]){
+                        logoPos+=run.xAdvances[i]
                     }
-
+                    logoPos += run.x
+                    batch.draw(logo, logoPos, run.y + baseY - font.capHeight / 2 - rhreWidth / 2, rhreWidth,
+                        rhreWidth)
                     font.drawCompressed(batch, "We hope you have a wonderful holiday season.", 0f,
                                         baseY - font.lineHeight * 2, camera.viewportWidth, Align.center)
                 }

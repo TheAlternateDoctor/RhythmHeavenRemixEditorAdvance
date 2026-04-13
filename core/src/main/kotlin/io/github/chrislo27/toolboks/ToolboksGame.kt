@@ -370,11 +370,17 @@ ${(screen as? ToolboksScreen<*, *>)?.getDebugString() ?: ""}"""
         return false
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    //Not implemented.
+    override fun scrolled(p0: Float, p1: Float): Boolean {
         return false
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
         return false
     }
+
+    override fun touchCancelled(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        return false
+    }
+
 }

@@ -91,8 +91,8 @@ public abstract class ToolboksScreen<G : ToolboksGame, SELF : ToolboksScreen<G, 
         return stage?.keyTyped(character) ?: false
     }
 
-    override fun scrolled(amount: Int): Boolean {
-        return stage?.scrolled(amount) ?: false
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
+        return stage?.scrolled(amountX, amountY) ?: false
     }
 
     override fun keyUp(keycode: Int): Boolean {
@@ -109,5 +109,9 @@ public abstract class ToolboksScreen<G : ToolboksGame, SELF : ToolboksScreen<G, 
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         return stage?.touchDown(screenX, screenY, pointer, button) ?: false
+    }
+
+    override fun touchCancelled(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        return false
     }
 }

@@ -32,7 +32,7 @@ class InputSponge<S : ToolboksScreen<*, *>>(parent: UIElement<S>, parameterStage
         return shouldAbsorbInput
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         return shouldAbsorbInput
     }
 

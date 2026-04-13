@@ -12,6 +12,7 @@ import io.github.chrislo27.rhre3.theme.LoadedThemes
 import io.github.chrislo27.toolboks.ui.*
 import io.github.chrislo27.toolboks.util.gdxutils.fillRect
 import io.github.chrislo27.toolboks.util.gdxutils.getInputY
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 
@@ -178,13 +179,13 @@ abstract class ThemeListStage<T>(val editor: Editor, val palette: UIPalette, par
         resetButtons()
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         if (this.isMouseOver()) {
-            scroll(amount)
+            scroll(ceil(amountY).toInt())
             return true
         }
 
-        return super.scrolled(amount)
+        return super.scrolled(amountX, amountY)
     }
 
     inner class ItemButton(val index: Int, palette: UIPalette, parent: UIElement<EditorScreen>,

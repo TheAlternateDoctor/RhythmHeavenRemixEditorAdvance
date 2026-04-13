@@ -48,6 +48,7 @@ import io.github.chrislo27.toolboks.ui.*
 import io.github.chrislo27.toolboks.util.MathHelper
 import io.github.chrislo27.toolboks.util.gdxutils.*
 import java.util.*
+import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -543,7 +544,8 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                               screenHeight = Editor.BUTTON_SIZE / RHRE3.HEIGHT)
         }
         pickerStage = object : Stage<EditorScreen>(this@EditorStage, camera) {
-            override fun scrolled(amount: Int): Boolean {
+            override fun scrolled(amountX: Float, amountY: Float): Boolean {
+                val amountScrolled = ceil(amountY).toInt()
                 if (isMouseOver()) {
                     val filter = editor.pickerSelection.filter
                     when (stage.camera.getInputX()) {
@@ -552,7 +554,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                             val currentDatamodelList = filter.currentDatamodelList
                             if (!filter.areDatamodelsEmpty && currentDatamodelList != null) {
                                 val old = currentDatamodelList.currentIndex
-                                currentDatamodelList.currentIndex += amount
+                                currentDatamodelList.currentIndex += amountScrolled
                                 if (old != currentDatamodelList.currentIndex) {
                                     updateSelected()
                                     return true
@@ -564,7 +566,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                             val currentGameList = filter.currentGameList
                             if (!filter.areGamesEmpty && currentGameList != null) {
                                 val old = currentGameList.scroll
-                                currentGameList.scroll += amount
+                                currentGameList.scroll += amountScrolled
                                 if (old != currentGameList.scroll) {
                                     updateSelected()
                                     return true
@@ -575,7 +577,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                         in (location.realX)..(variantButtons.first().location.realX) -> {
                             if (!filter.areGroupsEmpty) {
                                 val old = filter.groupScroll
-                                filter.groupScroll += amount
+                                filter.groupScroll += amountScrolled
                                 if (old != filter.groupScroll) {
                                     updateSelected()
                                     return true

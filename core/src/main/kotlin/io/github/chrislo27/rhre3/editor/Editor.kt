@@ -817,10 +817,10 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
 
         if (!stage.isTyping) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-                Gdx.input.inputProcessor.scrolled(-1)
+                Gdx.input.inputProcessor.scrolled(0f, -1f)
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || (Gdx.input.isKeyJustPressed(Input.Keys.S) && !control)) {
-                Gdx.input.inputProcessor.scrolled(1)
+                Gdx.input.inputProcessor.scrolled(0f, 1f)
             }
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -1998,11 +1998,12 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         }
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY:  Float): Boolean {
         if (remix.playState != STOPPED) {
             return false
         }
 
+        val amountScrolled = ceil(amountY).toInt()
         val selection = selection
         val tool = currentTool
         val control = Gdx.input.isControlDown()
@@ -2010,12 +2011,12 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         if (tool == Tool.SELECTION && selection.isNotEmpty() && !shift) {
             when (scrollMode) {
                 Editor.ScrollMode.PITCH -> {
-                    changePitchOfSelection(-amount * (if (control) 2 else 1), true, false, selection)
+                    changePitchOfSelection(-amountScrolled * (if (control) 2 else 1), true, false, selection)
                 }
                 Editor.ScrollMode.VOLUME -> {
                     val volumetrics = selection.filter { it is IVolumetric && it.isVolumetric }
                     val oldVolumes: List<Int> = volumetrics.map { (it as IVolumetric).volumePercent }
-                    val changeAmount = -amount * (if (control) 25 else 5)
+                    val changeAmount = -amountScrolled * (if (control) 25 else 5)
 
                     val anyChanged = selection.fold(false) { acc, it ->
                         if (it is IVolumetric && it.isVolumetric) {
@@ -2058,7 +2059,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
             val inputBeat = if (snap == 0f) inputX else floor(inputX.toDouble() / snap).toFloat() * snap
             if (timeSig != null && MathUtils.isEqual(inputBeat, timeSig.beat)) {
                 if (!shift) {
-                    val change = -amount * (if (control) 5 else 1)
+                    val change = -amountScrolled * (if (control) 5 else 1)
                     val newDivisions = (timeSig.beatsPerMeasure + change)
                             .coerceIn(TimeSignature.LOWER_BEATS_PER_MEASURE, TimeSignature.UPPER_BEATS_PER_MEASURE)
                     if ((change < 0 && timeSig.beatsPerMeasure > TimeSignature.LOWER_BEATS_PER_MEASURE) || (change > 0 && timeSig.beatsPerMeasure < TimeSignature.UPPER_BEATS_PER_MEASURE)) {
@@ -2074,7 +2075,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
                         return true
                     }
                 } else if (shift && !control) {
-                    val change = -amount
+                    val change = -amountScrolled
                     val index = TimeSignature.NOTE_UNITS.indexOf(timeSig.beatUnit).takeUnless { it == -1 } ?: TimeSignature.NOTE_UNITS.indexOf(TimeSignature.DEFAULT_NOTE_UNIT)
                     val newUnits = TimeSignature.NOTE_UNITS[(index + change).coerceIn(0, TimeSignature.NOTE_UNITS.size - 1)]
                     if (newUnits != timeSig.beatUnit) {
@@ -2094,7 +2095,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         } else if (tool.isTrackerRelated) {
             val tracker = getTrackerOnMouse(tool.trackerClass?.java, true)
             if (tracker != null) {
-                val result = tracker.scroll(-amount, control, shift)
+                val result = tracker.scroll(-amountScrolled, control, shift)
 
                 if (result != null) {
                     val lastAction: TrackerValueChange? = remix.getUndoStack().peekFirst() as? TrackerValueChange?
@@ -2112,7 +2113,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         } else if (tool == Tool.SWING) {
             val tracker = getTrackerOnMouse(TempoChange::class.java, true) as? TempoChange?
             if (tracker != null) {
-                val result = tracker.scrollSwing(-amount, control, shift)
+                val result = tracker.scrollSwing(-amountScrolled, control, shift)
 
                 if (result != null) {
                     val lastAction: TrackerValueChange? = remix.getUndoStack().peekFirst() as? TrackerValueChange?
@@ -2131,7 +2132,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
 
         if (shift && tool != Tool.TIME_SIGNATURE) {
             // Camera scrolling left/right (CTRL/SHIFT+CTRL)
-            val amt = (amount * if (control) 5f else 1f)
+            val amt = (amountScrolled * if (control) 5f else 1f)
             camera.position.x += amt
             camera.update()
 
@@ -2150,6 +2151,10 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
     }
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+        return false
+    }
+
+    override fun touchCancelled(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         return false
     }
 

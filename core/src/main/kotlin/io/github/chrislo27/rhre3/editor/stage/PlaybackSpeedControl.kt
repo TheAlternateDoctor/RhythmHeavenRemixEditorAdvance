@@ -19,6 +19,7 @@ import io.github.chrislo27.toolboks.util.gdxutils.getInputX
 import io.github.chrislo27.toolboks.util.gdxutils.isAltDown
 import io.github.chrislo27.toolboks.util.gdxutils.isControlDown
 import io.github.chrislo27.toolboks.util.gdxutils.isShiftDown
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 
@@ -115,7 +116,7 @@ class PlaybackSpeedControl(parent: Stage<EditorScreen>, val editorStage: EditorS
                 }
             }
 
-            override fun scrolled(amount: Int): Boolean {
+            override fun scrolled(amountX: Float, amountY: Float): Boolean {
                 val editor = editorStage.editor
                 if (isMouseOver() && editor.clickOccupation == ClickOccupation.None) {
                     var index: Int = 0
@@ -125,7 +126,7 @@ class PlaybackSpeedControl(parent: Stage<EditorScreen>, val editorStage: EditorS
                         } else break
                     }
                     if (index == -1) index = speedZeroIndex
-                    index += -amount
+                    index += -ceil(amountY).toInt()
                     index = index.coerceIn(0, setSpeeds.size - 1)
                     editor.remix.speedMultiplier = setSpeeds[index]
                     return true
