@@ -13,7 +13,7 @@ object Credits {
     fun generateList(): List<Credit> {
         return listOf(
                 "title" crediting RHRE3.GITHUB,
-                "programming" crediting "chrislo27\n${Localization["credits.title.programming.contributions", "Kamayana"]}",
+                "programming" crediting "chrislo27\nTheAlternateDoctor\n${Localization["credits.title.programming.contributions", "Kamayana"]}",
                 "localization" crediting
                         """[LIGHT_GRAY]Français (French)[]
                 |inkedsplat, minenice55, Pengu123
