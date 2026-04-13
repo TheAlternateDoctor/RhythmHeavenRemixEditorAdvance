@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.Align
 import io.github.chrislo27.rhre3.PreferenceKeys
 import io.github.chrislo27.rhre3.RHRE3Application
 import io.github.chrislo27.rhre3.analytics.AnalyticsHandler
-import io.github.chrislo27.rhre3.credits.CreditsGame
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.extras.*
 import io.github.chrislo27.rhre3.util.FadeIn
@@ -29,9 +28,6 @@ class ExtrasStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, va
     : Stage<InfoScreen>(parent, camera) {
 
     private val main: RHRE3Application get() = infoScreen.main
-    private val preferences: Preferences get() = main.preferences
-
-    private val upbeatHardButton: Button<InfoScreen>
     
     init {
         val palette = infoScreen.stage.palette
@@ -89,142 +85,6 @@ class ExtrasStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, va
             }
             this.tooltipTextIsLocalizationKey = true
             this.tooltipText = "extras.polyrhythmMania.tooltip"
-        }
-        this.elements += Button(palette, this, this).apply {
-            addLabel(TextLabel(palette, this, this.stage).apply {
-                this.fontScaleMultiplier = fontScale
-                this.isLocalizationKey = true
-                this.textWrapping = false
-                this.textAlign = Align.center
-                this.text = "extras.quiz"
-            })
-            this.location.set(screenX = 1f - (padding + buttonWidth),
-                              screenY = padding * 6 + buttonHeight * 5,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
-            this.leftClickAction = { _, _ ->
-                AnalyticsHandler.track("Play Extras Game", mapOf("game" to "quiz"))
-                val game = QuizGame(main)
-                Gdx.app.postRunnable {
-                    main.screen = TransitionScreen(main, infoScreen, RhythmGameScreen(main, game), WipeTo(Color.BLACK, 0.35f), WipeFrom(Color.BLACK, 0.35f))
-                    AssetRegistry.get<Sound>("sfx_enter_game").play()
-                }
-            }
-            this.tooltipTextIsLocalizationKey = true
-            this.tooltipText = "extras.quiz.tooltip"
-        }
-//        this.elements += Button(palette, this, this).apply {
-//            addLabel(TextLabel(palette, this, this.stage).apply {
-//                this.fontScaleMultiplier = fontScale
-//                this.isLocalizationKey = false
-//                this.textWrapping = false
-//                this.textAlign = Align.center
-//                this.text = "Goat Feeding"
-//            })
-//            this.location.set(screenX = padding,
-//                              screenY = padding * 5 + buttonHeight * 4,
-//                              screenWidth = buttonWidth,
-//                              screenHeight = buttonHeight)
-//        }
-//        this.elements += Button(palette, this, this).apply {
-//            addLabel(TextLabel(palette, this, this.stage).apply {
-//                this.fontScaleMultiplier = fontScale
-//                this.isLocalizationKey = false
-//                this.textWrapping = false
-//                this.textAlign = Align.center
-//                this.text = "Mechanical Horse"
-//            })
-//            this.location.set(screenX = padding,
-//                              screenY = padding * 4 + buttonHeight * 3,
-//                              screenWidth = buttonWidth,
-//                              screenHeight = buttonHeight)
-//        }
-
-        this.elements += Button(palette, this, this).apply {
-            addLabel(TextLabel(palette, this, this.stage).apply {
-                this.fontScaleMultiplier = fontScale
-                this.isLocalizationKey = true
-                this.textWrapping = false
-                this.textAlign = Align.center
-                this.text = "extras.upbeat"
-            })
-            this.location.set(screenX = padding,
-                              screenY = padding * 6 + buttonHeight * 5,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
-            this.leftClickAction = { _, _ ->
-                AnalyticsHandler.track("Play Extras Game", mapOf("game" to "upbeat_normal"))
-                val game = UpbeatGame(main, false)
-                Gdx.app.postRunnable {
-                    main.screen = TransitionScreen(main, infoScreen, RhythmGameScreen(main, game), WipeTo(Color.BLACK, 0.35f), WipeFrom(Color.BLACK, 0.35f))
-                    AssetRegistry.get<Sound>("sfx_enter_game").play()
-                }
-            }
-            this.tooltipTextIsLocalizationKey = true
-            this.tooltipText = "extras.upbeat.tooltip"
-        }
-        upbeatHardButton = Button(palette, this, this).apply {
-            addLabel(TextLabel(palette, this, this.stage).apply {
-                this.fontScaleMultiplier = fontScale
-                this.isLocalizationKey = true
-                this.textWrapping = false
-                this.textAlign = Align.center
-                this.text = "extras.upbeat.hardMode"
-            })
-            this.location.set(screenX = padding,
-                              screenY = padding * 5 + buttonHeight * 4,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
-            this.leftClickAction = { _, _ ->
-                AnalyticsHandler.track("Play Extras Game", mapOf("game" to "upbeat_hard"))
-                val game = UpbeatGame(main, true)
-                Gdx.app.postRunnable {
-                    main.screen = TransitionScreen(main, infoScreen, RhythmGameScreen(main, game), WipeTo(Color.BLACK, 0.35f), WipeFrom(Color.BLACK, 0.35f))
-                    AssetRegistry.get<Sound>("sfx_enter_game").play()
-                }
-            }
-            this.enabled = false
-            this.tooltipTextIsLocalizationKey = true
-            this.tooltipText = "extras.upbeat.hardMode.tooltip.locked"
-        }
-        this.elements += upbeatHardButton
-//        this.elements += Button(palette, this, this).apply {
-//            addLabel(TextLabel(palette, this, this.stage).apply {
-//                this.fontScaleMultiplier = fontScale
-//                this.isLocalizationKey = false
-//                this.textWrapping = false
-//                this.textAlign = Align.center
-//                this.text = "Notes Shop"
-//            })
-//            this.location.set(screenX = 1f - (padding + buttonWidth),
-//                              screenY = padding * 5 + buttonHeight * 4,
-//                              screenWidth = buttonWidth,
-//                              screenHeight = buttonHeight)
-//            this.leftClickAction = { _, _ ->
-////                main.screen = TestAffineScreen(main)
-//            }
-//        }
-//        this.elements += Button(palette, this, this).apply {
-//            addLabel(TextLabel(palette, this, this.stage).apply {
-//                this.fontScaleMultiplier = fontScale
-//                this.isLocalizationKey = false
-//                this.textWrapping = false
-//                this.textAlign = Align.center
-//                this.text = "Challenge Train"
-//            })
-//            this.location.set(screenX = 1f - (padding + buttonWidth),
-//                              screenY = padding * 4 + buttonHeight * 3,
-//                              screenWidth = buttonWidth,
-//                              screenHeight = buttonHeight)
-//        }
-    }
-    
-    fun show() {
-        if (preferences.getInteger(PreferenceKeys.EXTRAS_UPBEAT_HIGH_SCORE, 0) >= 256) {
-            upbeatHardButton.run {
-                this.enabled = true
-                this.tooltipText = "extras.upbeat.hardMode.tooltip.unlocked"
-            }
         }
     }
 }

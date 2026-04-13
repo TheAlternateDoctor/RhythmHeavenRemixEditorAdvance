@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import io.github.chrislo27.rhre3.PreferenceKeys
 import io.github.chrislo27.rhre3.RHRE3
 import io.github.chrislo27.rhre3.RHRE3Application
-import io.github.chrislo27.rhre3.credits.CreditsGame
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.screen.CreditsScreen
 import io.github.chrislo27.rhre3.sfxdb.GameMetadata
@@ -40,7 +39,6 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
     : Stage<InfoScreen>(parent, camera) {
 
     private val main: RHRE3Application get() = infoScreen.main
-    private val preferences: Preferences get() = infoScreen.preferences
     private val editor: Editor get() = infoScreen.editor
 
     private val loadingIcon: LoadingIcon<InfoScreen>
@@ -236,11 +234,6 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
                     this.textWrapping = false
                     this.text = "screen.info.credits"
                 })
-                addLabel(ImageLabel(palette, this, this.stage).apply {
-                    this.location.set(screenX = 0f, screenWidth = 0.1f)
-                    this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-                    this.image = TextureRegion(AssetRegistry.get<Texture>("weird_wakaaa"))
-                })
             }
 
             private val textLabel: TextLabel<InfoScreen>
@@ -252,22 +245,11 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
             private var spinStart: Long = System.currentTimeMillis()
 
             override fun onLeftClick(xPercent: Float, yPercent: Float) {
-                super.onLeftClick(xPercent, yPercent)
-
-                try {
-                    val credits = CreditsGame(main, if (Gdx.input.isShiftDown()) 1.25f else 1f)
-                    main.screen = TransitionScreen(main, infoScreen, credits, FadeOut(0.5f, Color.BLACK), FadeIn(0.75f, Color.BLACK))
-                    AssetRegistry.get<Sound>("sfx_enter_game").play()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    main.screen = CreditsScreen(main)
-                }
-            }
-
-            override fun onRightClick(xPercent: Float, yPercent: Float) {
                 super.onRightClick(xPercent, yPercent)
 
                 main.screen = CreditsScreen(main)
+
+                super.onLeftClick(xPercent, yPercent)
             }
 
             override fun render(screen: InfoScreen, batch: SpriteBatch, shapeRenderer: ShapeRenderer) {

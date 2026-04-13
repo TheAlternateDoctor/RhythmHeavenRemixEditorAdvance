@@ -139,8 +139,7 @@ class DefaultAssetLoader : AssetRegistry.IAssetLoader {
         
         AssetRegistry.loadAsset<Texture>("menu_bg_square", "images/menu/bg_square.png")
         AssetRegistry.loadAsset<Texture>("menu_snowflake", "images/menu/snowflake.png", linearTexture())
-        
-        AssetRegistry.loadAsset<Texture>("weird_wakaaa", "images/etc/wakaaa.png", linearTexture())
+
         AssetRegistry.loadAsset<Sound>("weird_sfx_honk", "sound/honk.ogg")
         AssetRegistry.loadAsset<Sound>("weird_sfx_bts_c", "sound/c.ogg")
         AssetRegistry.loadAsset<Sound>("weird_sfx_bts_pew", "sound/pew.ogg")
