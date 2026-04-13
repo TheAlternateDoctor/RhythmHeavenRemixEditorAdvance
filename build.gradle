@@ -20,6 +20,7 @@ allprojects {
         appName = "rhythm-heaven-remix-editor-3"
         gdxVersion = '1.14.0'
         gdxControllerVersion = '2.2.4'
+        lwjglVersion = '3.3.3'
     }
 
     repositories {
@@ -35,7 +36,7 @@ allprojects {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "21"
         freeCompilerArgs += "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
     }
 }
@@ -69,11 +70,12 @@ project(":desktop") {
         implementation "com.github.chrislo27:musique-barebones:3807b60"
         // implementation "club.minnced:java-discord-rpc:2.0.2"
         implementation "net.lingala.zip4j:zip4j:2.6.2"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.2.3"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.2.3:natives-windows"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.2.3:natives-windows-x86"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.2.3:natives-macos"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.2.3:natives-linux"
+        implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-windows"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-windows-x86"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-macos"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-linux"
 
         implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 
@@ -108,7 +110,8 @@ project(":core") {
         implementation "com.github.chrislo27:musique-barebones:3807b60"
         // implementation "club.minnced:java-discord-rpc:2.0.2"
         implementation "net.lingala.zip4j:zip4j:2.6.2"
-        implementation "org.lwjgl:lwjgl-tinyfd:3.2.3"
+        implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
         
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
 

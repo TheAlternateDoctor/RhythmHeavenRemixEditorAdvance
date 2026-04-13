@@ -145,8 +145,8 @@ class MusicSelectScreen(main: RHRE3Application)
         if (!isChooserOpen) {
             GlobalScope.launch {
                 isChooserOpen = true
-                // val filter = TinyFDWrapper.FileExtFilter(Localization["screen.music.fileFilter"] + "(.ogg, .mp3, .wav)", "*.ogg", "*.mp3", "*.wav")
-                TinyFDWrapper.openFile(Localization["screen.music.fileChooserTitle"], attemptRememberDirectory(main, PreferenceKeys.FILE_CHOOSER_MUSIC) ?: getDefaultDirectory(), null) { file ->
+                val filter = TinyFDWrapper.FileExtFilter(Localization["screen.music.fileFilter"] + "(.ogg, .mp3, .wav)", "*.ogg", "*.mp3", "*.wav")
+                TinyFDWrapper.openFile(Localization["screen.music.fileChooserTitle"], attemptRememberDirectory(main, PreferenceKeys.FILE_CHOOSER_MUSIC) ?: getDefaultDirectory(), filter) { file ->
                     isChooserOpen = false
                     if (file != null) {
                         isLoading = true
