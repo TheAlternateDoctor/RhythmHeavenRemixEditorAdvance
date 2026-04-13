@@ -10,8 +10,8 @@ import java.time.Month
 
 object RHRE3 {
 
-    const val TITLE = "Rhythm Heaven Remix Editor"
-    const val TITLE_3 = "Rhythm Heaven Remix Editor 3"
+    const val TITLE = "Rhythm Heaven Remix Editor Advance"
+    const val TITLE_3 = "Rhythm Heaven Remix Editor Advance 3"
     val VERSION: Version = Version(3, 21, 0, "")
     val EXPERIMENTAL: Boolean = VERSION.suffix.matches("DEVELOPMENT|SNAPSHOT(?:.)*|RC\\d+".toRegex())
     val enableEarlyAccessMessage: Boolean = EXPERIMENTAL && VERSION.suffix != "DEVELOPMENT"
