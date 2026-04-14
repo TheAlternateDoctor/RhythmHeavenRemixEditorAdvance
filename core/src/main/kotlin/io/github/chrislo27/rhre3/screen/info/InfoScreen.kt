@@ -52,8 +52,6 @@ class InfoScreen(main: RHRE3Application)
     companion object {
         const val DEFAULT_AUTOSAVE_TIME = 5
         val autosaveTimers = listOf(0, 1, 2, 3, 4, 5, 10, 15)
-        var shouldSeePartners: Boolean = true
-            private set
         var glowButtonInEditor: Boolean = true
             private set
     }
@@ -304,11 +302,6 @@ class InfoScreen(main: RHRE3Application)
         }
         stage.updatePositions()
         currentPage = currentPage // force update
-        updateSeePartners()
-    }
-
-    private fun updateSeePartners() {
-        shouldSeePartners = main.preferences.getInteger(PreferenceKeys.VIEWED_PARTNERS_VERSION, 0) < PartnersScreen.PARTNERS_VERSION
     }
 
     override fun render(delta: Float) {
@@ -349,7 +342,6 @@ class InfoScreen(main: RHRE3Application)
         super.show()
         infoStage.show()
         settingsStage.show()
-        updateSeePartners()
     }
 
     override fun hide() {
