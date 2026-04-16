@@ -13,9 +13,9 @@ object SoundStretch {
     enum class OS(val supported: Boolean, val executableName: String) {
         UNSUPPORTED(false, ""),
         WINDOWS(true, "SoundStretch_windows.exe"),
-//        MACOS(true, "SoundStretch_macOS");
+        MACOS(true, "SoundStretch_macOS"),
         LINUX(true, "SoundStretch_linux");
-        
+
         companion object {
             val ALL_VALUES: List<OS> = values().toList()
             val SUPPORTED: List<OS> = ALL_VALUES - UNSUPPORTED
@@ -31,7 +31,7 @@ object SoundStretch {
         val osName: String = System.getProperty("os.name", "???")?.toLowerCase(Locale.ROOT) ?: "???"
         when {
             "win" in osName -> OS.WINDOWS
-//            "mac" in osName -> OS.MACOS
+            "mac" in osName -> OS.MACOS
             osName.startsWith("linux") -> OS.LINUX
             else -> OS.UNSUPPORTED
         }
@@ -42,7 +42,7 @@ object SoundStretch {
     val isSupported: Boolean get() = currentOS.supported
 
     private fun makeProcessBuilder(directoryPath: File, args: List<String>): ProcessBuilder = when (val os = currentOS) {
-        OS.WINDOWS, OS.LINUX/*, OS.MACOS*/ -> {
+        OS.WINDOWS, OS.LINUX, OS.MACOS -> {
             ProcessBuilder(listOf(directoryPath.resolve(os.executableName).absolutePath) + args)
         }
         else -> throw NotImplementedError("Not implemented for the current operating system, supported OSs: ${OS.SUPPORTED}")

@@ -74,8 +74,12 @@ project(":desktop") {
         implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
         implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-windows"
         implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-windows-x86"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-windows-arm64"
         implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-macos"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-macos-arm64"
         implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-linux"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-linux-arm32"
+        implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:natives-linux-arm64"
 
         implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 
