@@ -168,45 +168,6 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
             this.tooltipText = "editor.customSfx.openFolder"
         }
 
-        // Partners button
-        info.elements += object : Button<InfoScreen>(palette, info, info) {
-            override fun render(screen: InfoScreen, batch: SpriteBatch, shapeRenderer: ShapeRenderer) {
-                if (labels.isNotEmpty()) {
-                    val first = labels.first()
-                    if (first is ImageLabel) {
-                        if (InfoScreen.shouldSeePartners) {
-                            first.tint.fromHsv(MathHelper.getSawtoothWave(1.5f) * 360f, 0.3f, 0.75f)
-                        } else {
-                            first.tint.set(1f, 1f, 1f, 1f)
-                        }
-                    }
-                }
-                super.render(screen, batch, shapeRenderer)
-            }
-        }.apply {
-            addLabel(ImageLabel(palette, this, this.stage).apply {
-                this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-                this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_credits"))
-            })
-
-            this.location.set(screenX = 0.5f - (0.1f / 2),
-                              screenY = padding,
-                              screenWidth = 0.1f,
-                              screenHeight = buttonHeight * 2 + padding)
-            this.leftClickAction = { _, _ ->
-                main.screen = ScreenRegistry.getNonNull("partners")
-            }
-        }
-        info.elements += TextLabel(palette, info, info).apply {
-            this.location.set(screenX = 0.5f - (0.1f / 2),
-                              screenY = buttonHeight * 2 + padding * 2.5f,
-                              screenWidth = 0.1f,
-                              screenHeight = buttonHeight)
-            this.isLocalizationKey = true
-            this.textWrapping = false
-            this.text = "screen.partners.title"
-        }
-
         // Donate button
         info.elements += Button(palette, info, info).apply {
             this.leftClickAction = { _, _ ->
