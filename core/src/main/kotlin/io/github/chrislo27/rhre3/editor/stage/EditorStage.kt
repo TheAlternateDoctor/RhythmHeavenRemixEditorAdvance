@@ -278,7 +278,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
             }
         }
 
-        if (isDirty != DirtyType.CLEAN && !SFXDatabase.isDataLoading()) {
+        if (isDirty != DirtyType.CLEAN && !SFXDatabase.isDataEmpty()) {
             val pickerSelection = editor.pickerSelection
             val filter = pickerSelection.filter
             val isSearching = filter === searchFilter
@@ -477,6 +477,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
     }
 
     init {
+
         paneLikeStages as MutableList
         gameButtons = mutableListOf()
         variantButtons = mutableListOf()
@@ -777,13 +778,13 @@ class EditorStage(parent: UIElement<EditorScreen>?,
             val iconWidthPadded = pickerStage.percentageOfWidth(Editor.ICON_SIZE + Editor.ICON_PADDING)
             val iconHeightPadded = pickerStage.percentageOfHeight(Editor.ICON_SIZE + Editor.ICON_PADDING)
             val startX = pickerStage.percentageOfWidth(
-                    (pickerStage.location.realWidth / 2f) -
-                            ((Editor.ICON_SIZE + Editor.ICON_PADDING) * (Editor.ICON_COUNT_X + 3)
-                                    - Editor.ICON_PADDING)
-                                                      ) / 2f
+                (pickerStage.location.realWidth / 2f) -
+                        ((Editor.ICON_SIZE + Editor.ICON_PADDING) * (Editor.ICON_COUNT_X + 3)
+                                - Editor.ICON_PADDING)
+            ) / 2f
             val startY = 1f - (pickerStage.percentageOfHeight(
-                    (Editor.ICON_SIZE + Editor.ICON_PADDING) * (Editor.ICON_COUNT_Y - 2) / 2f
-                                                             ))
+                (Editor.ICON_SIZE + Editor.ICON_PADDING) * (Editor.ICON_COUNT_Y - 2) / 2f
+            ))
 
             // Picker area
             run picker@{
@@ -793,15 +794,15 @@ class EditorStage(parent: UIElement<EditorScreen>?,
 
                 fun UIElement<*>.setLocation(x: Int, y: Int) {
                     this.location.set(
-                            screenX = startX + iconWidthPadded * x,
-                            screenY = startY - iconHeightPadded * y,
-                            screenWidth = iconWidth,
-                            screenHeight = iconHeight
-                                     )
+                        screenX = startX + iconWidthPadded * x,
+                        screenY = startY - iconHeightPadded * y,
+                        screenWidth = iconWidth,
+                        screenHeight = iconHeight
+                    )
                 }
 
                 gameStageText = TextLabel(palette.copy(textColor = Color.LIGHT_GRAY.cpy().apply { a = 0.8f }),
-                                          pickerStage, pickerStage).apply {
+                    pickerStage, pickerStage).apply {
                     this.location.set(0f, 0f, 0.5f, 1f)
                     this.isLocalizationKey = false
                     this.text = ""
@@ -838,7 +839,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                                     super.render(screen, batch, shapeRenderer)
                                     val filter = editor.pickerSelection.filter
                                     val label = this.labels.first() as TextLabel
-                                    if (SFXDatabase.isDataLoading() || if (isVariant) filter.areGamesEmpty else filter.areGroupsEmpty) {
+                                    if (SFXDatabase.isDataEmpty() || if (isVariant) filter.areGamesEmpty else filter.areGroupsEmpty) {
                                         if (isUp) {
                                             label.text = Editor.ARROWS[2]
                                         } else {
@@ -848,7 +849,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                                         if (isVariant) {
                                             val gameList = filter.currentGameList
                                             val scroll = gameList?.scroll
-                                                    ?: 0
+                                                ?: 0
                                             if (isUp) {
                                                 label.text = Editor.ARROWS[if (scroll > 0) 0 else 2]
                                             } else {
@@ -868,7 +869,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                                     super.onLeftClick(xPercent, yPercent)
                                     val filter = editor.pickerSelection.filter
                                     val gameList = filter.currentGameList
-                                            ?: return
+                                        ?: return
                                     if (isVariant) {
                                         if (isUp) {
                                             if (gameList.scroll > 0) {
@@ -900,7 +901,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                                     super.onRightClick(xPercent, yPercent)
                                     val filter = editor.pickerSelection.filter
                                     val gameList = filter.currentGameList
-                                            ?: return
+                                        ?: return
                                     if (isVariant) {
                                         if (isUp) {
                                             if (gameList.scroll > 0) {
@@ -931,17 +932,17 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                                 this.setLocation(x, y)
                                 this.background = false
                                 this.addLabel(
-                                        object : TextLabel<EditorScreen>(palette, this, this.stage) {
-                                            override fun getFont(): BitmapFont {
-                                                return main.defaultBorderedFont
-                                            }
-                                        }.apply {
-                                            this.setText(
-                                                    if (isUp) Editor.ARROWS[2] else Editor.ARROWS[3],
-                                                    Align.center, false, false
-                                                        )
-                                            this.background = false
-                                        })
+                                    object : TextLabel<EditorScreen>(palette, this, this.stage) {
+                                        override fun getFont(): BitmapFont {
+                                            return main.defaultBorderedFont
+                                        }
+                                    }.apply {
+                                        this.setText(
+                                            if (isUp) Editor.ARROWS[2] else Editor.ARROWS[3],
+                                            Align.center, false, false
+                                        )
+                                        this.background = false
+                                    })
                             }
 
                             pickerStage.elements += button
@@ -988,7 +989,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
             run patternArea@{
                 val borderedPalette = palette.copy(ftfont = main.defaultBorderedFontFTF)
                 val padding2 = pickerStage.percentageOfWidth(
-                        Editor.ICON_PADDING * 2)
+                    Editor.ICON_PADDING * 2)
 
                 val upButton = object : Button<EditorScreen>(borderedPalette, patternAreaStage, patternAreaStage) {
                     override fun render(screen: EditorScreen, batch: SpriteBatch,
@@ -998,7 +999,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                         val label = this.labels.first() as TextLabel
 
                         val currentDatamodelList = filter.currentDatamodelList
-                        if (SFXDatabase.isDataLoading() || currentDatamodelList == null) {
+                        if (SFXDatabase.isDataEmpty() || currentDatamodelList == null) {
                             label.text = Editor.ARROWS[2]
                         } else {
                             if (currentDatamodelList.currentIndex > 0) {
@@ -1030,20 +1031,20 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     }
                 }.apply {
                     this.location.set(screenX = padding2,
-                                      screenWidth = patternAreaStage.percentageOfWidth(
-                                              Editor.ICON_SIZE),
-                                      screenHeight = patternAreaStage.percentageOfHeight(
-                                              Editor.ICON_SIZE),
-                                      screenY = startY)
+                        screenWidth = patternAreaStage.percentageOfWidth(
+                            Editor.ICON_SIZE),
+                        screenHeight = patternAreaStage.percentageOfHeight(
+                            Editor.ICON_SIZE),
+                        screenY = startY)
                     this.background = false
                     this.addLabel(
-                            TextLabel(borderedPalette, this, this.stage).apply {
-                                this.setText(
-                                        Editor.ARROWS[2],
-                                        Align.center, false, false
-                                            )
-                                this.background = false
-                            })
+                        TextLabel(borderedPalette, this, this.stage).apply {
+                            this.setText(
+                                Editor.ARROWS[2],
+                                Align.center, false, false
+                            )
+                            this.background = false
+                        })
                 }
                 val downButton = object : Button<EditorScreen>(borderedPalette, patternAreaStage, patternAreaStage) {
                     override fun render(screen: EditorScreen, batch: SpriteBatch,
@@ -1053,7 +1054,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                         val label = this.labels.first() as TextLabel
 
                         val currentDatamodelList = filter.currentDatamodelList
-                        if (SFXDatabase.isDataLoading() || currentDatamodelList == null) {
+                        if (SFXDatabase.isDataEmpty() || currentDatamodelList == null) {
                             label.text = Editor.ARROWS[3]
                         } else {
                             if (currentDatamodelList.currentIndex < currentDatamodelList.maxIndex) {
@@ -1085,20 +1086,20 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     }
                 }.apply {
                     this.location.set(screenX = padding2,
-                                      screenWidth = patternAreaStage.percentageOfWidth(
-                                              Editor.ICON_SIZE),
-                                      screenHeight = patternAreaStage.percentageOfHeight(
-                                              Editor.ICON_SIZE),
-                                      screenY = startY - iconHeightPadded * (Editor.ICON_COUNT_Y - 1))
+                        screenWidth = patternAreaStage.percentageOfWidth(
+                            Editor.ICON_SIZE),
+                        screenHeight = patternAreaStage.percentageOfHeight(
+                            Editor.ICON_SIZE),
+                        screenY = startY - iconHeightPadded * (Editor.ICON_COUNT_Y - 1))
                     this.background = false
                     this.addLabel(
-                            TextLabel(borderedPalette, this, this.stage).apply {
-                                this.setText(
-                                        Editor.ARROWS[3],
-                                        Align.center, false, false
-                                            )
-                                this.background = false
-                            })
+                        TextLabel(borderedPalette, this, this.stage).apply {
+                            this.setText(
+                                Editor.ARROWS[3],
+                                Align.center, false, false
+                            )
+                            this.background = false
+                        })
                 }
 
                 datamodelScrollButtons as MutableList
@@ -1111,12 +1112,12 @@ class EditorStage(parent: UIElement<EditorScreen>?,
 
                 patternAreaArrowLabel = TextLabel(borderedPalette, patternAreaStage, patternAreaStage).apply {
                     this.location.set(
-                            screenX = padding2,
-                            screenWidth = patternAreaStage.percentageOfWidth(
-                                    Editor.ICON_SIZE),
-                            screenHeight = height,
-                            screenY = 1f - (height * (1 + (labelCount / 2)))
-                                     )
+                        screenX = padding2,
+                        screenWidth = patternAreaStage.percentageOfWidth(
+                            Editor.ICON_SIZE),
+                        screenHeight = height,
+                        screenY = 1f - (height * (1 + (labelCount / 2)))
+                    )
                     this.isLocalizationKey = false
                     this.textAlign = Align.center
                     this.textWrapping = false
@@ -1125,10 +1126,10 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 patternAreaStage.elements += patternAreaArrowLabel
                 baseBpmLabel = TextLabel(borderedPalette, patternAreaStage, patternAreaStage).apply {
                     this.location.set(
-                            screenX = padding2 / 2,
-                            screenWidth = patternAreaStage.percentageOfWidth(Editor.ICON_SIZE) + padding2,
-                            screenHeight = 0.05f
-                                     )
+                        screenX = padding2 / 2,
+                        screenWidth = patternAreaStage.percentageOfWidth(Editor.ICON_SIZE) + padding2,
+                        screenHeight = 0.05f
+                    )
                     this.location.set(screenY = 0.5f + 0.1f)
                     this.isLocalizationKey = false
                     this.textAlign = Align.center or Align.bottom
@@ -1139,10 +1140,10 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 patternAreaStage.elements += baseBpmLabel
                 bottomBaseBpmLabel = TextLabel(borderedPalette, patternAreaStage, patternAreaStage).apply {
                     this.location.set(
-                            screenX = padding2 / 2,
-                            screenWidth = patternAreaStage.percentageOfWidth(Editor.ICON_SIZE) + padding2,
-                            screenHeight = 0.05f
-                                     )
+                        screenX = padding2 / 2,
+                        screenWidth = patternAreaStage.percentageOfWidth(Editor.ICON_SIZE) + padding2,
+                        screenHeight = 0.05f
+                    )
                     this.location.set(screenY = 0.5f - 0.1f - this.location.screenHeight)
                     this.isLocalizationKey = false
                     this.textAlign = Align.center or Align.bottom
@@ -1153,13 +1154,13 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 patternAreaStage.elements += bottomBaseBpmLabel
 
                 patternPreviewButton = PatternPreviewButton(editor, borderedPalette, patternAreaStage,
-                                                            patternAreaStage).apply {
+                    patternAreaStage).apply {
                     this.location.set(
-                            screenWidth = patternAreaStage.percentageOfWidth(
-                                    Editor.ICON_SIZE),
-                            screenHeight = height,
-                            screenY = 1f - (height * (1 + (labelCount / 2)))
-                                     )
+                        screenWidth = patternAreaStage.percentageOfWidth(
+                            Editor.ICON_SIZE),
+                        screenHeight = height,
+                        screenY = 1f - (height * (1 + (labelCount / 2)))
+                    )
                     this.location.set(screenX = 1f - this.location.screenWidth)
                 }
                 patternAreaStage.elements += patternPreviewButton
@@ -1171,13 +1172,13 @@ class EditorStage(parent: UIElement<EditorScreen>?,
 
                 patternAreaStage.elements += pickerDisplay.apply {
                     this.location.set(
-                            screenHeight = 1f,
-                            screenY = 0f,
-                            screenX = upButton.location.screenX + upButton.location.screenWidth +
-                                    padding2
-                                     )
+                        screenHeight = 1f,
+                        screenY = 0f,
+                        screenX = upButton.location.screenX + upButton.location.screenWidth +
+                                padding2
+                    )
                     this.location.set(
-                            screenWidth = 1f - this.location.screenX - patternPreviewButton.location.screenWidth)
+                        screenWidth = 1f - this.location.screenX - patternPreviewButton.location.screenWidth)
                 }
 
             }
@@ -1422,6 +1423,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_small_gear"))
                 })
             }
+
             newsButton = NewsButton(editor, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenWidth = size,
                                   screenX = 1f - (size * 2 + padding))
@@ -1527,6 +1529,18 @@ class EditorStage(parent: UIElement<EditorScreen>?,
 
         this.updatePositions()
         this.updateSelected()
+    }
+
+    fun updateFilters(){
+        for (filterButton in filterButtons){
+            val filter = filterButton.filter
+            if(filter is SimpleFilter){
+                filter.shouldUpdate = true
+            } else if(filter is RecentFilter){
+                filter.shouldUpdate = true
+            }
+        }
+        isDirty = DirtyType.DIRTY
     }
 
 
@@ -1643,6 +1657,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
             this.image = favouriteTagRegion
             this.tint.set(Color.YELLOW)
         }
+
 
     }
 

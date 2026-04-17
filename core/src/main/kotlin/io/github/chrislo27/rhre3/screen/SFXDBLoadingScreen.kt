@@ -122,6 +122,10 @@ class SFXDBLoadingScreen(main: RHRE3Application, val nextScreen: () -> ToolboksS
 
     override fun show() {
         super.show()
+        if(SFXDatabase.isDataLoaded()){
+            backingData?.dispose();
+            backingData = null;
+        }
         backingData = SFXDatabase.initialize()
     }
 

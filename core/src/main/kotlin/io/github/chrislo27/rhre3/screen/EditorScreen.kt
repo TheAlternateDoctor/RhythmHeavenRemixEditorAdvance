@@ -52,6 +52,8 @@ class EditorScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Application, Ed
 
         refreshPresence = presenceCycle
 
+        stage.updateFilters()
+
         editor.updateMessageLabel()
     }
 

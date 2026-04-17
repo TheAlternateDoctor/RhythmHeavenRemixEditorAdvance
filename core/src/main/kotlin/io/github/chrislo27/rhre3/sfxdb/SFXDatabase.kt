@@ -67,15 +67,28 @@ object SFXDatabase : Disposable {
 
     private var backingData: SFXDBData = SFXDBData()
 
+    enum class LoadState {
+        EMPTY, LOADING, LOADED
+    }
+
     val data: SFXDBData
         get() {
-            check(backingData.ready) { "Cannot get data when loading" }
+            check(backingData.status == LoadState.LOADED) { "Cannot get data when loading" }
             return backingData
         }
     val moddingMetadata: ModdingMetadata get() = data.moddingMetadata
 
+    fun isDataEmpty(): Boolean =
+            backingData.status == LoadState.EMPTY
+
+    fun isDataNotLoading(): Boolean =
+            backingData.status != LoadState.LOADING
+
     fun isDataLoading(): Boolean =
-            !backingData.ready
+            backingData.status == LoadState.LOADING
+
+    fun isDataLoaded(): Boolean =
+            backingData.status == LoadState.LOADED
 
     fun reset(data: SFXDBData? = null) {
         backingData = if (data == null) {
@@ -89,19 +102,24 @@ object SFXDatabase : Disposable {
     }
 
     fun initialize(): SFXDBData {
-        check(isDataLoading()) { "Cannot initialize SFX database when already loaded" }
+        check(isDataNotLoading()) { "Cannot initialize SFX database when loading" }
+        if(isDataLoaded()){
+            backingData.dispose();
+            backingData = SFXDBData();
+        }
         return backingData
     }
 
     class SFXDBData : Disposable {
 
         @Volatile
-        var ready: Boolean = false
+        // This is set to the proper status
+        var status: LoadState = LoadState.EMPTY
             private set
 
         var hasCustom: Boolean = false
             get() {
-                if (!ready)
+                if (status != LoadState.LOADED)
                     error("Attempt to get hasCustom field when not ready")
 
                 return field
@@ -109,14 +127,14 @@ object SFXDatabase : Disposable {
             private set
         val gameMap: Map<String, Game> = mutableMapOf()
         val gameList: List<Game> by lazy {
-            if (!ready)
+            if (status != LoadState.LOADED)
                 error("Attempt to map game list when not ready")
 
             gameMap.values.toList().sortedByName()
         }
         val objectMap: Map<String, Datamodel> = mutableMapOf()
         val objectList: List<Datamodel> by lazy {
-            if (!ready)
+            if (status != LoadState.LOADED)
                 error("Attempt to map datamodels when not ready")
 
             objectMap.values.toList()
@@ -124,7 +142,7 @@ object SFXDatabase : Disposable {
         val noDeprecationsObjectMap: Map<String, Datamodel> = mutableMapOf()
         val gameGroupsMap: Map<String, GameGroup> = mutableMapOf()
         val gameGroupsList: List<GameGroup> by lazy {
-            if (!ready)
+            if (status != LoadState.LOADED)
                 error("Attempt to map game groups when not ready")
 
             gameGroupsMap.values.toList().sortedBy(GameGroup::name)
@@ -217,7 +235,7 @@ object SFXDatabase : Disposable {
             endRemix = specialGame.objectsMap.getValue(END_REMIX_ENTITY_ID) as EndRemix
             addSpecialGeneratedGames()
 
-            ready = true
+            status = LoadState.LOADED
 
             // create
             gameList
@@ -395,7 +413,7 @@ object SFXDatabase : Disposable {
         }
 
         fun loadOne(): Float {
-            if (ready)
+            if (status == LoadState.LOADED)
                 return 1f
 
             objectMap as MutableMap
@@ -663,11 +681,12 @@ object SFXDatabase : Disposable {
         }
 
         fun loadFor(delta: Float): Float {
-            if (ready)
+            if (status == LoadState.LOADED)
                 return 1f
 
             val msToLoad = (delta * 1000f)
             val startNano = System.nanoTime()
+            status = LoadState.LOADING
 
             while (getProgress() < 1) {
                 loadOne()
@@ -805,7 +824,7 @@ object SFXDatabase : Disposable {
     }
 
     override fun dispose() {
-        if (backingData.ready) {
+        if (backingData.status == LoadState.LOADED) {
             backingData.dispose()
         }
     }
