@@ -152,7 +152,7 @@ class AutoUpdaterScreen(main: RHRE3Application)
                 6. Copy jar file atomically and exit forcibly (System.exit())
                  */
                 val releaseResponseBody = RHRE3Application.httpClient
-                        .prepareGet("https://api.github.com/repos/chrislo27/RhythmHeavenRemixEditor/releases/latest")
+                        .prepareGet("https://api.github.com/repos/TheAlternateDoctor/RhythmHeavenRemixEditor/releases/latest")
                         .addHeader("Accept", "application/vnd.github.v3+json")
                         .execute().get().responseBody
                 val releaseMeta: JsonNode = JsonHandler.OBJECT_MAPPER.readTree(releaseResponseBody)
