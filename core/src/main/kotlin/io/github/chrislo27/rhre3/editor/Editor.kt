@@ -164,8 +164,8 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
 
     private data class AutosaveState(val result: AutosaveResult, var time: Float)
 
-    fun createRemix(addListeners: Boolean = true): Remix {
-        return EditorRemix(main, this).apply {
+    fun createRemix(addListeners: Boolean = true, fromFile: Boolean = true): Remix {
+        val newRemix = EditorRemix(main, this).apply {
             if (addListeners) {
                 playStateListeners += { old, new ->
                     when (new) {
@@ -207,6 +207,12 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
                 }
             }
         }
+        if(!fromFile){
+            newRemix.timeSignatures.add(TimeSignature(newRemix.timeSignatures, 0f,
+                TimeSignature.DEFAULT_NOTE_UNIT,
+                TimeSignature.DEFAULT_NOTE_UNIT))
+        }
+        return newRemix
     }
 
     val camera: OrthographicCamera by lazy {
@@ -228,7 +234,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
     var cameraPan: CameraPan? = null
 
     val pickerSelection: PickerSelection = PickerSelection()
-    var remix: Remix = createRemix()
+    var remix: Remix = createRemix(fromFile = false)
         set(value) {
             field.dispose()
             field = value

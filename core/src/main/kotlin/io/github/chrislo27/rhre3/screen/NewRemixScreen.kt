@@ -61,7 +61,7 @@ class NewRemixScreen(main: RHRE3Application)
                 }
                 SoundCache.unloadAll()
                 val oldRemix = editor.remix
-                val newRemix = editor.createRemix()
+                val newRemix = editor.createRemix(fromFile = false)
                 editor.remix = newRemix
                 oldRemix.entities.filter { it.bounds.x <= editor.camera.position.x + editor.camera.viewportWidth * 1.5f && it.bounds.maxX >= editor.camera.position.x - editor.camera.viewportWidth * 1.5f }
                         .filterIsInstance<ModelEntity<*>>()

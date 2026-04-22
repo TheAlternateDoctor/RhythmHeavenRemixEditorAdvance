@@ -29,6 +29,7 @@ import io.github.chrislo27.rhre3.sfxdb.datamodel.impl.Cue
 import io.github.chrislo27.rhre3.sfxdb.datamodel.impl.special.Subtitle
 import io.github.chrislo27.rhre3.soundsystem.*
 import io.github.chrislo27.rhre3.track.timesignature.TimeSignature
+import io.github.chrislo27.rhre3.track.timesignature.TimeSignatureAction
 import io.github.chrislo27.rhre3.track.timesignature.TimeSignatures
 import io.github.chrislo27.rhre3.track.tracker.TrackerContainer
 import io.github.chrislo27.rhre3.track.tracker.musicvolume.MusicVolumeChange
@@ -583,6 +584,7 @@ open class Remix(val main: RHRE3Application)
         }
     }
 
+
     enum class EntityUpdateResult {
         NOT_STARTED, STARTED, UPDATED, ENDED, STARTED_AND_ENDED, ALREADY_UPDATED
     }
@@ -734,6 +736,7 @@ open class Remix(val main: RHRE3Application)
         true
     }
     var isExporting: Boolean = false
+
 
     private fun setMusicVolume() {
         val music = music ?: return
