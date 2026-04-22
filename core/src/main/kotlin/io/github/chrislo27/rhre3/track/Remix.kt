@@ -88,6 +88,8 @@ open class Remix(val main: RHRE3Application)
                 tree.put("playbackStart", playbackStart)
                 tree.put("musicStartSec", musicStartSec)
 
+                tree.put("defaultTempo",tempos.defaultTempo)
+
                 tree.put("trackCount", trackCount)
 
                 tree.put("isAutosave", isAutosave)
@@ -173,7 +175,20 @@ open class Remix(val main: RHRE3Application)
                 remix.tempos.fromTree(trackers["tempos"] as ObjectNode)
                 remix.musicVolumes.fromTree(trackers["musicVolumes"] as ObjectNode)
             }
-            
+
+            // Used to "update" a remix to the global tempo system
+            fun determineDefaultTempo(): Float {
+                for(tempoChange in remix.tempos.secondsMap.values){
+                    if(tempoChange.beat == 0f){
+                        return tempoChange.bpm
+                    }
+                }
+                return 120f
+            }
+
+            remix.tempos.defaultTempo = tree["defaultTempo"]?.floatValue() ?: determineDefaultTempo()
+
+
             // entities
             val entitiesArray = tree["entities"] as ArrayNode
             entitiesArray.filterIsInstance<ObjectNode>()
@@ -664,8 +679,6 @@ open class Remix(val main: RHRE3Application)
     var suppressDerivativeAudioLoading: Boolean = false
     val playStateListeners: MutableList<(old: PlayState, new: PlayState) -> Unit> = mutableListOf()
     var playState: PlayState by Delegates.vetoable(PlayState.STOPPED) { _, old, new ->
-        if (new == PlayState.PLAYING && !canPlayRemix)
-            return@vetoable false
         val music = music
         playStateListeners.forEach { it.invoke(old, new) }
         when (new) {
@@ -721,8 +734,6 @@ open class Remix(val main: RHRE3Application)
         true
     }
     var isExporting: Boolean = false
-    val canPlayRemix: Boolean
-        get() = tempos.secondsMap.isNotEmpty()
 
     private fun setMusicVolume() {
         val music = music ?: return
@@ -975,6 +986,7 @@ open class Remix(val main: RHRE3Application)
             playState = PlayState.STOPPED
         }
     }
+
 
     override fun dispose() {
         music?.dispose()

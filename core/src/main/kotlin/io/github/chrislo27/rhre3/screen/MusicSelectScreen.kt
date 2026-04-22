@@ -40,6 +40,7 @@ class MusicSelectScreen(main: RHRE3Application)
     private var isLoading = false
     private val mainLabel: TextLabel<MusicSelectScreen>
     private val moveMusicStartButton: Button<MusicSelectScreen>
+    private val tempoField: TextField<MusicSelectScreen>
 
     init {
         stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_songchoose"))
@@ -99,6 +100,40 @@ class MusicSelectScreen(main: RHRE3Application)
             })
         }
         stage.bottomStage.elements += moveMusicStartButton
+
+        stage.centreStage.elements += object : TextLabel<MusicSelectScreen>(palette, stage.centreStage, stage.centreStage) {
+            override fun frameUpdate(screen: MusicSelectScreen) {
+                super.frameUpdate(screen)
+                this.visible = (editor.remix.music != null)
+            }
+        }.apply {
+            this.location.set(screenY = 0.125f, screenX = -0.14f)
+            this.textAlign = Align.bottomRight
+            this.isLocalizationKey = true
+            this.text = "tempo"
+            this.visible = true
+        }
+        tempoField = object : TextField<MusicSelectScreen>(palette, stage.centreStage, stage.centreStage) {
+            override fun frameUpdate(screen: MusicSelectScreen) {
+                super.frameUpdate(screen)
+                this.visible = (editor.remix.music != null)
+            }
+            override fun onEnterPressed(): Boolean {
+                hasFocus = false
+                editor.remix.tempos.defaultTempo = text.toFloatOrNull()?.coerceIn(0f, 360f) ?: 0f
+                return true
+            }
+        }.apply {
+            this.text = editor.remix.tempos.defaultTempo.toString()
+            this.background = true
+            this.canInputNewlines = false
+            this.canPaste = true
+            val acceptedChars = setOf('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.')
+            this.canTypeText = { it in acceptedChars }
+            this.textAlign = Align.left
+            this.location.set(screenX = 0.775f, screenWidth = 0.225f, screenHeight = 0.1f)
+        }
+        stage.centreStage.elements += tempoField
         stage.centreStage.elements += object : TextLabel<MusicSelectScreen>(palette, stage.centreStage, stage.centreStage) {
             override fun frameUpdate(screen: MusicSelectScreen) {
                 super.frameUpdate(screen)
@@ -205,9 +240,6 @@ class MusicSelectScreen(main: RHRE3Application)
     override fun show() {
         super.show()
         updateLabels()
-        if (editor.remix.music == null) {
-            openPicker()
-        }
     }
 
     override fun dispose() {

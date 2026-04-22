@@ -8,7 +8,7 @@ import io.github.chrislo27.rhre3.util.TempoUtils
 import java.util.*
 
 
-class TempoChanges(val defaultTempo: Float = 120f, val defaultSwing: Swing = Swing.STRAIGHT) : TrackerContainer<TempoChange>(0) {
+class TempoChanges(var defaultTempo: Float = 120f, val defaultSwing: Swing = Swing.STRAIGHT) : TrackerContainer<TempoChange>(0) {
 
     private val backingSecondsMap: NavigableMap<Float, TempoChange> = TreeMap()
     val secondsMap: Map<Float, TempoChange>
