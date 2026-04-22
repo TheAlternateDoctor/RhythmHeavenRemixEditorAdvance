@@ -3,6 +3,7 @@ package io.github.chrislo27.rhre3.editor.stage
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import io.github.chrislo27.rhre3.PreferenceKeys
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.screen.EditorScreen
 import io.github.chrislo27.rhre3.track.PlayState
@@ -15,8 +16,10 @@ class SnapButton(val editor: Editor, palette: UIPalette, parent: UIElement<Edito
     : Button<EditorScreen>(palette, parent, stage) {
 
     companion object {
-        val snapLevels = intArrayOf(4, 6, 8, 12, 16, 24, 32)
+        val snapLevels = intArrayOf(4, 6, 8, 12, 16, 24, 32, 48)
     }
+
+    val preferences = Gdx.app.getPreferences("RHRE3")
 
     private var index: Int = 0
         set(value) {
@@ -71,7 +74,12 @@ class SnapButton(val editor: Editor, palette: UIPalette, parent: UIElement<Edito
 
     override fun onLeftClick(xPercent: Float, yPercent: Float) {
         super.onLeftClick(xPercent, yPercent)
-        index = if (index + 1 >= snapLevels.size) 0 else index + 1
+        val advancedOptionsEnabled = preferences.getBoolean(PreferenceKeys.SETTINGS_ADVANCED_OPTIONS, false)
+        if(advancedOptionsEnabled){
+            index = if (index + 1 >= snapLevels.size) 0 else index + 1
+        }else {
+            index = if (index + 1 >= snapLevels.size-1) 0 else index + 1
+        }
         updateAndFlash()
     }
 
