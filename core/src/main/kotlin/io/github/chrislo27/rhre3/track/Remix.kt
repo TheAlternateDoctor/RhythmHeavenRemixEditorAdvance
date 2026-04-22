@@ -179,12 +179,15 @@ open class Remix(val main: RHRE3Application)
 
             // Used to "update" a remix to the global tempo system
             fun determineDefaultTempo(): Float {
+                var earliestChange = TempoChange(beat = -1f, bpm = 120f,container = remix.tempos,swing = Swing.STRAIGHT,width = 0f)
                 for(tempoChange in remix.tempos.secondsMap.values){
-                    if(tempoChange.beat == 0f){
-                        return tempoChange.bpm
+                    if(earliestChange.beat == -1f){
+                        earliestChange = tempoChange
+                    }else if(tempoChange.beat >= 0f && earliestChange.beat > tempoChange.beat){
+                        earliestChange = tempoChange
                     }
                 }
-                return 120f
+                return earliestChange.bpm
             }
 
             remix.tempos.defaultTempo = tree["defaultTempo"]?.floatValue() ?: determineDefaultTempo()
@@ -396,7 +399,7 @@ open class Remix(val main: RHRE3Application)
         }
 
         fun pack(remix: Remix, stream: ZipOutputStream, isAutosave: Boolean) {
-            val objectNode = Remix.toJson(remix, isAutosave)
+            val objectNode = toJson(remix, isAutosave)
             stream.setComment("Rhythm Heaven Remix Editor 3 savefile - ${RHRE3.VERSION}")
 
             stream.putNextEntry(ZipEntry("remix.json"))
@@ -434,7 +437,7 @@ open class Remix(val main: RHRE3Application)
             val musicNode = objectNode["musicData"] as ObjectNode
             val musicPresent = musicNode["present"].booleanValue()
 
-            val result = Remix.fromJson(objectNode, remix, preloadSounds)
+            val result = fromJson(objectNode, remix, preloadSounds)
 
             if (musicPresent) {
                 val folder = RHRE3.tmpMusic
