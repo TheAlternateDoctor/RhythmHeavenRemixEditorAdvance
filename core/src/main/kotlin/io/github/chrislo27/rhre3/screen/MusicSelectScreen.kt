@@ -220,6 +220,7 @@ class MusicSelectScreen(main: RHRE3Application)
                     if (start >= 0f) {
                         label.text += "\n\n${Localization["screen.music.estimatedMusicStart", (Editor.TRACKER_MINUTES_FORMATTER.format((start / 60).toLong()) + ":" + Editor.TRACKER_TIME_FORMATTER.format(start % 60.0))]}"
                     }
+                    tempoField.text = editor.remix.tempos.defaultTempo.toString()
                 }
             }
 //            if (music != null) {

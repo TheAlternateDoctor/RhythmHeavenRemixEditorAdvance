@@ -179,15 +179,16 @@ open class Remix(val main: RHRE3Application)
 
             // Used to "update" a remix to the global tempo system
             fun determineDefaultTempo(): Float {
-                var earliestChange = TempoChange(beat = -1f, bpm = 120f,container = remix.tempos,swing = Swing.STRAIGHT,width = 0f)
-                for(tempoChange in remix.tempos.secondsMap.values){
-                    if(earliestChange.beat == -1f){
-                        earliestChange = tempoChange
-                    }else if(tempoChange.beat >= 0f && earliestChange.beat > tempoChange.beat){
-                        earliestChange = tempoChange
+                if(remix.tempos.secondsMap.values.isNotEmpty()){
+                    var earliestChange = remix.tempos.secondsMap.values.first()
+                    for(tempoChange in remix.tempos.secondsMap.values){
+                        if(earliestChange.beat > tempoChange.beat){
+                            earliestChange = tempoChange
+                        }
                     }
+                    return earliestChange.bpm
                 }
-                return earliestChange.bpm
+                return 120f
             }
 
             remix.tempos.defaultTempo = tree["defaultTempo"]?.floatValue() ?: determineDefaultTempo()
