@@ -64,9 +64,12 @@ object DesktopLauncher {
                     if (portable) {
                         this.setPreferencesConfig(".rhre3/.prefs/", Files.FileType.Local)
                     } else {
-                        val prefFolder = File(System.getProperty("user.home")+"/.prefs")
-                        if(prefFolder.exists() && prefFolder.isDirectory()){
-                            prefFolder.copyRecursively(File(System.getProperty("user.home") + "/.rhre3/prefs"))
+                        val newPrefFolder = File(System.getProperty("user.home")+"/.rhre3/.prefs")
+                        if(!newPrefFolder.exists() && newPrefFolder.isDirectory()){
+                            val prefFolder = File(System.getProperty("user.home")+"/.prefs")
+                            if(!prefFolder.exists() && prefFolder.isDirectory()){
+                                prefFolder.copyRecursively(File(System.getProperty("user.home") + "/.rhre3/prefs"))
+                            }
                         }
                         this.setPreferencesConfig(System.getProperty("user.home") + "/.rhre3/prefs/", Files.FileType.Absolute)
                     }
