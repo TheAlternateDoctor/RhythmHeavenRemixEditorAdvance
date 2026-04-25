@@ -64,11 +64,13 @@ object DesktopLauncher {
                     if (portable) {
                         this.setPreferencesConfig(".rhre3/.prefs/", Files.FileType.Local)
                     } else {
-                        val newPrefFolder = File(System.getProperty("user.home")+"/.rhre3/.prefs")
-                        if(!newPrefFolder.exists() && newPrefFolder.isDirectory()){
+                        logger.info("Setting preference folder to "+System.getProperty("user.home")+"/.rhre3/prefs")
+                        val newPrefFolder = File(System.getProperty("user.home")+"/.rhre3/prefs")
+                        if(!newPrefFolder.exists()){
                             val prefFolder = File(System.getProperty("user.home")+"/.prefs")
-                            if(!prefFolder.exists() && prefFolder.isDirectory()){
+                            if(prefFolder.exists() && prefFolder.isDirectory()){
                                 prefFolder.copyRecursively(File(System.getProperty("user.home") + "/.rhre3/prefs"))
+                                logger.info("Copied older preference folder")
                             }
                         }
                         this.setPreferencesConfig(System.getProperty("user.home") + "/.rhre3/prefs/", Files.FileType.Absolute)
