@@ -181,7 +181,6 @@ class AudioSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicCam
             }.apply {
                 this.isLocalizationKey = false
                 this.text = ""
-                this.visible = !main.settings.advancedOptions
                 this.textWrapping = false
                 this.fontScaleMultiplier = fontScale
                 this.location.set(pixelX = 2f, pixelWidth = -4f)
@@ -191,9 +190,7 @@ class AudioSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicCam
             override fun frameUpdate(screen: InfoScreen) {
                 super.frameUpdate(screen)
                 this.visible = !main.settings.advancedOptions
-                if(!main.settings.advancedOptions){
                     updateText()
-                }
             }
 
             private fun updateText() {
@@ -245,7 +242,6 @@ class AudioSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicCam
                 screenY = padding * 4 + buttonHeight * 3,
                 screenWidth = buttonWidth,
                 screenHeight = buttonHeight)
-            this.visible = !main.settings.advancedOptions
         }
         
         // Sound mixer settings
