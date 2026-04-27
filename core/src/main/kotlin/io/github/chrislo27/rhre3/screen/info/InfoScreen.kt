@@ -3,9 +3,6 @@ package io.github.chrislo27.rhre3.screen.info
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.Preferences
-import com.badlogic.gdx.audio.Sound
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Colors
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -14,36 +11,21 @@ import com.badlogic.gdx.utils.Align
 import io.github.chrislo27.rhre3.PreferenceKeys
 import io.github.chrislo27.rhre3.RHRE3
 import io.github.chrislo27.rhre3.RHRE3Application
-import io.github.chrislo27.rhre3.VersionHistory
 import io.github.chrislo27.rhre3.analytics.AnalyticsHandler
-import io.github.chrislo27.rhre3.editor.CameraBehaviour
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.screen.*
-import io.github.chrislo27.rhre3.sfxdb.GameMetadata
-import io.github.chrislo27.rhre3.sfxdb.SFXDatabase
 import io.github.chrislo27.rhre3.soundsystem.BeadsSoundSystem
-import io.github.chrislo27.rhre3.soundsystem.SoundCache
-import io.github.chrislo27.rhre3.soundsystem.SoundStretch
-import io.github.chrislo27.rhre3.stage.FalseCheckbox
 import io.github.chrislo27.rhre3.stage.GenericStage
-import io.github.chrislo27.rhre3.stage.LoadingIcon
-import io.github.chrislo27.rhre3.stage.TrueCheckbox
 import io.github.chrislo27.rhre3.stage.bg.Background
-import io.github.chrislo27.rhre3.util.FadeIn
-import io.github.chrislo27.rhre3.util.FadeOut
-import io.github.chrislo27.rhre3.util.Semitones
 import io.github.chrislo27.toolboks.Toolboks
 import io.github.chrislo27.toolboks.ToolboksScreen
 import io.github.chrislo27.toolboks.i18n.Localization
 import io.github.chrislo27.toolboks.registry.AssetRegistry
 import io.github.chrislo27.toolboks.registry.ScreenRegistry
-import io.github.chrislo27.toolboks.transition.TransitionScreen
 import io.github.chrislo27.toolboks.ui.*
-import io.github.chrislo27.toolboks.util.MathHelper
 import io.github.chrislo27.toolboks.util.gdxutils.isAltDown
 import io.github.chrislo27.toolboks.util.gdxutils.isControlDown
 import io.github.chrislo27.toolboks.util.gdxutils.isShiftDown
-import io.github.chrislo27.toolboks.version.Version
 
 
 class InfoScreen(main: RHRE3Application)
@@ -57,7 +39,7 @@ class InfoScreen(main: RHRE3Application)
     }
 
     enum class Page(val heading: String) {
-        INFO("screen.info.info"), SETTINGS("screen.info.settings"), EXTRAS("screen.info.extras");
+        INFO("screen.info.info"), AUDIO_SETTINGS("screen.info.audio.settings"), PROGRAM_SETTINGS("screen.info.program.settings"), VISUAL_SETTINGS("screen.info.visual.settings"), EXTRAS("screen.info.extras");
 
         companion object {
             val VALUES = values().toList()
@@ -70,7 +52,7 @@ class InfoScreen(main: RHRE3Application)
         get() = ScreenRegistry.getNonNullAsType<EditorScreen>("editor").editor
 
     private var backgroundOnly = false
-    private var currentPage: Page = Page.SETTINGS
+    private var currentPage: Page = Page.PROGRAM_SETTINGS
         set(value) {
             field = value
             pageStages.forEach { it.visible = false }
@@ -78,8 +60,14 @@ class InfoScreen(main: RHRE3Application)
                 Page.INFO -> {
                     infoStage.visible = true
                 }
-                Page.SETTINGS -> {
-                    settingsStage.visible = true
+                Page.AUDIO_SETTINGS -> {
+                    audioSettingsStage.visible = true
+                }
+                Page.PROGRAM_SETTINGS -> {
+                    programSettingsStage.visible = true
+                }
+                Page.VISUAL_SETTINGS -> {
+                    visualSettingsStage.visible = true
                 }
                 Page.EXTRAS -> {
                     extrasStage.visible = true
@@ -108,7 +96,9 @@ class InfoScreen(main: RHRE3Application)
         get() = currentPage == Page.INFO
     override val stage: GenericStage<InfoScreen> = GenericStage(main.uiPalette, null, main.defaultCamera)
 
-    private val settingsStage: SettingsStage
+    private val audioSettingsStage: AudioSettingsStage
+    private val programSettingsStage: ProgramSettingsStage
+    private val visualSettingsStage: VisualSettingsStage
     private val infoStage: InfoStage
     private val extrasStage: ExtrasStage
     
@@ -118,6 +108,8 @@ class InfoScreen(main: RHRE3Application)
     private val headingLabel: TextLabel<InfoScreen>
     private val onlineLabel: TextLabel<InfoScreen>
     private val menuBgButton: Button<InfoScreen>
+
+    var lockKeys = false
 
     init {
         val palette = stage.palette
@@ -268,7 +260,9 @@ class InfoScreen(main: RHRE3Application)
         }
 
         infoStage = InfoStage(stage.centreStage, stage.camera, this)
-        settingsStage = SettingsStage(stage.centreStage, stage.camera, this)
+        audioSettingsStage = AudioSettingsStage(stage.centreStage, stage.camera, this)
+        programSettingsStage = ProgramSettingsStage(stage.centreStage, stage.camera, this)
+        visualSettingsStage = VisualSettingsStage(stage.centreStage, stage.camera, this)
         extrasStage = ExtrasStage(stage.centreStage, stage.camera, this)
 
         val padding = 0.025f
@@ -283,7 +277,7 @@ class InfoScreen(main: RHRE3Application)
                                   screenWidth = width,
                                   screenHeight = buttonHeight)
                 this.isLocalizationKey = true
-                this.text = "screen.info.settings"
+                this.text = "screen.info.program.settings"
             }
             centre.elements += headingLabel
 
@@ -297,7 +291,7 @@ class InfoScreen(main: RHRE3Application)
             centre.elements += rightPageButton
         }
         
-        pageStages = listOf(infoStage, settingsStage, extrasStage).onEach { 
+        pageStages = listOf(infoStage, audioSettingsStage, programSettingsStage, visualSettingsStage, extrasStage).onEach {
             stage.centreStage.elements += it
         }
         stage.updatePositions()
@@ -316,41 +310,43 @@ class InfoScreen(main: RHRE3Application)
 
     override fun renderUpdate() {
         super.renderUpdate()
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && stage.backButton.visible && stage.backButton.enabled) {
-            stage.onBackButtonClick()
-        } else if (!Gdx.input.isShiftDown() && !Gdx.input.isAltDown()) {
-            if (Gdx.input.isControlDown()) {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-                    main.screen = ScreenRegistry.getNonNull("advancedOptions")
+        if(!lockKeys){
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && stage.backButton.visible && stage.backButton.enabled) {
+                stage.onBackButtonClick()
+            } else if (!Gdx.input.isShiftDown() && !Gdx.input.isAltDown()) {
+                if (Gdx.input.isControlDown()) {
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+                        main.screen = ScreenRegistry.getNonNull("advancedOptions")
+                    }
+                } else {
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+                        if (leftPageButton.visible)
+                            leftPageButton.onLeftClick(0f, 0f)
+                    }
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+                        if (rightPageButton.visible)
+                            rightPageButton.onLeftClick(0f, 0f)
+                    }
                 }
-            } else {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-                    if (leftPageButton.visible)
-                        leftPageButton.onLeftClick(0f, 0f)
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-                    if (rightPageButton.visible)
-                        rightPageButton.onLeftClick(0f, 0f)
-                }
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.Q) && Gdx.input.isKeyPressed(Toolboks.DEBUG_KEY)) {
+                backgroundOnly = !backgroundOnly
             }
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.Q) && Gdx.input.isKeyPressed(Toolboks.DEBUG_KEY)) {
-            backgroundOnly = !backgroundOnly
         }
     }
 
     override fun show() {
         super.show()
         infoStage.show()
-        settingsStage.show()
+        programSettingsStage.show()
     }
 
     override fun hide() {
         super.hide()
         
-        settingsStage.hide()
+        programSettingsStage.hide()
 
         // Analytics
-        if (settingsStage.didChangeSettings) {
+        if (programSettingsStage.didChangeSettings) {
             val map: Map<String, *> = preferences.get()
             AnalyticsHandler.track("Exit Info and Settings",
                                    mapOf(
@@ -359,7 +355,7 @@ class InfoScreen(main: RHRE3Application)
                                            } + mapOf("background" to map[PreferenceKeys.BACKGROUND], "defaultMixer" to BeadsSoundSystem.getDefaultMixer().mixerInfo.name)
                                         ))
         }
-        settingsStage.didChangeSettings = false
+        programSettingsStage.didChangeSettings = false
     }
 
     override fun getDebugString(): String? {
@@ -381,7 +377,7 @@ class InfoScreen(main: RHRE3Application)
             this.isLocalizationKey = true
             this.textAlign = if (right) Align.right else Align.left
             this.fontScaleMultiplier = 0.75f
-            this.text = "screen.info.settings"
+            this.text = "screen.info.program.settings"
         }
 
         init {

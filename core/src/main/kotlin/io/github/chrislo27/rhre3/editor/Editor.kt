@@ -310,6 +310,15 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
 
     val glassEffect: GlassEffect = GlassEffect(main, this)
 
+    init{
+        if(main.preferences.getBoolean(PreferenceKeys.SETTINGS_LIVE_WAVEFORM)){
+            views.add(ViewType.WAVEFORM)
+        }
+        if(main.preferences.getBoolean(PreferenceKeys.SETTINGS_CHORUS_KIDS)){
+            views.add(ViewType.GLEE_CLUB)
+        }
+    }
+
     fun resetAutosaveTimer() {
         autosaveFrequency = main.preferences.getInteger(PreferenceKeys.SETTINGS_AUTOSAVE,
                                                         InfoScreen.DEFAULT_AUTOSAVE_TIME)

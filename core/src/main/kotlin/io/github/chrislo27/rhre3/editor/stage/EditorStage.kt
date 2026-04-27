@@ -1754,11 +1754,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
 
         override fun render(screen: EditorScreen, batch: SpriteBatch, shapeRenderer: ShapeRenderer) {
             if (tool == Tool.TEMPO_CHANGE) {
-                if (editor.remix.tempos.secondsMap.isEmpty()) {
-                    label.tint.fromHsv(MathHelper.getSawtoothWave(1.5f) * 360f, 0.3f, 0.75f)
-                } else {
                     label.tint.set(1f, 1f, 1f, 1f)
-                }
             }
             super.render(screen, batch, shapeRenderer)
         }

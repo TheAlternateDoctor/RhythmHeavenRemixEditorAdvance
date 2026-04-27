@@ -20,6 +20,10 @@ class EditorMidiListener(val editor: Editor) : MidiHandler.MidiNoteListener {
     private val remix: Remix get() = editor.remix
     var numberOfNotes = 0
 
+    companion object {
+
+    }
+
     override fun noteOn(note: MidiHandler.MidiReceiver.Note) {
         Gdx.app.postRunnable {
             val selection = editor.selection

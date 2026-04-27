@@ -24,7 +24,7 @@ import io.github.chrislo27.toolboks.version.Version
 import javax.sound.sampled.Mixer
 
 
-class SettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val infoScreen: InfoScreen)
+class VisualSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val infoScreen: InfoScreen)
     : Stage<InfoScreen>(parent, camera) {
 
     private val main: RHRE3Application get() = infoScreen.main

@@ -39,10 +39,10 @@ class ColourPicker<S : ToolboksScreen<*, *>>(palette: UIPalette, parent: UIEleme
     val satField: TextField<S>
     val valueField: TextField<S>
     val alphaField: TextField<S>
-    val hueArrow: MovingArrow
-    val satArrow: MovingArrow
-    val valueArrow: MovingArrow
-    val alphaArrow: MovingArrow
+    val hueArrow: MovingArrow<S>
+    val satArrow: MovingArrow<S>
+    val valueArrow: MovingArrow<S>
+    val alphaArrow: MovingArrow<S>
 
     val clearButton: Button<S>
     val copyButton: Button<S>
@@ -115,7 +115,7 @@ class ColourPicker<S : ToolboksScreen<*, *>>(palette: UIPalette, parent: UIEleme
             this.visible = hasAlpha
         }
         elements += alpha
-        hueArrow = MovingArrow(this).apply {
+        hueArrow = MovingArrow(palette, this, this).apply {
             this.location.set(hue.location)
             this.onPercentageChange = {
                 hsv.hue = it * 360f
@@ -123,7 +123,7 @@ class ColourPicker<S : ToolboksScreen<*, *>>(palette: UIPalette, parent: UIEleme
             }
         }
         elements += hueArrow
-        satArrow = MovingArrow(this).apply {
+        satArrow = MovingArrow(palette, this, this).apply {
             this.location.set(saturation.location)
             this.onPercentageChange = {
                 hsv.saturation = it
@@ -131,7 +131,7 @@ class ColourPicker<S : ToolboksScreen<*, *>>(palette: UIPalette, parent: UIEleme
             }
         }
         elements += satArrow
-        valueArrow = MovingArrow(this).apply {
+        valueArrow = MovingArrow(palette, this, this).apply {
             this.location.set(value.location)
             this.onPercentageChange = {
                 hsv.value = it
@@ -139,7 +139,7 @@ class ColourPicker<S : ToolboksScreen<*, *>>(palette: UIPalette, parent: UIEleme
             }
         }
         elements += valueArrow
-        alphaArrow = MovingArrow(this).apply {
+        alphaArrow = MovingArrow(palette, this, this).apply {
             this.location.set(alpha.location)
             this.visible = hasAlpha
             this.onPercentageChange = {
@@ -366,32 +366,6 @@ class ColourPicker<S : ToolboksScreen<*, *>>(palette: UIPalette, parent: UIEleme
             batch.setColor(1f, 1f, 1f, 1f)
             texRegion.setRegion(0, 0, location.realWidth.toInt(), location.realHeight.toInt())
             batch.draw(texRegion, location.realX, location.realY, location.realWidth, location.realHeight)
-        }
-    }
-
-    inner class MovingArrow(parent: ColourPicker<S>) : UIElement<S>(parent, parent) {
-        var percentage = 0f
-
-        var onPercentageChange: (value: Float) -> Unit = {}
-
-        override fun render(screen: S, batch: SpriteBatch, shapeRenderer: ShapeRenderer) {
-            if (wasClickedOn && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                val old = percentage
-                percentage = ((stage.camera.getInputX() - location.realX) / location.realWidth).coerceIn(0f, 1f)
-                if (percentage != old) {
-                    onPercentageChange(percentage)
-                }
-            }
-
-            val tex = AssetRegistry.get<Texture>("ui_colour_picker_arrow")
-            val height = location.realHeight / 2f
-            batch.setColor(1f, 1f, 1f, 1f)
-            batch.draw(tex, location.realX + location.realWidth * percentage - height / 2, location.realY,
-                    height, height)
-        }
-
-        override fun canBeClickedOn(): Boolean {
-            return true
         }
     }
 }

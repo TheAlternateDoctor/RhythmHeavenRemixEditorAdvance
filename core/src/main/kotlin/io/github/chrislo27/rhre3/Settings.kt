@@ -3,10 +3,13 @@ package io.github.chrislo27.rhre3
 import com.badlogic.gdx.Preferences
 import io.github.chrislo27.rhre3.PreferenceKeys.ADVOPT_EXPLODING_ENTITIES
 import io.github.chrislo27.rhre3.PreferenceKeys.ADVOPT_IGNORE_PITCH_RESTRICTIONS
+import io.github.chrislo27.rhre3.PreferenceKeys.MIDI_NOTE
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_ADVANCED_OPTIONS
+import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_CHORUS_KIDS
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_DISABLE_MINIMAP
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_DISABLE_TIME_STRETCHING
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_GLASS_ENTITIES
+import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_LIVE_WAVEFORM
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_MINIMAP_PREVIEW
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_SMOOTH_DRAGGING
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_SUBTITLE_ORDER
@@ -31,7 +34,11 @@ class Settings(private val main: RHRE3Application) {
     
     var advExplodingEntities: Boolean = false
     var advIgnorePitchRestrictions: Boolean = false
-    
+
+    var liveWaveform: Boolean = false
+    var chorusKids: Boolean = false
+    var midiNote: String = "gleeClubEn/singLoop"
+
     fun load() {
         advancedOptions = preferences.getBoolean(SETTINGS_ADVANCED_OPTIONS, advancedOptions)
         disableTimeStretching = preferences.getBoolean(SETTINGS_DISABLE_TIME_STRETCHING, disableTimeStretching)
@@ -41,6 +48,9 @@ class Settings(private val main: RHRE3Application) {
         minimapPreview = preferences.getBoolean(SETTINGS_MINIMAP_PREVIEW, minimapPreview)
         subtitlesBelow = preferences.getBoolean(SETTINGS_SUBTITLE_ORDER, subtitlesBelow)
         smoothDragging = preferences.getBoolean(SETTINGS_SMOOTH_DRAGGING, smoothDragging)
+        liveWaveform = preferences.getBoolean(SETTINGS_LIVE_WAVEFORM, liveWaveform)
+        chorusKids = preferences.getBoolean(SETTINGS_CHORUS_KIDS, chorusKids)
+        midiNote = preferences.getString(MIDI_NOTE, midiNote)
         val oldChaseCamera = "settings_chaseCamera"
         if (oldChaseCamera in preferences) {
             // Retroactively apply settings
@@ -67,8 +77,12 @@ class Settings(private val main: RHRE3Application) {
                 .putBoolean(SETTINGS_MINIMAP_PREVIEW, minimapPreview)
                 .putBoolean(SETTINGS_SUBTITLE_ORDER, subtitlesBelow)
                 .putBoolean(SETTINGS_SMOOTH_DRAGGING, smoothDragging)
-                
+                .putBoolean(SETTINGS_LIVE_WAVEFORM, liveWaveform)
+                .putBoolean(SETTINGS_CHORUS_KIDS, chorusKids)
+                .putString(MIDI_NOTE, midiNote)
+
                 .putBoolean(ADVOPT_EXPLODING_ENTITIES, advExplodingEntities)
+                .putBoolean(ADVOPT_IGNORE_PITCH_RESTRICTIONS, advIgnorePitchRestrictions)
                 .putBoolean(ADVOPT_IGNORE_PITCH_RESTRICTIONS, advIgnorePitchRestrictions)
                 .flush()
     }

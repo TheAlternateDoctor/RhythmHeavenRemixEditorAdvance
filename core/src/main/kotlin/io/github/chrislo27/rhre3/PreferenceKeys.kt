@@ -26,6 +26,10 @@ object PreferenceKeys {
     val SETTINGS_CLOSE_WARNING = "settings_closeWarning"
     val SETTINGS_DISABLE_TIME_STRETCHING = "settings_disableTimeStretching"
     val SETTINGS_AUDIO_MIXER = "settings_audioMixer"
+    val SETTINGS_AUDIO_VOLUME = "settings_audioVolume"
+
+    val SETTINGS_LIVE_WAVEFORM = "settings_liveWaveform"
+    val SETTINGS_CHORUS_KIDS = "settings_chorusKids"
 
     val allSettingsKeys: List<String> =
         listOf(SETTINGS_DISABLE_MINIMAP, SETTINGS_MINIMAP_PREVIEW, SETTINGS_AUTOSAVE, SETTINGS_CAMERA_BEHAVIOUR,

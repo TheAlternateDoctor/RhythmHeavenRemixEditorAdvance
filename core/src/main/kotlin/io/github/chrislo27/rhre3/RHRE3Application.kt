@@ -168,6 +168,9 @@ class RHRE3Application(logger: Logger, logToFile: File?)
     
     lateinit var hueBar: Texture
         private set
+
+    lateinit var volumeBar: Texture
+        private set
     
     override val programLaunchArguments: List<String>
         get() = RHRE3.launchArguments
@@ -241,6 +244,16 @@ class RHRE3Application(logger: Logger, logToFile: File?)
             }
             Toolboks.LOGGER.info("Generated hue bar texture")
         }
+        // Generate volume bar
+        run {
+            val pixmap = Pixmap(100, 100, Pixmap.Format.RGBA8888)
+            pixmap.setColor(Color(1f, 1f, 1f, 1f))
+            pixmap.fillTriangle(0, 100, 100, 100, 100, 0)
+            volumeBar = Texture(pixmap).apply {
+                this.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+            }
+            Toolboks.LOGGER.info("Generated volume bar texture")
+        }
         
         // preferences
         preferences = Gdx.app.getPreferences("RHRE3")
@@ -273,6 +286,9 @@ class RHRE3Application(logger: Logger, logToFile: File?)
         val mixer: Mixer? = BeadsSoundSystem.supportedMixers.firstOrNull { it.mixerInfo.name == mixerName }
         BeadsSoundSystem.regenerateAudioContexts(mixer ?: BeadsSoundSystem.getDefaultMixer())
         Toolboks.LOGGER.info("Loaded audio mixer from prefs: name=$mixerName, mixer found?=${mixer != null}")
+        val volume: Float = preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, 1f)
+        BeadsSoundSystem.audioContext.out.gain = volume
+        Toolboks.LOGGER.info("Loaded audio volume from prefs")
         Toolboks.LOGGER.info("Loaded persistent data from preferences")
         
         val discordRpcEnabled = preferences.getBoolean(PreferenceKeys.SETTINGS_DISCORD_RPC_ENABLED, true)
