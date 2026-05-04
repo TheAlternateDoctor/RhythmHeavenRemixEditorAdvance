@@ -74,9 +74,9 @@ abstract class ThemeListStage<T>(val editor: Editor, val palette: UIPalette, par
 
         val padding = 3f
         val start = 28f
-        val end = 330f
+        val end = 296f
         val area = end - start
-        val numberOfButtons = 9
+        val numberOfButtons = 8
         val buttonHeight = area / numberOfButtons
         for (i in 0 until numberOfButtons) {
             buttons += ItemButton(i, palette, this, this).apply {
@@ -152,7 +152,7 @@ abstract class ThemeListStage<T>(val editor: Editor, val palette: UIPalette, par
 
             override fun canBeClickedOn(): Boolean = maxButtonScroll > 0
         }.apply {
-            this.location.set(1f, 0f, 0f, 0f, -13f, 27f, 13f, 299f)
+            this.location.set(1f, 0f, 0f, 0f, -13f, 27f, 13f, 265f)
         }
     }
 

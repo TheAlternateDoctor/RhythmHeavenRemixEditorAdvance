@@ -53,8 +53,6 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
     private var seconds = 0f
 
     private val reloadMetadataButton: Button<AdvancedOptionsScreen>
-    private val pitchStyleButton: Button<AdvancedOptionsScreen>
-    private val explodingEntitiesButton: Button<AdvancedOptionsScreen>
 
     init {
         val palette = main.uiPalette
@@ -250,115 +248,6 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
             }
         }
 
-        // Semitone major/minor
-        pitchStyleButton = object : Button<AdvancedOptionsScreen>(palette, centre, centre) {
-            private val textLabel: TextLabel<AdvancedOptionsScreen>
-                get() = labels.first() as TextLabel
-
-            private fun cycle(dir: Int) {
-                val values = Semitones.PitchStyle.VALUES
-                val index = values.indexOf(Semitones.pitchStyle).coerceAtLeast(0)
-                val absNextIndex = index + sign(dir.toFloat()).toInt()
-                val nextIndex = if (absNextIndex < 0) values.size - 1 else if (absNextIndex >= values.size) 0 else absNextIndex
-                val next = values[nextIndex]
-                Semitones.pitchStyle = next
-                main.preferences.putString(PreferenceKeys.ADVOPT_PITCH_STYLE, next.name).flush()
-                updateLabels()
-            }
-
-            override fun onLeftClick(xPercent: Float, yPercent: Float) {
-                super.onLeftClick(xPercent, yPercent)
-                cycle(1)
-            }
-
-            override fun onRightClick(xPercent: Float, yPercent: Float) {
-                super.onRightClick(xPercent, yPercent)
-                cycle(-1)
-            }
-            //Not implemented.
-            override fun scrolled(p0: Float, p1: Float): Boolean {
-                return false
-            }
-        }.apply {
-            this.addLabel(TextLabel(palette, this, this.stage).apply {
-                this.isLocalizationKey = false
-                this.text = "Pitch note style: "
-                this.textWrapping = false
-                this.fontScaleMultiplier = 0.8f
-            })
-
-            this.location.set(screenX = 1f - (padding + buttonWidth),
-                              screenY = padding * 8 + buttonHeight * 7,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
-        }
-        centre.elements += pitchStyleButton
-
-        // Exploding entities
-        explodingEntitiesButton = TrueCheckbox(palette, centre, centre).apply {
-            this.leftClickAction = { _, _ ->
-                main.settings.advExplodingEntities = this@apply.checked
-                main.settings.persist()
-            }
-            this.textLabel.also {
-                it.isLocalizationKey = false
-                it.text = "Entities explode when deleted"
-                it.textWrapping = false
-                it.fontScaleMultiplier = 0.8f
-                it.textAlign = Align.left
-            }
-            this.checked = main.settings.advExplodingEntities
-            this.location.set(screenX = 1f - (padding + buttonWidth),
-                              screenY = padding * 7 + buttonHeight * 6,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
-        }
-        centre.elements += explodingEntitiesButton
-        centre.elements += TrueCheckbox(palette, centre, centre).apply {
-            this.leftClickAction = { _, _ ->
-                main.settings.advIgnorePitchRestrictions = this@apply.checked
-                main.settings.persist()
-            }
-            this.textLabel.also {
-                it.isLocalizationKey = false
-                it.text = "Ignore entity pitching restrictions"
-                it.textWrapping = false
-                it.fontScaleMultiplier = 0.8f
-                it.textAlign = Align.left
-            }
-            this.checked = main.settings.advIgnorePitchRestrictions
-            this.location.set(screenX = 1f - (padding + buttonWidth),
-                              screenY = padding * 6 + buttonHeight * 5,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
-        }
-//        centre.elements += Button(palette, centre, centre).apply {
-//            this.leftClickAction = { _, _ ->
-//                val defaultCamera = main.defaultCamera
-//                val oldDim = defaultCamera.viewportWidth to defaultCamera.viewportHeight
-//                defaultCamera.setToOrtho(false, RHRE3.WIDTH.toFloat(), RHRE3.HEIGHT.toFloat())
-//                defaultCamera.update()
-//                ScreenRegistry["editor"]?.dispose()
-//                ScreenRegistry += "editor" to EditorScreen(main)
-//                defaultCamera.setToOrtho(false, oldDim.first, oldDim.second)
-//                defaultCamera.update()
-//                SFXDatabase.reset()
-//                main.screen = SFXDBLoadingScreen(main) { ScreenRegistry["editor"] }
-//            }
-//            this.location.set(screenX = 1f - (padding + buttonWidth),
-//                              screenY = padding,
-//                              screenWidth = buttonWidth,
-//                              screenHeight = buttonHeight)
-//            this.addLabel(TextLabel(palette, this, this.stage).apply {
-//                this.isLocalizationKey = false
-//                this.text = "Reload SFX Database"
-//                this.textWrapping = false
-//                this.fontScaleMultiplier = 0.8f
-//            })
-//            tooltipTextIsLocalizationKey = false
-//            tooltipText = "[ORANGE]WARNING[]: This will clear the editor and discard all unsaved changes.\nReloads the entire SFX database. May fail (and crash) if there are errors.\nThis will also reload modding metadata from scratch."
-//        }
-
         centre.elements += object : UIElement<AdvancedOptionsScreen>(centre, centre) {
             private val percentX: Float
                 get() = (stage.camera.getInputX() - location.realX) / location.realWidth
@@ -443,8 +332,6 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
         else
             "[YELLOW]Caution:[] modding info for this game\nmay only be partially complete and\nsubject to change."}[]\n"
         moddingGameLabel.text = "1 ♩ (quarter note) = ${game.beatsToTickflowString(1f)}${if (game.tickflowUnitName.isEmpty()) " rest units" else ""}"
-
-        (pitchStyleButton.labels.first() as TextLabel).text = "Pitch note style: [LIGHT_GRAY]${Semitones.pitchStyle.displayName} (ex: ${Semitones.pitchStyle.example})[]"
     }
 
     override fun tickUpdate() {

@@ -22,6 +22,8 @@ import io.github.chrislo27.toolboks.registry.AssetRegistry
 import io.github.chrislo27.toolboks.ui.*
 import io.github.chrislo27.toolboks.version.Version
 import javax.sound.sampled.Mixer
+import kotlin.math.exp
+import kotlin.math.pow
 
 
 class AudioSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val infoScreen: InfoScreen)
@@ -355,7 +357,8 @@ class AudioSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicCam
             this.location.set(volume.location)
             this.percentage = preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, 1f)
             this.onPercentageChange = {
-                BeadsSoundSystem.audioContext.out.gain = it
+                Toolboks.LOGGER.info("Gain set to "+ exp(6.908*it)/1000)
+                BeadsSoundSystem.audioContext.out.gain = (exp(6.908*it)/1000).toFloat()
                 preferences.putFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, it)
                 didChangeSettings = true
             }

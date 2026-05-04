@@ -30,6 +30,7 @@ object PreferenceKeys {
 
     val SETTINGS_LIVE_WAVEFORM = "settings_liveWaveform"
     val SETTINGS_CHORUS_KIDS = "settings_chorusKids"
+    val SETTINGS_GAME_BOUNDARIES = "settings_gameBoundaries"
 
     val allSettingsKeys: List<String> =
         listOf(SETTINGS_DISABLE_MINIMAP, SETTINGS_MINIMAP_PREVIEW, SETTINGS_AUTOSAVE, SETTINGS_CAMERA_BEHAVIOUR,

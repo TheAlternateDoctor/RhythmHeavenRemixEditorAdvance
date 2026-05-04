@@ -107,9 +107,9 @@ class InfoScreen(main: RHRE3Application)
     private val rightPageButton: PageChangeButton
     private val headingLabel: TextLabel<InfoScreen>
     private val onlineLabel: TextLabel<InfoScreen>
-    private val menuBgButton: Button<InfoScreen>
 
     var lockKeys = false
+    var makeDisappears = false
 
     init {
         val palette = stage.palette
@@ -147,71 +147,6 @@ class InfoScreen(main: RHRE3Application)
             this.location.set(screenX = 0.175f, screenWidth = 0.65f)
         }
 
-        menuBgButton = object : Button<InfoScreen>(palette, stage.bottomStage, stage.bottomStage) {
-            val numberLabel = TextLabel(palette.copy(ftfont = main.defaultBorderedFontFTF), this, this.stage).apply {
-                this.textAlign = Align.center
-                this.isLocalizationKey = false
-                this.fontScaleMultiplier = 1f
-                this.textWrapping = false
-                this.location.set(screenX = 0.5f - 0.03f, screenWidth = 0.5f + 0.03f, screenY = 0.3f, screenHeight = 0.7f, pixelWidth = -1f)
-            }
-            val nameLabel = TextLabel(palette.copy(ftfont = main.defaultBorderedFontFTF), this, this.stage).apply {
-                this.textAlign = Align.center
-                this.isLocalizationKey = false
-                this.fontScaleMultiplier = 0.6f
-                this.textWrapping = false
-                this.location.set(screenY = 0.05f, screenHeight = 0.25f, pixelX = 1f, pixelWidth = -2f)
-            }
-
-            override fun onLeftClick(xPercent: Float, yPercent: Float) {
-                super.onLeftClick(xPercent, yPercent)
-                cycle(1)
-                hoverTime = 0f
-            }
-
-            override fun onRightClick(xPercent: Float, yPercent: Float) {
-                super.onRightClick(xPercent, yPercent)
-                cycle(-1)
-                hoverTime = 0f
-            }
-
-            fun cycle(dir: Int) {
-                val values = Background.backgrounds
-                if (dir > 0) {
-                    val index = values.indexOf(GenericStage.backgroundImpl) + 1
-                    GenericStage.backgroundImpl = if (index >= values.size) {
-                        values.first()
-                    } else {
-                        values[index]
-                    }
-                } else if (dir < 0) {
-                    val index = values.indexOf(GenericStage.backgroundImpl) - 1
-                    GenericStage.backgroundImpl = if (index < 0) {
-                        values.last()
-                    } else {
-                        values[index]
-                    }
-                }
-
-                numberLabel.text = "${values.indexOf(GenericStage.backgroundImpl) + 1}/${values.size}"
-                nameLabel.text = "${Background.backgroundMapByBg[GenericStage.backgroundImpl]?.name}"
-
-                main.preferences.putString(PreferenceKeys.BACKGROUND, GenericStage.backgroundImpl.id).flush()
-            }
-        }.apply {
-            this.addLabel(ImageLabel(palette, this, this.stage).apply {
-                this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_palette"))
-                this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-                this.location.set(screenY = 0.3f, screenHeight = 0.7f, screenWidth = 0.5f)
-            })
-            this.addLabel(numberLabel)
-            this.addLabel(nameLabel)
-
-            this.cycle(0)
-
-            this.location.set(screenX = 0.85f, screenWidth = 1f - 0.85f)
-        }
-        stage.bottomStage.elements += menuBgButton
 
         onlineLabel = object : TextLabel<InfoScreen>(palette, stage.bottomStage, stage.bottomStage) {
             var last = Int.MIN_VALUE
@@ -300,7 +235,7 @@ class InfoScreen(main: RHRE3Application)
 
     override fun render(delta: Float) {
         super.render(delta)
-        if (backgroundOnly || menuBgButton.hoverTime >= 1.5f) {
+        if (makeDisappears) {
             val batch = main.batch
             batch.begin()
             GenericStage.backgroundImpl.render(main.defaultCamera, batch, main.shapeRenderer, 0f)
@@ -337,13 +272,13 @@ class InfoScreen(main: RHRE3Application)
     override fun show() {
         super.show()
         infoStage.show()
-        programSettingsStage.show()
+        audioSettingsStage.show()
     }
 
     override fun hide() {
         super.hide()
-        
-        programSettingsStage.hide()
+
+        audioSettingsStage.hide()
 
         // Analytics
         if (programSettingsStage.didChangeSettings) {

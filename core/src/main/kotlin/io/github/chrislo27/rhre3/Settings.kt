@@ -8,6 +8,7 @@ import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_ADVANCED_OPTIONS
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_CHORUS_KIDS
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_DISABLE_MINIMAP
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_DISABLE_TIME_STRETCHING
+import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_GAME_BOUNDARIES
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_GLASS_ENTITIES
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_LIVE_WAVEFORM
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_MINIMAP_PREVIEW
@@ -31,6 +32,7 @@ class Settings(private val main: RHRE3Application) {
     var subtitlesBelow: Boolean = false
     var smoothDragging: Boolean = true
     var cameraBehaviour: CameraBehaviour = Editor.DEFAULT_CAMERA_BEHAVIOUR
+    var gameBoundaries: Boolean = false
     
     var advExplodingEntities: Boolean = false
     var advIgnorePitchRestrictions: Boolean = false
@@ -50,6 +52,7 @@ class Settings(private val main: RHRE3Application) {
         smoothDragging = preferences.getBoolean(SETTINGS_SMOOTH_DRAGGING, smoothDragging)
         liveWaveform = preferences.getBoolean(SETTINGS_LIVE_WAVEFORM, liveWaveform)
         chorusKids = preferences.getBoolean(SETTINGS_CHORUS_KIDS, chorusKids)
+        gameBoundaries = preferences.getBoolean(SETTINGS_GAME_BOUNDARIES, gameBoundaries)
         midiNote = preferences.getString(MIDI_NOTE, midiNote)
         val oldChaseCamera = "settings_chaseCamera"
         if (oldChaseCamera in preferences) {
@@ -79,10 +82,10 @@ class Settings(private val main: RHRE3Application) {
                 .putBoolean(SETTINGS_SMOOTH_DRAGGING, smoothDragging)
                 .putBoolean(SETTINGS_LIVE_WAVEFORM, liveWaveform)
                 .putBoolean(SETTINGS_CHORUS_KIDS, chorusKids)
+                .putBoolean(SETTINGS_GAME_BOUNDARIES, gameBoundaries)
                 .putString(MIDI_NOTE, midiNote)
 
                 .putBoolean(ADVOPT_EXPLODING_ENTITIES, advExplodingEntities)
-                .putBoolean(ADVOPT_IGNORE_PITCH_RESTRICTIONS, advIgnorePitchRestrictions)
                 .putBoolean(ADVOPT_IGNORE_PITCH_RESTRICTIONS, advIgnorePitchRestrictions)
                 .flush()
     }
