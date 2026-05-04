@@ -37,6 +37,7 @@ class ProgramSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicC
     } ?: false
 
     private val pitchStyleButton: Button<InfoScreen>
+    private val clearRecentsButton: Button<InfoScreen>
 
     init {
         val palette = infoScreen.stage.palette
@@ -359,13 +360,14 @@ class ProgramSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicC
                               screenHeight = buttonHeight)
         }
         // Clear recent games
-        settings.elements += Button(palette, settings, settings).apply {
+        clearRecentsButton = Button(palette, settings, settings).apply {
             addLabel(TextLabel(palette, this, this.stage).apply {
                 this.fontScaleMultiplier = fontScale
                 this.isLocalizationKey = true
                 this.textWrapping = false
                 this.text = "screen.info.clearRecents"
             })
+            this.enabled = GameMetadata.recents.isNotEmpty()
             this.leftClickAction = { _, _ ->
                 editor.updateRecentsList(null)
                 enabled = false
@@ -376,10 +378,15 @@ class ProgramSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicC
                 screenWidth = buttonWidth,
                 screenHeight = buttonHeight)
         }
+        settings.elements += clearRecentsButton
     }
 
     private fun updateLabels() {
         (pitchStyleButton.labels.first() as TextLabel).text = "Pitch note style: [LIGHT_GRAY]${Semitones.pitchStyle.displayName} (ex: ${Semitones.pitchStyle.example})[]"
+    }
+
+    fun show(){
+        clearRecentsButton.enabled = GameMetadata.recents.isNotEmpty()
     }
 
     class LangObj() {

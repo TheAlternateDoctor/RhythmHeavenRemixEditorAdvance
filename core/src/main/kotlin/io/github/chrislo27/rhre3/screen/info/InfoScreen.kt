@@ -273,6 +273,7 @@ class InfoScreen(main: RHRE3Application)
         super.show()
         infoStage.show()
         audioSettingsStage.show()
+        programSettingsStage.show()
     }
 
     override fun hide() {

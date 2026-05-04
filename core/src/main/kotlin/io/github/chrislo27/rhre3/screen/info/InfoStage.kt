@@ -42,7 +42,6 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
     private val editor: Editor get() = infoScreen.editor
 
     private val loadingIcon: LoadingIcon<InfoScreen>
-    private val clearRecentsButton: Button<InfoScreen>
     private val dbVersionLabel: TextLabel<InfoScreen>
     private val versionLabel: TextLabel<InfoScreen>
 
@@ -243,25 +242,6 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
                               screenWidth = buttonWidth,
                               screenHeight = buttonHeight)
         }
-        // Clear recent games
-        clearRecentsButton = Button(palette, info, info).apply {
-            addLabel(TextLabel(palette, this, this.stage).apply {
-                this.fontScaleMultiplier = fontScale
-                this.isLocalizationKey = true
-                this.textWrapping = false
-                this.text = "screen.info.clearRecents"
-            })
-            this.leftClickAction = { _, _ ->
-                editor.updateRecentsList(null)
-                enabled = false
-                GameMetadata.persist()
-            }
-            this.location.set(screenX = 1f - (padding + buttonWidth),
-                              screenY = padding * 2 + buttonHeight,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
-        }
-        info.elements += clearRecentsButton
 
 
         // Editor version screen
@@ -317,7 +297,6 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
     }
 
     fun show() {
-        clearRecentsButton.enabled = GameMetadata.recents.isNotEmpty()
         dbVersionLabel.text = Localization["screen.info.databaseVersion", "v${SFXDatabase.data.version}"]
         versionLabel.text = Localization["screen.info.programVersion", RHRE3.VERSION.toString()]
     }
