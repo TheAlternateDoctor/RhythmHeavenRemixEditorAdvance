@@ -86,7 +86,7 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
             this.elements += contentStage
             buttonBar = Stage(contentStage, contentStage.camera, 346f, 34f).apply {
                 location.set(screenX = 0f, screenY = 0f, screenWidth = 1f, screenHeight = 0f,
-                             pixelX = 0f, pixelY = 0f, pixelWidth = 0f, pixelHeight = 34f)
+                             pixelX = 0f, pixelY = 34f, pixelWidth = 0f, pixelHeight = 34f)
             }
             contentStage.elements += buttonBar
         }
@@ -100,7 +100,7 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
         val themeList: ThemeListStage<Theme>
 
         init {
-            themeList = object : ThemeListStage<Theme>(editor, palette, contentStage, contentStage.camera, 362f, 352f) {
+            themeList = object : ThemeListStage<Theme>(editor, palette, contentStage, contentStage.camera, 362f, 318f) {
                 override val itemList: List<Theme> get() = LoadedThemes.themes
 
                 override fun getItemName(item: Theme): String = item.name
@@ -156,7 +156,7 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
                 }
             }.apply {
                 location.set(screenX = 0f, screenY = 0f, screenWidth = 0f, screenHeight = 0f,
-                             pixelX = 0f, pixelY = 40f, pixelWidth = 362f, pixelHeight = 352f)
+                             pixelX = 0f, pixelY = 74f, pixelWidth = 362f, pixelHeight = 318f)
                 Gdx.app.postRunnable {
                     this.resetButtons()
                 }
@@ -187,7 +187,7 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
         val fieldList: ThemeListStage<ThemeField>
 
         init {
-            fieldList = object : ThemeListStage<ThemeField>(editor, palette, contentStage, contentStage.camera, 362f, 352f) {
+            fieldList = object : ThemeListStage<ThemeField>(editor, palette, contentStage, contentStage.camera, 362f, 318f) {
                 override val itemList: List<ThemeField> get() = ThemeField.FIELDS
 
                 override fun getItemName(item: ThemeField): String = "editor.themeEditor.element." + item.name
@@ -203,7 +203,7 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
                 }
             }.apply {
                 location.set(screenX = 0f, screenY = 0f, screenWidth = 0f, screenHeight = 0f,
-                             pixelX = 0f, pixelY = 40f, pixelWidth = 362f, pixelHeight = 352f)
+                             pixelX = 0f, pixelY = 74f, pixelWidth = 362f, pixelHeight = 318f)
                 Gdx.app.postRunnable {
                     this.resetButtons()
                 }
@@ -292,7 +292,7 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
                 addLabel(ImageLabel(palette, this, this.stage).apply {
                     image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_back"))
                 })
-                this.location.set(0f, 0f, 0f, 1f, 0f, 0f, 34f, 0f)
+                this.location.set(0f, 0f, 0f, 1f, 0f, 34f, 34f, 0f)
                 leftClickAction = { _, _ ->
                     field.setter(theme, oldColor)
                     state = State.ChooseElement

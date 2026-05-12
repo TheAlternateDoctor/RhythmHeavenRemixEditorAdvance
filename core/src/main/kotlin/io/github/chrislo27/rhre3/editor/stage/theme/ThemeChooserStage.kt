@@ -25,6 +25,7 @@ class ThemeChooserStage(val editor: Editor, val palette: UIPalette, parent: Edit
         get() = editor.main.preferences
 
     val title: TextLabel<EditorScreen>
+    val closeButton: Button<EditorScreen>
     private val chooserButtonBar: Stage<EditorScreen>
     private val themeList: ThemeListStage<Theme>
     val themeEditor: ThemeEditorStage
@@ -58,7 +59,7 @@ class ThemeChooserStage(val editor: Editor, val palette: UIPalette, parent: Edit
         }
         this.elements += themeList
 
-        this.elements += object : Button<EditorScreen>(palette, this, this.stage) {
+        closeButton = object : Button<EditorScreen>(palette, this, this.stage) {
             override fun onLeftClick(xPercent: Float, yPercent: Float) {
                 super.onLeftClick(xPercent, yPercent)
                 val chooserStage = editor.stage.themeChooserStage
@@ -77,6 +78,7 @@ class ThemeChooserStage(val editor: Editor, val palette: UIPalette, parent: Edit
                 this.image = TextureRegion(AssetRegistry.get<Texture>("ui_search_clear"))
             })
         }
+        this.elements += closeButton
 
         title = TextLabel(palette, this, this).apply {
             this.location.set(screenX = 0f, screenWidth = 1f, screenY = 0.875f, screenHeight = 0.125f)
@@ -172,6 +174,7 @@ class ThemeChooserStage(val editor: Editor, val palette: UIPalette, parent: Edit
     fun updateVisibility(inThemeEditor: Boolean) {
         themeEditor.visible = inThemeEditor
         chooserButtonBar.visible = !inThemeEditor
+        closeButton.visible = !inThemeEditor
         themeList.visible = !inThemeEditor
     }
     

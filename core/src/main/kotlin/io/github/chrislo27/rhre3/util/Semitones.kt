@@ -68,8 +68,8 @@ object Semitones {
         SHARPS({ convertToName(sharpKeyNames, it)}, "A$SHARP", "Sharps (US style)"),
         FLATS({ convertToName(flatKeyNames, it) }, "B$FLAT", "Flats (US style)"),
         SHARPSDOREMI({ convertToName(sharpKeyNamesDoremi, it)}, "La$SHARP", "Sharps (EU style)"),
-        FLATSDOREMI({ convertToName(flatKeyNamesDoremi, it) }, "Si$FLAT", "Flats (EUS style)"),
-        INTEGRAL({ if (it == 0) "0" else if (it < 0) "$it" else "+$it" }, "+3, -5", "Integral");
+        FLATSDOREMI({ convertToName(flatKeyNamesDoremi, it) }, "Si$FLAT", "Flats (EU style)"),
+        INTEGRAL({ if (it == 0) "0" else if (it < 0) "$it" else "+$it" }, "+3, -5", "Interval");
 
         val usedKeyNames = mutableMapOf<Int, String>()
 
