@@ -286,8 +286,6 @@ class RHRE3Application(logger: Logger, logToFile: File?)
         val mixer: Mixer? = BeadsSoundSystem.supportedMixers.firstOrNull { it.mixerInfo.name == mixerName }
         BeadsSoundSystem.regenerateAudioContexts(mixer ?: BeadsSoundSystem.getDefaultMixer())
         Toolboks.LOGGER.info("Loaded audio mixer from prefs: name=$mixerName, mixer found?=${mixer != null}")
-        val volume: Float = preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, 1f)
-        BeadsSoundSystem.audioContext.out.gain = volume
         Toolboks.LOGGER.info("Loaded audio volume from prefs")
         Toolboks.LOGGER.info("Loaded persistent data from preferences")
         

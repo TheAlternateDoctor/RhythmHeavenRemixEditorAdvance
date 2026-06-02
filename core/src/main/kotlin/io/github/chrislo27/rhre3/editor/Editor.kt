@@ -52,6 +52,7 @@ import io.github.chrislo27.rhre3.sfxdb.GameMetadata
 import io.github.chrislo27.rhre3.sfxdb.SFXDatabase
 import io.github.chrislo27.rhre3.sfxdb.datamodel.Datamodel
 import io.github.chrislo27.rhre3.sfxdb.datamodel.ResponseModel
+import io.github.chrislo27.rhre3.soundsystem.BeadsSoundSystem
 import io.github.chrislo27.rhre3.soundsystem.SoundCache
 import io.github.chrislo27.rhre3.theme.LoadedThemes
 import io.github.chrislo27.rhre3.theme.Theme
@@ -317,6 +318,9 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         if(main.preferences.getBoolean(PreferenceKeys.SETTINGS_CHORUS_KIDS)){
             views.add(ViewType.GLEE_CLUB)
         }
+        //volume
+        val volume: Float = main.preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, 1f)
+        BeadsSoundSystem.audioContext.out.gain = (exp(6.908*volume)/1000).toFloat()
     }
 
     fun resetAutosaveTimer() {

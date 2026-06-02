@@ -25,7 +25,6 @@ import io.github.chrislo27.rhre3.editor.stage.advopt.SelectionToJSONButton
 import io.github.chrislo27.rhre3.editor.stage.playalong.PlayalongStage
 import io.github.chrislo27.rhre3.editor.stage.playalong.PlayalongToggleButton
 import io.github.chrislo27.rhre3.editor.stage.theme.ThemeChooserStage
-import io.github.chrislo27.rhre3.editor.stage.theme.ThemeEditorStage
 import io.github.chrislo27.rhre3.entity.model.IEditableText
 import io.github.chrislo27.rhre3.entity.model.special.SubtitleEntity
 import io.github.chrislo27.rhre3.modding.ModdingUtils
@@ -38,6 +37,7 @@ import io.github.chrislo27.rhre3.sfxdb.SFXDatabase
 import io.github.chrislo27.rhre3.sfxdb.Series
 import io.github.chrislo27.rhre3.sfxdb.datamodel.Datamodel
 import io.github.chrislo27.rhre3.sfxdb.datamodel.impl.Cue
+import io.github.chrislo27.rhre3.soundsystem.BeadsSoundSystem
 import io.github.chrislo27.rhre3.track.PlayState
 import io.github.chrislo27.rhre3.util.OSUtils
 import io.github.chrislo27.toolboks.Toolboks
@@ -45,10 +45,10 @@ import io.github.chrislo27.toolboks.i18n.Localization
 import io.github.chrislo27.toolboks.i18n.ToolboksBundle
 import io.github.chrislo27.toolboks.registry.AssetRegistry
 import io.github.chrislo27.toolboks.ui.*
-import io.github.chrislo27.toolboks.util.MathHelper
 import io.github.chrislo27.toolboks.util.gdxutils.*
 import java.util.*
 import kotlin.math.ceil
+import kotlin.math.exp
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -102,6 +102,12 @@ class EditorStage(parent: UIElement<EditorScreen>?,
     lateinit var pauseButton: PlaybackButton
         private set
     lateinit var stopButton: PlaybackButton
+        private set
+    lateinit var volumeButton: VolumeButton
+        private set
+    lateinit var volumeImage: ImageLabel<EditorScreen>
+        private set
+    lateinit var volumeArrow: MovingArrow<EditorScreen>
         private set
     lateinit var newsButton: NewsButton
         private set
@@ -1421,6 +1427,39 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_small_gear"))
                 })
             }
+
+            volumeButton = VolumeButton(editor, palette, buttonBarStage, buttonBarStage).apply{
+                this.location.set(screenWidth = size,
+                    screenX = 1f - (size * 3 + padding * 2))
+                this.leftClickAction = { _, _ ->
+                    val show = !volumeImage.visible
+                    volumeImage.visible = show
+                    volumeArrow.visible = show
+                }
+            }
+            buttonBarStage.elements += volumeButton
+            volumeImage = ImageLabel(palette, buttonBarStage, buttonBarStage).apply {
+                this.renderType = ImageLabel.ImageRendering.RENDER_FULL
+                this.background = true
+                this.visible = false
+                this.image = TextureRegion(RHRE3Application.instance.volumeBar)
+                val endX = (size * 2 + padding * 2)
+                this.location.set(screenX = 1f - (size*6+endX),
+                    screenY = -1.125f,
+                    screenWidth = size*6)
+            }
+            buttonBarStage.elements += volumeImage
+            volumeArrow = MovingArrow(palette, buttonBarStage, buttonBarStage).apply {
+                this.location.set(volumeImage.location)
+                this.visible = false
+                this.percentage = main.preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, 1f)
+                this.onPercentageChange = {
+                    Toolboks.LOGGER.info("Gain set to "+ exp(6.908*it)/1000)
+                    BeadsSoundSystem.audioContext.out.gain = (exp(6.908*it)/1000).toFloat()
+                    main.preferences.putFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, it)
+                }
+            }
+            buttonBarStage.elements += volumeArrow
 
             newsButton = NewsButton(editor, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenWidth = size,
