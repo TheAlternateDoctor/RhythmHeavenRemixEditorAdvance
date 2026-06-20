@@ -17,7 +17,7 @@ enum class Tool(val texId: String, val nameId: String,
     TEMPO_CHANGE("tool_tempo_change", "tool.tempoChange.name", trackerClass = TempoChange::class),
     MUSIC_VOLUME("tool_music_volume", "tool.musicVolume.name", trackerClass = MusicVolumeChange::class),
     TIME_SIGNATURE("tool_time_signature", "tool.timeSignature.name", showSubbeatLines = true),
-    SWING("tool_swing", "tool.swing.name"),
+    SWING("tool_swing", "tool.swing.name", trackerClass = TempoChange::class),
     RULER("tool_ruler", "tool.ruler.name", keybinds = listOf("R"), showSubbeatLines = true),
     PICKAXE("tool_pickaxe", "tool.pickaxe.name");
 

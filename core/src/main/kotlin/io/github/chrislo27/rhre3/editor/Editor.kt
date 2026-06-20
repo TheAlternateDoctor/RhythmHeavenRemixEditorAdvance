@@ -1622,7 +1622,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
                         }
                     } else if (getTrackerOnMouse(tool.trackerClass.java, false) == null) {
                         val tr = when (tool) {
-                            Tool.TEMPO_CHANGE -> {
+                            Tool.TEMPO_CHANGE, Tool.SWING -> {
                                 val tempoScale = if (shift && !alt) 0.5f else if (!shift && alt) 2f else 1f
                                 TempoChange(remix.tempos, beat, (remix.tempos.tempoAt(beat) * tempoScale).coerceIn(TempoChange.MIN_TEMPO, TempoChange.MAX_TEMPO), remix.tempos.swingAt(beat), 0f)
                             }
@@ -2086,7 +2086,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
                     }
                 }
             }
-        } else if (tool.isTrackerRelated) {
+        } else if (tool.isTrackerRelated && tool != Tool.SWING) {
             val tracker = getTrackerOnMouse(tool.trackerClass?.java, true)
             if (tracker != null) {
                 val result = tracker.scroll(-amountScrolled, control, shift)
