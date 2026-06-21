@@ -11,7 +11,7 @@ import io.github.chrislo27.rhre3.util.TempoUtils
 import java.util.*
 
 
-class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swing: Swing, width: Float)
+class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swing: Swing, width: Float, immutable: Boolean = false)
     : Tracker<TempoChange>(container, beat, width) {
 
     companion object {
@@ -40,6 +40,7 @@ class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swin
         get() = (container.map as NavigableMap).lowerEntry(beat)?.value?.bpm ?: (container as TempoChanges).defaultTempo
 
     init {
+        super.immutable = immutable
         text = getFormattedText(bpm)
     }
 
@@ -51,7 +52,7 @@ class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swin
         if (beat == 0f){
             (container as TempoChanges).defaultTempo = bpm+change
         }
-        return TempoChange(container as TempoChanges, beat, (bpm + change).coerceIn(MIN_TEMPO, MAX_TEMPO), swing, width)
+        return TempoChange(container as TempoChanges, beat, (bpm + change).coerceIn(MIN_TEMPO, MAX_TEMPO), swing, width, immutable)
     }
 
     fun scrollSwing(amount: Int, control: Boolean, shift: Boolean): TempoChange? {
@@ -99,7 +100,15 @@ class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swin
     }
 
     override fun getColour(theme: Theme): Color {
-        return theme.trackers.tempoChange
+        if(immutable){
+            val colour = Color(theme.trackers.tempoChange)
+            colour.r -= 0.2f
+            colour.g -= 0.2f
+            colour.b -= 0.2f
+            return colour
+        }else {
+            return theme.trackers.tempoChange
+        }
     }
 
     fun secondsToBeats(seconds: Float): Float {

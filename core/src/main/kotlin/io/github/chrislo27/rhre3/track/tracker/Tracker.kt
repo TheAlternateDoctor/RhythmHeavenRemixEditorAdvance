@@ -17,6 +17,8 @@ abstract class Tracker<SELF : Tracker<SELF>>(val container: TrackerContainer<SEL
     val endBeat: Float
         get() = beat + width
 
+    var immutable: Boolean = false
+
     var text: String = ""
         protected set
 

@@ -73,6 +73,7 @@ import io.github.chrislo27.rhre3.track.tracker.musicvolume.MusicVolumeChange
 import io.github.chrislo27.rhre3.track.tracker.tempo.TempoChange
 import io.github.chrislo27.rhre3.util.RectanglePool
 import io.github.chrislo27.rhre3.util.Semitones
+import io.github.chrislo27.rhre3.util.Swing
 import io.github.chrislo27.rhre3.util.scaleFont
 import io.github.chrislo27.rhre3.util.unscaleFont
 import io.github.chrislo27.toolboks.Toolboks
@@ -212,6 +213,11 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
             newRemix.timeSignatures.add(TimeSignature(newRemix.timeSignatures, 0f,
                 TimeSignature.DEFAULT_NOTE_UNIT,
                 TimeSignature.DEFAULT_NOTE_UNIT))
+            newRemix.tempos.add(TempoChange(newRemix.tempos, 0f,
+                120f,
+                Swing.STRAIGHT,
+                0f,
+                true))
         }
         return newRemix
     }
@@ -1611,7 +1617,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
                 val mouseX = camera.getInputX()
                 val beat = MathHelper.snapToNearest(mouseX, snap)
 
-                if (button == Input.Buttons.RIGHT && tracker != null) {
+                if (button == Input.Buttons.RIGHT && tracker != null && !tracker.immutable) {
                     remix.mutate(TrackerAction(tracker, true))
                 } else if (button == Input.Buttons.LEFT) {
                     if (tracker != null && tracker.allowsResize) {
