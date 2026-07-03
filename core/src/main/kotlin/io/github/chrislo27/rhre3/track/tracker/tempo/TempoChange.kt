@@ -57,11 +57,11 @@ class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swin
 
     fun scrollSwing(amount: Int, control: Boolean, shift: Boolean): TempoChange? {
         if (shift && !control) {
-            return TempoChange(container as TempoChanges, beat, bpm, swing.copy(division = if (swing.division == Swing.EIGHTH_DIVISION) Swing.SIXTEENTH_DIVISION else Swing.EIGHTH_DIVISION), width)
+            return TempoChange(container as TempoChanges, beat, bpm, swing.copy(division = if (swing.division == Swing.EIGHTH_DIVISION) Swing.SIXTEENTH_DIVISION else Swing.EIGHTH_DIVISION), width, immutable)
         } else if (control) {
             val change = amount * (if (shift) 5 else 1)
             if ((change < 0 && swing.ratio > Swing.MIN_SWING) || (change > 0 && swing.ratio < Swing.MAX_SWING)) {
-                return TempoChange(container as TempoChanges, beat, bpm, swing.copy(ratio = (swing.ratio + change).coerceIn(Swing.MIN_SWING, Swing.MAX_SWING)), width)
+                return TempoChange(container as TempoChanges, beat, bpm, swing.copy(ratio = (swing.ratio + change).coerceIn(Swing.MIN_SWING, Swing.MAX_SWING)), width, immutable)
             }
         } else {
             val list = Swing.SWING_LIST
@@ -88,7 +88,7 @@ class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swin
             }
 
             if (nextIndex != currentIndex) {
-                return TempoChange(container as TempoChanges, beat, bpm, swing.copy(ratio = list[nextIndex].ratio), width)
+                return TempoChange(container as TempoChanges, beat, bpm, swing.copy(ratio = list[nextIndex].ratio), width, immutable)
             }
         }
 
@@ -96,7 +96,7 @@ class TempoChange(container: TempoChanges, beat: Float, val bpm: Float, val swin
     }
 
     override fun createResizeCopy(beat: Float, width: Float): TempoChange {
-        return TempoChange(container as TempoChanges, beat, bpm, swing, width)
+        return TempoChange(container as TempoChanges, beat, bpm, swing, width, immutable)
     }
 
     override fun getColour(theme: Theme): Color {
