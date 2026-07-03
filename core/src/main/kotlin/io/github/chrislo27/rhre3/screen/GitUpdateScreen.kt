@@ -124,6 +124,12 @@ class GitUpdateScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Application,
                         return@launch
                     }
                 }
+                // Doing weird stuff to update, yippee
+                if(main.preferences.getInteger(PreferenceKeys.DATABASE_VERSION_BRANCH) < 139){
+                    var gitConfig = RHRE3.RHRE3_FOLDER.child("sfx/${RHRE3.DATABASE_BRANCH}/.git/config").readString()
+                    gitConfig = gitConfig.replace("chrislo27","TheAlternateDoctor")
+                    RHRE3.RHRE3_FOLDER.child("sfx/${RHRE3.DATABASE_BRANCH}/.git/config").writeString(gitConfig, false)
+                }
                 GitHelper.ensureRemoteExists()
                 GitHelper.fetchOrClone(GitScreenProgressMonitor(this@GitUpdateScreen, !GitHelper.doesGitFolderExist()))
                 repoStatus = RepoStatus.DONE
