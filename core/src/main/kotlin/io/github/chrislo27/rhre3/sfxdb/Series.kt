@@ -7,7 +7,7 @@ enum class Series(val console: String = "") {
 
     OTHER,
     TENGOKU("GBA"), DS("DS"), FEVER("Wii"), MEGAMIX("3DS"),
-    GROOVE("Switch"),
+    SWITCH("Switch"),
     SIDE;
 
     companion object {
