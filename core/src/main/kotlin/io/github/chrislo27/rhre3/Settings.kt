@@ -14,6 +14,7 @@ import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_LIVE_WAVEFORM
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_MINIMAP_PREVIEW
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_SMOOTH_DRAGGING
 import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_SUBTITLE_ORDER
+import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_NEW_TRACKS_ON_TOP
 import io.github.chrislo27.rhre3.PreferenceKeys.THEME_USES_MENU
 import io.github.chrislo27.rhre3.editor.CameraBehaviour
 import io.github.chrislo27.rhre3.editor.Editor
@@ -33,6 +34,7 @@ class Settings(private val main: RHRE3Application) {
     var smoothDragging: Boolean = true
     var cameraBehaviour: CameraBehaviour = Editor.DEFAULT_CAMERA_BEHAVIOUR
     var gameBoundaries: Boolean = false
+    var newTracksOnTop: Boolean = true //
     
     var advExplodingEntities: Boolean = false
     var advIgnorePitchRestrictions: Boolean = false
@@ -53,6 +55,7 @@ class Settings(private val main: RHRE3Application) {
         liveWaveform = preferences.getBoolean(SETTINGS_LIVE_WAVEFORM, liveWaveform)
         chorusKids = preferences.getBoolean(SETTINGS_CHORUS_KIDS, chorusKids)
         gameBoundaries = preferences.getBoolean(SETTINGS_GAME_BOUNDARIES, gameBoundaries)
+        newTracksOnTop = preferences.getBoolean(SETTINGS_NEW_TRACKS_ON_TOP, newTracksOnTop)
         midiNote = preferences.getString(MIDI_NOTE, midiNote)
         val oldChaseCamera = "settings_chaseCamera"
         if (oldChaseCamera in preferences) {

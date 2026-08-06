@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import io.github.chrislo27.rhre3.PreferenceKeys
+import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_NEW_TRACKS_ON_TOP
 import io.github.chrislo27.rhre3.RHRE3
 import io.github.chrislo27.rhre3.RHRE3Application
 import io.github.chrislo27.rhre3.VersionHistory
@@ -654,6 +655,8 @@ open class Remix(val main: RHRE3Application)
         private set
     var entitiesTouchTrackTop: Boolean = false
         private set
+    var entitiesTouchTrackBottom: Boolean = false
+        private set
     
     val timeStretchingAllowed: Boolean
         get() = SoundStretch.isSupported && !main.settings.disableTimeStretching
@@ -762,11 +765,12 @@ open class Remix(val main: RHRE3Application)
             return false
         }
 
-        return entities.filterNot { it is EndRemixEntity }.firstOrNull { (it.bounds.y + it.bounds.height).roundToInt() >= trackCount } == null
+        return !entitiesInTheWay()
     }
 
     fun canIncreaseTrackCount(): Boolean = trackCount < Editor.MAX_TRACK_COUNT
     fun canDecreaseTrackCount(): Boolean = trackCount > Editor.MIN_TRACK_COUNT
+    fun entitiesInTheWay(): Boolean = if(main.preferences.getBoolean(SETTINGS_NEW_TRACKS_ON_TOP)) {entitiesTouchTrackTop} else {entitiesTouchTrackBottom}
 
     fun isEmpty(): Boolean {
         return entities.isEmpty() && trackers.all { it.map.isEmpty() } && timeSignatures.map.isEmpty() && music == null
@@ -780,6 +784,7 @@ open class Remix(val main: RHRE3Application)
         duration = entities.firstOrNull { it is EndRemixEntity }?.bounds?.x ?: Float.POSITIVE_INFINITY
         lastPoint = getLastEntityPoint()
         entitiesTouchTrackTop = entities.filterNot { it is EndRemixEntity }.firstOrNull { (it.bounds.y + it.bounds.height).toInt() >= trackCount } != null
+        entitiesTouchTrackBottom = entities.filterNot { it is EndRemixEntity }.firstOrNull { it.bounds.y.toInt() <= 0 } != null
 
         gameSections.clear()
         val reversedEntities = entities.takeWhile { it !is EndRemixEntity }

@@ -427,6 +427,9 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
      * Pre-stage renderWithGlass.
      */
     fun render(updateDelta: Boolean, otherUI: Boolean, noGlassEffect: Boolean, disableThemeUsesMenu: Boolean = false) {
+        // We set the icon size depending on the window size
+        Gdx.graphics.width
+
         val isGameBoundariesInViews = ViewType.GAME_BOUNDARIES in views
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)

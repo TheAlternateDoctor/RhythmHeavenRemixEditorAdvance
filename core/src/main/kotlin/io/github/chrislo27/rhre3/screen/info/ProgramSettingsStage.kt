@@ -355,10 +355,34 @@ class ProgramSettingsStage(parent: UIElement<InfoScreen>?, camera: OrthographicC
             }
 
             this.location.set(screenX = 1f - (padding + buttonWidth),
-                              screenY = padding * 4 + buttonHeight * 3,
-                              screenWidth = buttonWidth,
-                              screenHeight = buttonHeight)
+                screenY = padding * 4 + buttonHeight * 3,
+                screenWidth = buttonWidth,
+                screenHeight = buttonHeight)
         }
+
+        // New track behaviour
+        settings.elements += TrueCheckbox(palette, settings, settings).apply {
+            this.checked = preferences.getBoolean(PreferenceKeys.SETTINGS_NEW_TRACKS_ON_TOP, true)
+
+            this.textLabel.apply {
+                this.fontScaleMultiplier = fontScale * 0.9f
+                this.isLocalizationKey = true
+                this.textWrapping = false
+                this.textAlign = Align.left
+                this.text = "screen.info.newTrackBehaviour"
+            }
+
+            this.checkedStateChanged = {
+                preferences.putBoolean(PreferenceKeys.SETTINGS_NEW_TRACKS_ON_TOP, it)
+                didChangeSettings = true
+            }
+
+            this.location.set(screenX = padding,
+                screenY = padding * 3 + buttonHeight * 2,
+                screenWidth = buttonWidth,
+                screenHeight = buttonHeight)
+        }
+
         // Clear recent games
         clearRecentsButton = Button(palette, settings, settings).apply {
             addLabel(TextLabel(palette, this, this.stage).apply {

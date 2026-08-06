@@ -10,6 +10,10 @@ enum class ResizeAction {
      */
     ANY_SIZE,
     /**
+     * The window can be adjusted to any size. Fonts **do** reload.
+     */
+    ANY_SIZE_RELOAD,
+    /**
      * The game is always emulated at a certain set of dimensions. Fonts do not reload.
      */
     LOCKED,
@@ -17,6 +21,6 @@ enum class ResizeAction {
      * The window can be adjusted to any size, and the internal camera will attempt to keep a maximum fit of the
      * provided aspect ratio. Fonts **do** reload.
      */
-    KEEP_ASPECT_RATIO
+    KEEP_ASPECT_RATIO,
 
 }

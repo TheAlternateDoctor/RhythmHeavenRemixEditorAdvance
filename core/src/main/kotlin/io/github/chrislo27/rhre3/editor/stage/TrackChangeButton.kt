@@ -3,6 +3,7 @@ package io.github.chrislo27.rhre3.editor.stage
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Interpolation
+import io.github.chrislo27.rhre3.PreferenceKeys.SETTINGS_NEW_TRACKS_ON_TOP
 import io.github.chrislo27.rhre3.editor.CameraPan
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.editor.action.EntitySelectionAction
@@ -36,7 +37,7 @@ class TrackChangeButton(val editor: Editor, palette: UIPalette, parent: UIElemen
         get() {
             return Localization["editor.trackChange"] + " [LIGHT_GRAY](${Editor.MIN_TRACK_COUNT}≦[]${remix.trackCount}[LIGHT_GRAY]≦${Editor.MAX_TRACK_COUNT})[]\n" +
                     Localization[if (remix.canIncreaseTrackCount()) "editor.trackChange.increase" else "editor.trackChange.max"] + "\n" +
-                    Localization[if (!remix.canDecreaseTrackCount()) "editor.trackChange.min" else if (remix.entitiesTouchTrackTop) "editor.trackChange.impedance" else "editor.trackChange.decrease"]
+                    Localization[if (!remix.canDecreaseTrackCount()) "editor.trackChange.min" else if (remix.entitiesInTheWay()) "editor.trackChange.impedance" else "editor.trackChange.decrease"]
         }
 
     override fun onLeftClick(xPercent: Float, yPercent: Float) {
@@ -52,15 +53,20 @@ class TrackChangeButton(val editor: Editor, palette: UIPalette, parent: UIElemen
         if (remix.playState == PlayState.STOPPED && remix.canDecreaseTrackCount()) {
             if (!remix.wouldEntitiesFitNewTrackCount(remix.trackCount - 1)) {
                 // Jump to first blocking entity
-                val entities = remix.entities.filterNot { it is EndRemixEntity }
+                val entities = if(editor.main.preferences.getBoolean(SETTINGS_NEW_TRACKS_ON_TOP)){
+                    remix.entities.filterNot { it is EndRemixEntity }
                         .filter { (it.bounds.y + it.bounds.height).roundToInt() >= remix.trackCount }.takeUnless(List<Entity>::isEmpty) ?: return
+                } else{
+                    remix.entities.filterNot { it is EndRemixEntity }
+                        .filter { (it.bounds.y).roundToInt() <= 0 }.takeUnless(List<Entity>::isEmpty) ?: return
+                }
 
                 if (!(editor.selection.containsAll(entities) && editor.selection.size == entities.size)) {
                     remix.mutate(EntitySelectionAction(editor, editor.selection.toList(), entities))
                 }
                 editor.cameraPan = CameraPan(editor.camera.position.x, entities.first().bounds.x, 0.5f, Interpolation.exp10Out)
             } else {
-                remix.mutate(TrackResizeAction(editor, remix.trackCount, remix.trackCount - 1))
+                remix.mutate(TrackResizeAction(editor, remix.trackCount, remix.trackCount - 1, ))
                 remix.recomputeCachedData()
             }
         }
