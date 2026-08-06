@@ -35,7 +35,7 @@ import io.github.chrislo27.toolboks.ui.TextLabel
 import io.github.chrislo27.toolboks.ui.UIElement
 import io.github.chrislo27.toolboks.util.gdxutils.fillRect
 import io.github.chrislo27.toolboks.util.gdxutils.getInputX
-import io.github.chrislo27.toolboks.util.gdxutils.openFileExplorer
+import java.awt.Desktop
 import java.util.*
 import kotlin.math.sign
 import kotlin.system.measureNanoTime
@@ -244,7 +244,7 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
                 image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
             })
             this.leftClickAction = { _, _ ->
-                Gdx.net.openFileExplorer(SFXDatabase.CUSTOM_MODDING_METADATA_FOLDER)
+                Desktop.getDesktop().open(SFXDatabase.CUSTOM_MODDING_METADATA_FOLDER.file())
             }
         }
 

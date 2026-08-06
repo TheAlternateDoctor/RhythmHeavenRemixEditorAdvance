@@ -46,6 +46,7 @@ import io.github.chrislo27.toolboks.i18n.ToolboksBundle
 import io.github.chrislo27.toolboks.registry.AssetRegistry
 import io.github.chrislo27.toolboks.ui.*
 import io.github.chrislo27.toolboks.util.gdxutils.*
+import java.awt.Desktop
 import java.util.*
 import kotlin.math.ceil
 import kotlin.math.exp
@@ -822,7 +823,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                         image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
                     })
                     this.leftClickAction = { _, _ ->
-                        Gdx.net.openFileExplorer(SFXDatabase.CUSTOM_SFX_FOLDER.file())
+                        Desktop.getDesktop().open(SFXDatabase.CUSTOM_SFX_FOLDER.file())
                     }
                     this.tooltipTextIsLocalizationKey = true
                     this.tooltipText = "editor.customSfx.openFolder"

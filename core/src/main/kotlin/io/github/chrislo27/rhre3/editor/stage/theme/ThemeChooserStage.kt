@@ -15,7 +15,7 @@ import io.github.chrislo27.rhre3.theme.Theme
 import io.github.chrislo27.rhre3.theme.Themes
 import io.github.chrislo27.toolboks.registry.AssetRegistry
 import io.github.chrislo27.toolboks.ui.*
-import io.github.chrislo27.toolboks.util.gdxutils.openFileExplorer
+import java.awt.Desktop
 
 
 class ThemeChooserStage(val editor: Editor, val palette: UIPalette, parent: EditorStage, camera: OrthographicCamera, pixelsWidth: Float, pixelsHeight: Float)
@@ -144,7 +144,7 @@ class ThemeChooserStage(val editor: Editor, val palette: UIPalette, parent: Edit
                     this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
                 })
                 this.leftClickAction = { _, _ ->
-                    Gdx.net.openFileExplorer(LoadedThemes.THEMES_FOLDER)
+                    Desktop.getDesktop().open(LoadedThemes.THEMES_FOLDER.file())
                 }
                 this.tooltipTextIsLocalizationKey = true
                 this.tooltipText = "editor.themeEditor.openContainingFolder"

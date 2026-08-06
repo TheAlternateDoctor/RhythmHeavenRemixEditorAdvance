@@ -30,7 +30,6 @@ import io.github.chrislo27.toolboks.util.MathHelper
 import io.github.chrislo27.toolboks.util.gdxutils.isAltDown
 import io.github.chrislo27.toolboks.util.gdxutils.isControlDown
 import io.github.chrislo27.toolboks.util.gdxutils.isShiftDown
-import io.github.chrislo27.toolboks.util.gdxutils.openFileExplorer
 import java.awt.Desktop
 import java.net.URI
 
@@ -161,7 +160,7 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
                 image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
             })
             this.leftClickAction = { _, _ ->
-                Gdx.net.openFileExplorer(SFXDatabase.CUSTOM_SFX_FOLDER)
+                Desktop.getDesktop().open(SFXDatabase.CUSTOM_SFX_FOLDER.file())
             }
             this.tooltipTextIsLocalizationKey = true
             this.tooltipText = "editor.customSfx.openFolder"

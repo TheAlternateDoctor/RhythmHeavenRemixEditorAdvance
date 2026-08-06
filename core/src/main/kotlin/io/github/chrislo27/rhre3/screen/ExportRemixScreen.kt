@@ -50,6 +50,7 @@ import net.beadsproject.beads.ugens.DelayTrigger
 import net.beadsproject.beads.ugens.RangeLimiter
 import net.beadsproject.beads.ugens.RecordToFile
 import org.xiph.libvorbis.vorbis_comment
+import java.awt.Desktop
 import java.io.File
 import java.util.*
 import javax.sound.sampled.AudioFileFormat
@@ -166,7 +167,7 @@ class ExportRemixScreen(main: RHRE3Application)
             this.leftClickAction = { _, _ ->
                 val ff = folderFile
                 if (ff != null) {
-                    Gdx.net.openFileExplorer((ff.takeUnless { it.isFile } ?: ff.parentFile))
+                    Desktop.getDesktop().open(ff.takeUnless { it.isFile } ?: ff.parentFile)
                 }
             }
             this.visible = false
