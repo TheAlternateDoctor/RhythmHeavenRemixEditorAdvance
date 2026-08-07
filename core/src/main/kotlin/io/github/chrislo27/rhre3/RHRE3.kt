@@ -19,7 +19,7 @@ object RHRE3 {
     const val HEIGHT = 720
     val DEFAULT_SIZE = WIDTH to HEIGHT
     val MINIMUM_SIZE: Pair<Int, Int> = 640 to 360
-    val RHRE3_FOLDER: FileHandle by lazy { (if (portableMode) Gdx.files.local(".rhre3/") else Gdx.files.external(".rhre3/")).apply(FileHandle::mkdirs) }
+    val RHRE3_FOLDER: FileHandle by lazy { (if (portableMode) Gdx.files.local(".rhre3adv/") else Gdx.files.external(".rhre3adv/")).apply(FileHandle::mkdirs) }
     val SOUNDSTRETCH_FOLDER: FileHandle by lazy { RHRE3_FOLDER.child("soundstretch/") }
 
     val SUPPORTED_DECODING_SOUND_TYPES = listOf("ogg", "mp3", "wav")

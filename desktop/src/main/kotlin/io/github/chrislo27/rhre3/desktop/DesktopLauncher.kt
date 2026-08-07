@@ -24,6 +24,8 @@ object DesktopLauncher {
         System.setProperty("jna.nosys", "true")
         
         RHRE3.launchArguments = args.toList()
+
+        val RHRE3_FOLDER = ".rhre3adv"
         
         try {
             // Check for bad arguments but don't cause a full crash
@@ -47,7 +49,17 @@ object DesktopLauncher {
         
         val logger = Logger()
         val portable = arguments.portableMode
-        val app = RHRE3Application(logger, File(if (portable) ".rhre3/logs/" else System.getProperty("user.home") + "/.rhre3/logs/"))
+
+        // Copy the legacy folder over, so that the two can coexist
+        if(!portable && !File(System.getProperty("user.home") + "/$RHRE3_FOLDER").exists()){
+            val legacyFolder = File(System.getProperty("user.home") + "/.rhre3")
+            val newFolder = File(System.getProperty("user.home") + "/$RHRE3_FOLDER")
+            newFolder.mkdir()
+            legacyFolder.copyRecursively(newFolder)
+            File(System.getProperty("user.home") + "/$RHRE3_FOLDER/customSounds").deleteRecursively()
+        }
+
+        val app = RHRE3Application(logger, File(if (portable) "$RHRE3_FOLDER/logs/" else System.getProperty("user.home") + "/$RHRE3_FOLDER/logs/"))
         ToolboksDesktopLauncher3(app)
                 .editConfig {
                     this.setAutoIconify(true)
@@ -62,18 +74,18 @@ object DesktopLauncher {
                     this.setHdpiMode(HdpiMode.Logical)
 //                    this.setBackBufferConfig(8, 8, 8, 8, 16, 0, 2)
                     if (portable) {
-                        this.setPreferencesConfig(".rhre3/.prefs/", Files.FileType.Local)
+                        this.setPreferencesConfig("$RHRE3_FOLDER/.prefs/", Files.FileType.Local)
                     } else {
-                        logger.info("Setting preference folder to "+System.getProperty("user.home")+"/.rhre3/prefs")
-                        val newPrefFolder = File(System.getProperty("user.home")+"/.rhre3/prefs")
+                        logger.info("Setting preference folder to "+System.getProperty("user.home")+"/$RHRE3_FOLDER/prefs")
+                        val newPrefFolder = File(System.getProperty("user.home")+"/$RHRE3_FOLDER/prefs")
                         if(!newPrefFolder.exists()){
                             val prefFolder = File(System.getProperty("user.home")+"/.prefs")
                             if(prefFolder.exists() && prefFolder.isDirectory()){
-                                prefFolder.copyRecursively(File(System.getProperty("user.home") + "/.rhre3/prefs"))
+                                prefFolder.copyRecursively(File(System.getProperty("user.home") + "/$RHRE3_FOLDER/prefs"))
                                 logger.info("Copied older preference folder")
                             }
                         }
-                        this.setPreferencesConfig(System.getProperty("user.home") + "/.rhre3/prefs/", Files.FileType.Absolute)
+                        this.setPreferencesConfig(System.getProperty("user.home") + "/$RHRE3_FOLDER/prefs/", Files.FileType.Absolute)
                     }
                     
                     RHRE3.portableMode = portable
