@@ -21,7 +21,8 @@ open class Cue(game: Game, id: String, deprecatedIDs: List<String>, name: String
                val baseBpm: Float, val useTimeStretching: Boolean, val baseBpmRules: BaseBpmRules,
                val loops: Boolean, val earliness: Float,
                val loopStart: Float, val loopEnd: Float,
-               val pitchBending: Boolean, val writtenPitch: Int)
+               val pitchBending: Boolean, val writtenPitch: Int,
+               val randomPitchLow: Int, val randomPitchHigh: Int)
     : Datamodel(game, id, deprecatedIDs, name, duration, subtext), ResponseModel, PreviewableModel {
 
     val usesBaseBpm: Boolean

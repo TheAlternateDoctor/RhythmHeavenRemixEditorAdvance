@@ -136,6 +136,10 @@ class CueObject : NamedIDObject() {
     var pitchBending: Boolean = false
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     var writtenPitch: Int = 0
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    var randomPitchLow: Int = 0
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    var randomPitchHigh: Int = 0
     
     @Suppress("EqualsOrHashCode")
     class UseTimeStretchingValueFilter {

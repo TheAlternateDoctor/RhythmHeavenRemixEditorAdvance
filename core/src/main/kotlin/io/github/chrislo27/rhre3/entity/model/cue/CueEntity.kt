@@ -16,6 +16,8 @@ import io.github.chrislo27.rhre3.track.Remix
 import io.github.chrislo27.rhre3.util.Semitones
 import io.github.chrislo27.toolboks.util.gdxutils.maxX
 import net.beadsproject.beads.ugens.SamplePlayer
+import java.util.Random
+import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.min
 
 
@@ -184,8 +186,8 @@ class CueEntity(remix: Remix, datamodel: Cue)
         return theme.entities.cue
     }
     
-    private fun getSemitonePitch(): Float {
-        return Semitones.getALPitch(semitone)
+    private fun getSemitonePitch(offset:Int): Float {
+        return Semitones.getALPitch(semitone+offset)
     }
     
     override fun getTextForSemitone(semitone: Int): String {
@@ -215,16 +217,18 @@ class CueEntity(remix: Remix, datamodel: Cue)
     
     fun play(position: Float = 0f, introSoundPos: Float = 0f) {
         // Combination of the semitone pitch + the remix speed multiplier
-        val pitch = getSemitonePitch() * getPitchMultiplierFromRemixSpeed()
+        val randomPitchVariation = ThreadLocalRandom.current().nextInt(cue.randomPitchLow, cue.randomPitchHigh+1)
+        val randomPitch = getSemitonePitch(randomPitchVariation) * getPitchMultiplierFromRemixSpeed()
+        val pitch = getSemitonePitch(0) * getPitchMultiplierFromRemixSpeed()
         val rate = if (!rulesAllowBaseBpm) {
             1f
         } else cue.getBaseBpmRate(remix.beat)
         val apparentRate = (pitch * rate)
         val loopParams = if (cue.loops) LoopParams(SamplePlayer.LoopType.LOOP_FORWARDS, cue.loopStart.toDouble(), cue.loopEnd.toDouble()) else LoopParams.NO_LOOP_FORWARDS
-        soundId = beadsSound.playWithLoop(pitch = pitch, rate = rate, volume = volume,
+        soundId = beadsSound.playWithLoop(pitch = randomPitch, rate = rate, volume = volume,
                                           position = (position.toDouble()) * apparentRate,
                                           loopParams = loopParams)
-        
+
         introSoundId = introCueBeadsSound?.play(loop = false, pitch = pitch,
                                  rate = cue.introSoundCue!!.getBaseBpmRate(remix.beat), volume = volume,
                                  position = (introSoundPos.toDouble()) * apparentRate) ?: -1L
@@ -276,7 +280,7 @@ class CueEntity(remix: Remix, datamodel: Cue)
                     }
                     val currentPitchBendTone = currentPitchBendingSemitone.progress
                     val pitch = (if (currentPitchBendTone == 0f)
-                        getSemitonePitch()
+                        getSemitonePitch(0)
                     else Semitones.getALPitchF(semitone + currentPitchBendTone)) * getPitchMultiplierFromRemixSpeed()
                     sound.setPitch(soundId, pitch)
                     val introSoundCue = cue.introSoundCue
@@ -294,7 +298,7 @@ class CueEntity(remix: Remix, datamodel: Cue)
                 endingSoundId = endingCueBeadsSound.play(loop = false, volume = volume,
                                                          rate = if (rulesAllowBaseBpm) endingSoundCue.getBaseBpmRate(remix.beat) else 1f,
                                                          pitch = (if (!cue.pitchBending)
-                                                             getSemitonePitch()
+                                                             getSemitonePitch(0)
                                                          else Semitones.getALPitchF(semitone + currentPitchBendingSemitone.progress)) * getPitchMultiplierFromRemixSpeed(), position = 0.0).coerceAtLeast(0L)
             }
         }
