@@ -2006,7 +2006,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
             return false
         }
 
-        val amountScrolled = ceil(amountY).toInt()
+        val amountScrolled = if(amountX!= 0f){ceil(amountX).toInt()} else {ceil(amountY).toInt()}
         val selection = selection
         val tool = currentTool
         val control = Gdx.input.isControlDown()
@@ -2133,8 +2133,9 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
             }
         }
 
-        if (shift && tool != Tool.TIME_SIGNATURE) {
+        if (shift && tool != Tool.TIME_SIGNATURE || amountX != 0f) {
             // Camera scrolling left/right (CTRL/SHIFT+CTRL)
+            // Also works with left/right scrolling
             val amt = (amountScrolled * if (control) 5f else 1f)
             camera.position.x += amt
             camera.update()
