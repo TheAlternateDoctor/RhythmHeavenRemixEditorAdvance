@@ -18,7 +18,7 @@ class ShakeEntity(remix: Remix, datamodel: ShakeScreen)
     companion object {
 
         fun getShakeIntensity(semitone: Int): Float {
-            return Semitones.getALPitch(semitone)
+            return Semitones.getALPitch(semitone.toFloat())
         }
 
     }

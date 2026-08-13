@@ -186,7 +186,7 @@ class CueEntity(remix: Remix, datamodel: Cue)
         return theme.entities.cue
     }
     
-    private fun getSemitonePitch(offset:Int): Float {
+    private fun getSemitonePitch(offset:Float): Float {
         return Semitones.getALPitch(semitone+offset)
     }
     
@@ -218,8 +218,8 @@ class CueEntity(remix: Remix, datamodel: Cue)
     fun play(position: Float = 0f, introSoundPos: Float = 0f) {
         // Combination of the semitone pitch + the remix speed multiplier
         val randomPitchVariation = ThreadLocalRandom.current().nextInt(cue.randomPitchLow, cue.randomPitchHigh+1)
-        val randomPitch = getSemitonePitch(randomPitchVariation) * getPitchMultiplierFromRemixSpeed()
-        val pitch = getSemitonePitch(0) * getPitchMultiplierFromRemixSpeed()
+        val randomPitch = getSemitonePitch(randomPitchVariation/100f) * getPitchMultiplierFromRemixSpeed()
+        val pitch = getSemitonePitch(0f) * getPitchMultiplierFromRemixSpeed()
         val rate = if (!rulesAllowBaseBpm) {
             1f
         } else cue.getBaseBpmRate(remix.beat)
@@ -280,8 +280,8 @@ class CueEntity(remix: Remix, datamodel: Cue)
                     }
                     val currentPitchBendTone = currentPitchBendingSemitone.progress
                     val pitch = (if (currentPitchBendTone == 0f)
-                        getSemitonePitch(0)
-                    else Semitones.getALPitchF(semitone + currentPitchBendTone)) * getPitchMultiplierFromRemixSpeed()
+                        getSemitonePitch(0f)
+                    else Semitones.getALPitch(semitone + currentPitchBendTone)) * getPitchMultiplierFromRemixSpeed()
                     sound.setPitch(soundId, pitch)
                     val introSoundCue = cue.introSoundCue
                     if (introSoundCue != null && introSoundId != -1L) {
@@ -298,8 +298,8 @@ class CueEntity(remix: Remix, datamodel: Cue)
                 endingSoundId = endingCueBeadsSound.play(loop = false, volume = volume,
                                                          rate = if (rulesAllowBaseBpm) endingSoundCue.getBaseBpmRate(remix.beat) else 1f,
                                                          pitch = (if (!cue.pitchBending)
-                                                             getSemitonePitch(0)
-                                                         else Semitones.getALPitchF(semitone + currentPitchBendingSemitone.progress)) * getPitchMultiplierFromRemixSpeed(), position = 0.0).coerceAtLeast(0L)
+                                                             getSemitonePitch(0f)
+                                                         else Semitones.getALPitch(semitone + currentPitchBendingSemitone.progress)) * getPitchMultiplierFromRemixSpeed(), position = 0.0).coerceAtLeast(0L)
             }
         }
     }

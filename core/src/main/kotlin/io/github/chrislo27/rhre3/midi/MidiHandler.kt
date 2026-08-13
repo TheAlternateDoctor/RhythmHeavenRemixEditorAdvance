@@ -67,7 +67,7 @@ object MidiHandler : Disposable {
             init {
                 soundID = if (MIDI_NOTE_ID in AssetRegistry) {
                     val sound = AssetRegistry.get<Sound>(MIDI_NOTE_ID)
-                    sound.loop(volume, Semitones.getALPitch(semitone), 0f)
+                    sound.loop(volume, Semitones.getALPitch(semitone.toFloat()), 0f)
                 } else {
                     -1L
                 }

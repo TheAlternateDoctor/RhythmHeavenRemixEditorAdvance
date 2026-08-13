@@ -92,19 +92,15 @@ object Semitones {
     }
 
 
-    private val cachedPitches = mutableMapOf<Int, Float>()
+    private val cachedPitches = mutableMapOf<Float, Float>()
     var pitchStyle: PitchStyle = Semitones.PitchStyle.SHARPS
 
     fun getSemitoneName(semitone: Int): String {
         return pitchStyle.getSemitoneName(semitone)
     }
 
-    fun getALPitch(semitone: Int): Float {
+    fun getALPitch(semitone: Float): Float {
         return cachedPitches.getOrPut(semitone) { 2.0.pow((semitone * SEMITONE_VALUE).toDouble()).toFloat() }
-    }
-    
-    fun getALPitchF(semitone: Float): Float {
-        return 2.0.pow((semitone * SEMITONE_VALUE).toDouble()).toFloat()
     }
 
 }

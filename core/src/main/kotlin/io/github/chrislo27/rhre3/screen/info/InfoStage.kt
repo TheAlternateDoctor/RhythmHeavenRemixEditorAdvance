@@ -69,7 +69,7 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
             private var timeSinceLastClick = System.currentTimeMillis()
             private val CLICKS_RESET = 3000L
             private val color = Color(1f, 1f, 1f, 1f)
-            private val notes = listOf(0, 2, 4, 5, 7)
+            private val notes = listOf(0f, 2f, 4f, 5f, 7f)
 
             init {
                 this.textColor = color
@@ -82,7 +82,7 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
                 if (System.currentTimeMillis() - timeSinceLastClick >= CLICKS_RESET) {
                     clicks = 0
                 }
-                AssetRegistry.get<Sound>("weird_sfx_bts_c").play(0.5f, Semitones.getALPitch(notes.getOrElse(clicks) { 0 }), 0f)
+                AssetRegistry.get<Sound>("weird_sfx_bts_c").play(0.5f, Semitones.getALPitch(notes.getOrElse(clicks) { 0f }), 0f)
                 clicks++
                 timeSinceLastClick = System.currentTimeMillis()
 

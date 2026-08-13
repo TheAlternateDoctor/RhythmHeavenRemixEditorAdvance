@@ -704,7 +704,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
                         staticCamera.viewportWidth / remix.midiInstruments
                     else renderWidth), startY, width.toFloat(),
                                height * (if (isPlaying && playingEntity != null && playingEntity is IRepitchable)
-                                   (Semitones.getALPitch(playingEntity.semitone)) else 1f),
+                                   (Semitones.getALPitch(playingEntity.semitone.toFloat())) else 1f),
                                1 + (animation * (width + 2)),
                                1 + (if (isPlaying) ((cellHeight + 2) * (if (isPlaying && playingEntity != null && playingEntity is IRepitchable && playingEntity.semitone > IRepitchable.DEFAULT_RANGE.last) 4 else 3)) else 0),
                                width, height, false, false)
