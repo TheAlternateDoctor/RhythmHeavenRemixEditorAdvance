@@ -217,7 +217,7 @@ class CueEntity(remix: Remix, datamodel: Cue)
     
     fun play(position: Float = 0f, introSoundPos: Float = 0f) {
         // Combination of the semitone pitch + the remix speed multiplier
-        val randomPitchVariation = ThreadLocalRandom.current().nextInt(cue.randomPitchLow, cue.randomPitchHigh+1)
+        val randomPitchVariation = ThreadLocalRandom.current().nextInt(cue.randomPitchLowCents, cue.randomPitchHighCents+1)
         val randomPitch = getSemitonePitch(randomPitchVariation/100f) * getPitchMultiplierFromRemixSpeed()
         val pitch = getSemitonePitch(0f) * getPitchMultiplierFromRemixSpeed()
         val rate = if (!rulesAllowBaseBpm) {

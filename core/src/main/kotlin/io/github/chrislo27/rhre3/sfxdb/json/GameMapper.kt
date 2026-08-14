@@ -29,7 +29,7 @@ fun NamedIDObject.mapToDatamodel(baseFileHandle: FileHandle, game: Game, objID: 
                 obj.responseIDs.starSubstitution(),
                 obj.baseBpm, obj.useTimeStretching,
                 BaseBpmRules.MAP[obj.baseBpmRules ?: BaseBpmRules.ALWAYS.id] ?: error("Unrecognized baseBpmRules value: ${obj.baseBpmRules}"),
-                obj.loops, obj.earliness, obj.loopStart, obj.loopEnd, obj.pitchBending, obj.writtenPitch, obj.randomPitchLow, obj.randomPitchHigh)
+                obj.loops, obj.earliness, obj.loopStart, obj.loopEnd, obj.pitchBending, obj.writtenPitch, obj.randomPitchLowCents, obj.randomPitchHighCents)
         is EquidistantObject ->
             Equidistant(game, objID, obj.deprecatedIDs,
                         obj.name, obj.subtext, obj.distance,
