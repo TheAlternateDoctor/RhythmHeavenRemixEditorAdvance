@@ -19,8 +19,6 @@ import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.editor.Tool
 import io.github.chrislo27.rhre3.editor.picker.*
 import io.github.chrislo27.rhre3.editor.quickswitch.SwitchToGame
-import io.github.chrislo27.rhre3.editor.stage.advopt.ExportImageButton
-import io.github.chrislo27.rhre3.editor.stage.advopt.SelectionToJSONButton
 import io.github.chrislo27.rhre3.editor.stage.playalong.PlayalongStage
 import io.github.chrislo27.rhre3.editor.stage.playalong.PlayalongToggleButton
 import io.github.chrislo27.rhre3.editor.stage.theme.ThemeChooserStage
@@ -1482,45 +1480,6 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 this.background = true
             }
             buttonBarStage.elements += jumpToField
-            buttonBarStage.elements += object : Button<EditorScreen>(palette, buttonBarStage, buttonBarStage) {
-                override fun frameUpdate(screen: EditorScreen) {
-                    super.frameUpdate(screen)
-    
-                    val advOpt = editor.main.settings.advancedOptions
-                    if (advOpt) {
-                        this.visible = true
-                    } else if (!advOpt && this.visible) {
-                        this.visible = false
-                        advOptButtons.forEach { it.visible = false }
-                    }
-                }
-            }.apply {
-                this.leftClickAction = { _, _ ->
-                    val show = !advOptButtons.first().visible
-                    advOptButtons.forEach { it.visible = show }
-                }
-                this.addLabel(TextLabel(palette, this, stage).apply {
-                    this.fontScaleMultiplier = 0.4f
-                    this.text = "Adv. Opts."
-                    this.isLocalizationKey = false
-                })
-                val endX = 1f - (size * 15 + padding * 10)
-                this.location.set(screenX = 0.5f + (size * 1.5f + padding * 2))
-                this.location.set(screenWidth = endX - this.location.screenX)
-            }
-    
-            val endX = 1f - (size * 15 + padding * 10)
-//            advOptButtons += ExportImageButton(editor, palette, buttonBarStage, buttonBarStage).apply {
-//                this.location.set(screenX = endX)
-//                this.location.set(screenWidth = size)
-//                this.location.screenY = -1.125f
-//            }
-            advOptButtons += SelectionToJSONButton(editor, palette, buttonBarStage, buttonBarStage).apply {
-                this.location.set(screenX = 0.5f + (size * 1.5f + padding * 2))
-                this.location.set(screenWidth = size * 4 - padding * 4)
-                this.location.screenY = -2.125f
-            }
-            buttonBarStage.elements.addAll(advOptButtons)
         }
 
         this.updatePositions()

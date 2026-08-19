@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.SharedLibraryLoader
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonParseException
 import io.github.chrislo27.rhre3.PreferenceKeys
 import io.github.chrislo27.rhre3.RHRE3
@@ -71,6 +72,7 @@ import io.github.chrislo27.rhre3.track.tracker.TrackerAction
 import io.github.chrislo27.rhre3.track.tracker.TrackerValueChange
 import io.github.chrislo27.rhre3.track.tracker.musicvolume.MusicVolumeChange
 import io.github.chrislo27.rhre3.track.tracker.tempo.TempoChange
+import io.github.chrislo27.rhre3.util.JsonHandler
 import io.github.chrislo27.rhre3.util.RectanglePool
 import io.github.chrislo27.rhre3.util.Semitones
 import io.github.chrislo27.rhre3.util.Swing
@@ -88,6 +90,7 @@ import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
+import kotlin.collections.toList
 import kotlin.math.*
 
 
@@ -789,6 +792,30 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
 
     }
 
+
+    private class SmallCuePointer {
+
+        lateinit var id: String
+        var beat: Float = -1f
+
+        @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+        var duration: Float = 0f
+        @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+        var semitone: Int = 0
+        @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+        var track: Int = 0
+
+    }
+
+    private class SmallPatternObject {
+        var type: String = "pattern"
+        lateinit var id: String
+        lateinit var deprecatedIDs: List<String>
+        lateinit var name: String
+        var stretchable: Boolean = false
+        lateinit var cues: List<SmallCuePointer>
+    }
+
     fun renderUpdate() {
         remix.timeUpdate(Gdx.graphics.deltaTime)
         if (remix.playState == PLAYING) {
@@ -1005,6 +1032,38 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
                         if (newSelection.size != oldSelection.size || !newSelection.containsAll(oldSelection)) {
                             remix.mutate(EntitySelectionAction(this, oldSelection, newSelection))
                             updateMessageLabel()
+                        }
+                    } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+
+                        val selection = this.selection.toList().filterIsInstance<ModelEntity<*>>()
+
+                        if (!selection.isEmpty()) {
+                            try {
+                                val bottommost = selection.minByOrNull { it.bounds.y }!!
+                                val leftmost = selection.minByOrNull { it.bounds.x }!!
+                                val firstGame = selection.first().datamodel.game
+                                val allSameParentId = selection.all { it.datamodel.game == firstGame }
+                                val json = JsonHandler.toJson(SmallPatternObject().also {
+                                    it.id = "*_"
+                                    it.deprecatedIDs = listOf()
+                                    it.name = ""
+                                    it.cues = selection.map { entity ->
+                                        SmallCuePointer().also { pointer ->
+                                            pointer.id = if (allSameParentId) entity.datamodel.id.replaceFirst(firstGame.id, "*") else entity.datamodel.id
+                                            pointer.duration = entity.bounds.width
+                                            pointer.beat = entity.bounds.x - leftmost.bounds.x
+                                            pointer.track = (entity.bounds.y - bottommost.bounds.y).roundToInt()
+                                            pointer.semitone = (entity as? IRepitchable)?.semitone ?: 0
+                                        }
+                                    }
+                                })
+
+                                Gdx.app.clipboard.contents = json
+                                Toolboks.LOGGER.info("\n$json\n")
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }

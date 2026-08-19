@@ -214,6 +214,7 @@ class ExportRemixScreen(main: RHRE3Application)
                         Align.center, false, false
                     )
                     this.background = false
+                    this.fontScaleMultiplier = 0.8f
                 })
             this.location.set(this@ExportRemixScreen.stage.backButton.location)
             this.location.set(screenX = 1f - this.location.screenWidth)
@@ -580,7 +581,6 @@ class ExportRemixScreen(main: RHRE3Application)
         hasEndRemix = remix.duration < Float.POSITIVE_INFINITY
         readyButton.visible = false
         folderButton.visible = false
-        copyGamesButton.visible = false
         exportImageButton.visible = false
         folderFile = null
         selectionStage.visible = false
