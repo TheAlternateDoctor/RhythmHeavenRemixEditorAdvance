@@ -231,6 +231,12 @@ ${(screen as? ToolboksScreen<*, *>)?.getDebugString() ?: ""}"""
                 fonts.loadAll(defaultCamera.viewportWidth, defaultCamera.viewportHeight)
             }
             Toolboks.LOGGER.info("Reloaded all ${fonts.fonts.size} fonts in ${nano / 1_000_000.0} ms")
+        } else if(resizeAction == ResizeAction.ANY_SIZE_RELOAD &&
+            (defaultCamera.viewportWidth to defaultCamera.viewportHeight) != lastCameraDimensions) {
+            val nano = measureNanoTime {
+                fonts.loadAll(defaultCamera.viewportWidth, defaultCamera.viewportHeight)
+            }
+            Toolboks.LOGGER.info("Reloaded all ${fonts.fonts.size} fonts in ${nano / 1_000_000.0} ms")
         }
         super.resize(width, height)
     }
@@ -280,6 +286,8 @@ ${(screen as? ToolboksScreen<*, *>)?.getDebugString() ?: ""}"""
     fun resetCamera() {
         when (resizeAction) {
             ResizeAction.ANY_SIZE -> defaultCamera.setToOrtho(false, Gdx.graphics.width.toFloat(),
+                                                              Gdx.graphics.height.toFloat())
+            ResizeAction.ANY_SIZE_RELOAD -> defaultCamera.setToOrtho(false, Gdx.graphics.width.toFloat(),
                                                               Gdx.graphics.height.toFloat())
             ResizeAction.LOCKED -> defaultCamera.setToOrtho(false, emulatedSize.first.toFloat(),
                                                             emulatedSize.second.toFloat())

@@ -69,7 +69,7 @@ import kotlin.system.measureNanoTime
 
 
 class RHRE3Application(logger: Logger, logToFile: File?)
-    : ToolboksGame(logger, logToFile, RHRE3.VERSION, RHRE3.DEFAULT_SIZE, ResizeAction.KEEP_ASPECT_RATIO, RHRE3.MINIMUM_SIZE), CloseListener {
+    : ToolboksGame(logger, logToFile, RHRE3.VERSION, RHRE3.DEFAULT_SIZE, ResizeAction.ANY_SIZE_RELOAD, RHRE3.MINIMUM_SIZE), CloseListener {
     
     companion object {
         lateinit var instance: RHRE3Application
