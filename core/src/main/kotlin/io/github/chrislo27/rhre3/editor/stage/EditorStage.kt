@@ -19,7 +19,6 @@ import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.editor.Tool
 import io.github.chrislo27.rhre3.editor.picker.*
 import io.github.chrislo27.rhre3.editor.quickswitch.SwitchToGame
-import io.github.chrislo27.rhre3.editor.stage.advopt.CopyGamesUsedButton
 import io.github.chrislo27.rhre3.editor.stage.advopt.ExportImageButton
 import io.github.chrislo27.rhre3.editor.stage.advopt.SelectionToJSONButton
 import io.github.chrislo27.rhre3.editor.stage.playalong.PlayalongStage
@@ -1511,16 +1510,11 @@ class EditorStage(parent: UIElement<EditorScreen>?,
             }
     
             val endX = 1f - (size * 15 + padding * 10)
-            advOptButtons += CopyGamesUsedButton(editor, palette, buttonBarStage, buttonBarStage).apply {
-                this.location.set(screenX = 0.5f + (size * 1.5f + padding * 2))
-                this.location.set(screenWidth = endX - this.location.screenX)
-                this.location.screenY = -1.125f
-            }
-            advOptButtons += ExportImageButton(editor, palette, buttonBarStage, buttonBarStage).apply {
-                this.location.set(screenX = endX)
-                this.location.set(screenWidth = size)
-                this.location.screenY = -1.125f
-            }
+//            advOptButtons += ExportImageButton(editor, palette, buttonBarStage, buttonBarStage).apply {
+//                this.location.set(screenX = endX)
+//                this.location.set(screenWidth = size)
+//                this.location.screenY = -1.125f
+//            }
             advOptButtons += SelectionToJSONButton(editor, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenX = 0.5f + (size * 1.5f + padding * 2))
                 this.location.set(screenWidth = size * 4 - padding * 4)

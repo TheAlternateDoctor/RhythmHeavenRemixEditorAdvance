@@ -7,7 +7,7 @@ data class ExportOptions(val bitrateKbps: Int, val sampleRate: Int, val madeWith
         /**
          * Standard output settings.
          */
-        val DEFAULT = ExportOptions(196, 44100, true)
+        val DEFAULT = ExportOptions(320, 44100, true)
         /**
          * A lower bitrate for quick uploads.
          */

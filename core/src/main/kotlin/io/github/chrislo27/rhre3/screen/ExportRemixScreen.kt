@@ -19,6 +19,7 @@ import io.github.chrislo27.rhre3.RHRE3
 import io.github.chrislo27.rhre3.RHRE3Application
 import io.github.chrislo27.rhre3.analytics.AnalyticsHandler
 import io.github.chrislo27.rhre3.editor.Editor
+import io.github.chrislo27.rhre3.editor.stage.advopt.ExportImageButton
 import io.github.chrislo27.rhre3.entity.model.ISoundDependent
 import io.github.chrislo27.rhre3.entity.model.special.MusicDistortEntity
 import io.github.chrislo27.rhre3.screen.ExportRemixScreen.ExportFileType.FLAC
@@ -86,6 +87,8 @@ class ExportRemixScreen(main: RHRE3Application)
     private val folderButton: Button<ExportRemixScreen>
     private var folderFile: File? = null
     private val readyButton: Button<ExportRemixScreen>
+    private val copyGamesButton: Button<ExportRemixScreen>
+    private val exportImageButton: ExportImageButton
     private val selectionStage: SelectionStage
     
     private enum class ExportFileType(val extension: String) {
@@ -153,6 +156,8 @@ class ExportRemixScreen(main: RHRE3Application)
 
                 this.visible = false
                 selectionStage.visible = false
+                copyGamesButton.visible = false
+                exportImageButton.visible = false
             }
             this.visible = false
             
@@ -176,6 +181,50 @@ class ExportRemixScreen(main: RHRE3Application)
             this.location.set(screenX = 1f - this.location.screenWidth)
         }
         stage.bottomStage.elements += folderButton
+        copyGamesButton = object: Button<ExportRemixScreen>(palette, stage.bottomStage, stage.bottomStage){
+            val strings: List<String> = listOf("Copy\ngames", "[CYAN]Copied![]", "No\ngames...")
+            override fun onLeftClick(xPercent: Float, yPercent: Float) {
+                super.onLeftClick(xPercent, yPercent)
+                val games = editor.getGamesUsedInRemix()
+
+                val label = this.labels.first() as TextLabel
+                if (games.isEmpty()) {
+                    label.text = strings[2]
+                } else {
+                    label.text = strings[1]
+                    Gdx.app.clipboard.contents = games
+                }
+            }
+            override var tooltipText: String?
+                set(_) {}
+                get() {
+                    val label = this.labels.first() as TextLabel
+                    return when (label.text) {
+                        strings[1] -> "Copied successfully to clipboard!"
+                        strings[2] -> "No games in remix"
+                        else -> "Click to copy games used to clipboard"
+                    }
+                }
+        }.apply {
+            this.addLabel(
+                object : TextLabel<ExportRemixScreen>(palette, this, this.stage) {
+                }.apply {
+                    this.setText(
+                        "Copy\ngames",
+                        Align.center, false, false
+                    )
+                    this.background = false
+                })
+            this.location.set(this@ExportRemixScreen.stage.backButton.location)
+            this.location.set(screenX = 1f - this.location.screenWidth)
+        }
+        stage.bottomStage.elements += copyGamesButton
+
+        exportImageButton = ExportImageButton(editor, palette, stage.bottomStage, stage.bottomStage).apply {
+            this.location.set(this@ExportRemixScreen.stage.backButton.location)
+            this.location.set(screenX = 1f - (this.location.screenWidth*2+0.0125f))
+        }
+        stage.bottomStage.elements += exportImageButton
         
         stage.updatePositions()
         updateLabels(null)
@@ -531,6 +580,8 @@ class ExportRemixScreen(main: RHRE3Application)
         hasEndRemix = remix.duration < Float.POSITIVE_INFINITY
         readyButton.visible = false
         folderButton.visible = false
+        copyGamesButton.visible = false
+        exportImageButton.visible = false
         folderFile = null
         selectionStage.visible = false
         if (!hasEndRemix) {
@@ -539,6 +590,8 @@ class ExportRemixScreen(main: RHRE3Application)
             if (throwable == null) {
                 label.text = Localization["screen.export.prepare"]
                 readyButton.visible = true
+                copyGamesButton.visible = true
+                exportImageButton.visible = true
                 selectionStage.visible = true
             } else {
                 label.text = Localization["screen.export.failed", throwable::class.java.canonicalName]

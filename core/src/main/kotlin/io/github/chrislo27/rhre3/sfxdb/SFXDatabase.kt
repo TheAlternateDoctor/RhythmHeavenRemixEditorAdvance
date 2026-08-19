@@ -609,6 +609,10 @@ object SFXDatabase : Disposable {
                                             "Long Press ${PlayalongChars.FILLED_A}", true,
                                             PlayalongInput.BUTTON_A, PlayalongMethod.LONG_PRESS,
                                             pickerName = PickerName("Long Press ${PlayalongChars.FILLED_A}", "[LIGHT_GRAY](ex: Glee Club transitions)[]"))
+            playalongObjs += PlayalongModel(playalongGame, "${playalongGame.id}_longPress_Dpad_left", listOf(),
+                                            "Long Press ${PlayalongChars.FILLED_DPAD_L}", true,
+                                            PlayalongInput.BUTTON_DPAD_LEFT, PlayalongMethod.LONG_PRESS,
+                                            pickerName = PickerName("Long Press ${PlayalongChars.FILLED_DPAD_L}", "[LIGHT_GRAY](ex: Sweeper Stars Spin)[]"))
 
             // D-pad
             playalongObjs += PlayalongModel(playalongGame, "${playalongGame.id}_press_Dpad_right", listOf(),
@@ -671,6 +675,18 @@ object SFXDatabase : Disposable {
                                             "Release and Hold ${PlayalongChars.FILLED_DPAD}", true,
                                             PlayalongInput.BUTTON_DPAD, PlayalongMethod.RELEASE_AND_HOLD,
                                             pickerName = PickerName("Release and Hold ${PlayalongChars.FILLED_DPAD}", "[LIGHT_GRAY](not present in-game)[]"))
+            playalongObjs += PlayalongModel(playalongGame, "${playalongGame.id}_longPress_Dpad_right", listOf(),
+                                            "Long Press ${PlayalongChars.FILLED_DPAD_R}", true,
+                                            PlayalongInput.BUTTON_DPAD_RIGHT, PlayalongMethod.LONG_PRESS,
+                                            pickerName = PickerName("Long Press ${PlayalongChars.FILLED_DPAD_R}", "[LIGHT_GRAY](not present in-game)[]"))
+            playalongObjs += PlayalongModel(playalongGame, "${playalongGame.id}_longPress_Dpad_up", listOf(),
+                                            "Long Press ${PlayalongChars.FILLED_DPAD_U}", true,
+                                            PlayalongInput.BUTTON_DPAD_UP, PlayalongMethod.LONG_PRESS,
+                                            pickerName = PickerName("Long Press ${PlayalongChars.FILLED_DPAD_U}", "[LIGHT_GRAY](not present in-game)[]"))
+            playalongObjs += PlayalongModel(playalongGame, "${playalongGame.id}_longPress_Dpad_down", listOf(),
+                                            "Long Press ${PlayalongChars.FILLED_DPAD_D}", true,
+                                            PlayalongInput.BUTTON_DPAD_DOWN, PlayalongMethod.LONG_PRESS,
+                                            pickerName = PickerName("Long Press ${PlayalongChars.FILLED_DPAD_D}", "[LIGHT_GRAY](not present in-game)[]"))
     
             addGameAndObjects(playalongGame)
             this.playalongGame = playalongGame

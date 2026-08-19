@@ -13,7 +13,7 @@ import io.github.chrislo27.rhre3.PreferenceKeys
 import io.github.chrislo27.rhre3.RHRE3
 import io.github.chrislo27.rhre3.editor.Editor
 import io.github.chrislo27.rhre3.entity.model.ModelEntity
-import io.github.chrislo27.rhre3.screen.EditorScreen
+import io.github.chrislo27.rhre3.screen.ExportRemixScreen
 import io.github.chrislo27.rhre3.util.*
 import io.github.chrislo27.toolboks.Toolboks
 import io.github.chrislo27.toolboks.ui.*
@@ -23,21 +23,21 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 
-class ExportImageButton(val editor: Editor, palette: UIPalette, parent: UIElement<EditorScreen>,
-                        stage: Stage<EditorScreen>)
-    : Button<EditorScreen>(palette, parent, stage) {
+class ExportImageButton(val editor: Editor, palette: UIPalette, parent: UIElement<ExportRemixScreen>,
+                        stage: Stage<ExportRemixScreen>)
+    : Button<ExportRemixScreen>(palette, parent, stage) {
 
     init {
         addLabel(TextLabel(palette, this, this.stage).apply {
             this.text = "Export\nImage"
             this.textWrapping = false
             this.isLocalizationKey = false
-            this.fontScaleMultiplier = 0.35f
+//            this.fontScaleMultiplier = 0.35f
         })
         this.visible = false
     }
 
-    override fun render(screen: EditorScreen, batch: SpriteBatch, shapeRenderer: ShapeRenderer) {
+    override fun render(screen: ExportRemixScreen, batch: SpriteBatch, shapeRenderer: ShapeRenderer) {
         this.enabled = editor.remix.duration.isFinite()
         super.render(screen, batch, shapeRenderer)
     }
