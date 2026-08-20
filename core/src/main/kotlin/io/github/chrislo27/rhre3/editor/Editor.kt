@@ -327,6 +327,9 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         if(main.preferences.getBoolean(PreferenceKeys.SETTINGS_CHORUS_KIDS)){
             views.add(ViewType.GLEE_CLUB)
         }
+        if(main.preferences.getBoolean(PreferenceKeys.SETTINGS_GAME_BOUNDARIES)){
+            views.add(ViewType.GAME_BOUNDARIES)
+        }
         //volume
         val volume: Float = main.preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, 1f)
         BeadsSoundSystem.audioContext.out.gain = (exp(6.908*volume)/1000).toFloat()
@@ -458,7 +461,7 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         if (updateDelta) {
             val transitionTime = Gdx.graphics.deltaTime / 0.15f
             val cameraYNormal = calculateNormalCameraY()
-            val cameraZoomNormal = (if (isGameBoundariesInViews) 1.5f else 1f) + (remix.trackCount - MIN_TRACK_COUNT) / 10f
+            val cameraZoomNormal = 1 + (remix.trackCount - MIN_TRACK_COUNT) / 10f
             val cameraYPlayalong = calculatePlayalongCameraY()
             val cameraZoomPlayalong = if (monsterGoal) remix.playalong.getMonsterGoalCameraZoom() else 1f
             val isPlayalong = stage.playalongStage.visible
@@ -632,11 +635,6 @@ class Editor(val main: RHRE3Application, stageCamera: OrthographicCamera, attach
         // waveform
         if (remix.playState == PLAYING && ViewType.WAVEFORM in views && otherUI) {
             this.renderWaveform(batch, oldCameraX, oldCameraY, adjustedCameraX, adjustedCameraY)
-        }
-
-        // game boundaries view (dividers)
-        if (isGameBoundariesInViews) {
-            this.renderGameBoundaryDividers(batch, beatRange, font)
         }
 
         this.renderTopTrackers(batch, beatRange, trackYOffset)
