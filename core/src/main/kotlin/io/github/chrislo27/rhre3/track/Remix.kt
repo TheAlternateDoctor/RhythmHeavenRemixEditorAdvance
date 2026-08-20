@@ -193,7 +193,14 @@ open class Remix(val main: RHRE3Application)
             }
 
             remix.tempos.defaultTempo = tree["defaultTempo"]?.floatValue() ?: determineDefaultTempo()
-
+            // Makes the first tempo immutable, if there is none
+            var hasImmutable = false
+            for(tempoChange in remix.tempos.secondsMap.values){
+                if(tempoChange.immutable){
+                    hasImmutable = true
+                }
+            }
+            if(!hasImmutable){remix.tempos.secondsMap.values.first().immutable = true}
 
             // entities
             val entitiesArray = tree["entities"] as ArrayNode
