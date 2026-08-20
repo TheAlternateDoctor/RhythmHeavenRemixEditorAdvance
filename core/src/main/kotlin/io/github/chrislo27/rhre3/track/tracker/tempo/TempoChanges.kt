@@ -25,6 +25,7 @@ class TempoChanges(var defaultTempo: Float = 120f, val defaultSwing: Swing = Swi
                     .put("width", it.width)
                     .put("swingRatio", it.swing.ratio)
                     .put("swingDivision", it.swing.division)
+                    .put("isImmutable", it.immutable)
         }
 
         return node
@@ -33,13 +34,14 @@ class TempoChanges(var defaultTempo: Float = 120f, val defaultSwing: Swing = Swi
     override fun fromTree(node: ObjectNode) {
         clear()
         (node["trackers"] as ArrayNode).filterIsInstance<ObjectNode>().forEach {
+            val isImmutable: Boolean = it["isImmutable"]?.asBoolean(false) ?: false
             val swingRatio: Int = it["swingRatio"]?.asInt(0) ?: 0
             val swingDivision: Float = it["swingDivision"]?.asDouble(0.0)?.toFloat() ?: 0f
             val swing: Swing = if (swingRatio !in Swing.ABS_MIN_SWING..Swing.MAX_SWING || swingDivision <= 0f) defaultSwing else Swing(swingRatio, swingDivision)
             add(TempoChange(this,
                             it["beat"].asDouble().toFloat(),
                             it["bpm"].asDouble(defaultTempo.toDouble()).toFloat(),
-                            swing, it["width"]?.floatValue()?.coerceAtLeast(0f) ?: 0f),
+                            swing, it["width"]?.floatValue()?.coerceAtLeast(0f) ?: 0f, isImmutable),
                 shouldUpdate = false)
         }
         update()
