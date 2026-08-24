@@ -24,7 +24,7 @@ class VolumeButton(val editor: Editor, palette: UIPalette,
     init {
         addLabel(ImageLabel(palette, this, this.stage).apply {
             this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_sfx_volume"))
+            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_volume"))
         })
     }
 
