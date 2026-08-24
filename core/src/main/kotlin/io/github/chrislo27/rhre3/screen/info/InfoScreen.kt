@@ -115,7 +115,7 @@ class InfoScreen(main: RHRE3Application)
         val palette = stage.palette
 
         stage.titleIcon.apply {
-            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_info"))
+            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_small_gear"))
         }
         stage.titleLabel.apply {
             this.text = "editor.info"

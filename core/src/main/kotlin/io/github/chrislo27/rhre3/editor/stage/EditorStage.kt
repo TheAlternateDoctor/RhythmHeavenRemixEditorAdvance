@@ -82,7 +82,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
     val variantScrollButtons: List<Button<EditorScreen>>
     val datamodelScrollButtons: List<Button<EditorScreen>>
 
-    val selectorRegion: TextureRegion by lazy { TextureRegion(AssetRegistry.get<Texture>("ui_selector_fever")) }
+    val selectorRegion: TextureRegion by lazy { TextureRegion(AssetRegistry.get<Texture>("ui_selector_rainbow")) }
     val favouriteTagRegion by lazy { TextureRegion(AssetRegistry.get<Texture>("ui_selector_favourite")) }
     val selectorRegionSeries: TextureRegion by lazy { TextureRegion(AssetRegistry.get<Texture>("ui_selector")) }
     lateinit var searchBar: SearchBar<EditorScreen>
@@ -1354,7 +1354,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     IOButton(editor, "newRemix", "screen.new.title", palette, buttonBarStage, buttonBarStage).apply {
                         this.location.set(screenWidth = size)
                         this.addLabel(ImageLabel(palette, this, this.stage).apply {
-                            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_new_button"))
+                            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_new"))
                         })
                     }
             buttonBarStage.elements +=
@@ -1370,7 +1370,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                         this.location.set(screenWidth = size,
                                           screenX = size * 2 + padding * 2)
                         this.addLabel(ImageLabel(palette, this, this.stage).apply {
-                            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_save_button"))
+                            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_save"))
                         })
                     }
             buttonBarStage.elements +=

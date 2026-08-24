@@ -105,7 +105,7 @@ class ExportRemixScreen(main: RHRE3Application)
     }
     
     init {
-        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_export_big"))
+        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_export"))
         stage.titleLabel.text = "screen.export.title"
         stage.backButton.visible = true
         stage.onBackButtonClick = {

@@ -58,7 +58,7 @@ class AdvancedOptionsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Applic
         val palette = main.uiPalette
         stage = GenericStage(main.uiPalette, null, main.defaultCamera)
 
-        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_adv_opts"))
+        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_small_gear"))
         stage.titleLabel.isLocalizationKey = false
         stage.titleLabel.text = "Advanced Options"
         stage.backButton.visible = true

@@ -45,7 +45,7 @@ class SaveRemixScreen(main: RHRE3Application)
     private val mainLabel: TextLabel<SaveRemixScreen>
 
     init {
-        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_saveremix"))
+        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_save"))
         stage.titleLabel.text = "screen.save.title"
         stage.backButton.visible = true
         stage.onBackButtonClick = {

@@ -42,7 +42,7 @@ class MusicSelectScreen(main: RHRE3Application)
     private val moveMusicStartButton: Button<MusicSelectScreen>
 
     init {
-        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_songchoose"))
+        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_music_button"))
         stage.titleLabel.text = "screen.music.title"
         stage.backButton.visible = true
         stage.onBackButtonClick = {

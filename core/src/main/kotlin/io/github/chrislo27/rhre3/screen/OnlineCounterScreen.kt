@@ -34,7 +34,7 @@ class OnlineCounterScreen(main: RHRE3Application, title: String) : ToolboksScree
         stage.titleLabel.text = title
         stage.titleLabel.isLocalizationKey = false
         stage.titleIcon.apply {
-            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_info"))
+            this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_history"))
         }
         stage.backButton.visible = true
         stage.onBackButtonClick = {

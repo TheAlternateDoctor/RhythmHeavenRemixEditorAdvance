@@ -36,7 +36,7 @@ class NewRemixScreen(main: RHRE3Application)
 
     init {
         stage as GenericStage
-        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_newremix"))
+        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_new"))
         stage.titleLabel.text = "screen.new.title"
         stage.backButton.visible = true
         stage.onBackButtonClick = {

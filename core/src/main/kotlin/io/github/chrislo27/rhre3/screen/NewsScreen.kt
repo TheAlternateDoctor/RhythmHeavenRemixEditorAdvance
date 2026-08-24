@@ -103,7 +103,7 @@ class NewsScreen(main: RHRE3Application) : ToolboksScreen<RHRE3Application, News
 
     init {
         val palette = main.uiPalette
-        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_news_big"))
+        stage.titleIcon.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_news"))
         stage.titleLabel.text = "screen.news.title"
         stage.backButton.visible = true
         stage.onBackButtonClick = {
