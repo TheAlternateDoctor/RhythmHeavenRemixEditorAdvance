@@ -1,0 +1,136 @@
+package io.github.chrislo27.rhrefresh.editor.rendering
+
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.utils.Align
+import io.github.chrislo27.rhrefresh.RHREfreshApplication
+import io.github.chrislo27.rhrefresh.editor.Editor
+import io.github.chrislo27.rhrefresh.playalong.Playalong
+import io.github.chrislo27.rhrefresh.playalong.PlayalongChars
+import io.github.chrislo27.rhrefresh.theme.Theme
+import io.github.chrislo27.rhrefresh.util.scaleFont
+import io.github.chrislo27.rhrefresh.util.unscaleFont
+import io.github.chrislo27.toolboks.registry.AssetRegistry
+import io.github.chrislo27.toolboks.util.gdxutils.fillRect
+import io.github.chrislo27.toolboks.util.gdxutils.getTextHeight
+import io.github.chrislo27.toolboks.util.gdxutils.getTextWidth
+import io.github.chrislo27.toolboks.util.gdxutils.scaleMul
+import kotlin.math.roundToInt
+
+fun Editor.renderPlayalong(batch: SpriteBatch, beatRange: IntRange, alpha: Float) {
+    remix.playalong.renderPlayalong(main, camera, theme, batch, beatRange, alpha)
+}
+
+fun Playalong.renderPlayalong(main: RHREfreshApplication, camera: OrthographicCamera, theme: Theme,
+                              batch: SpriteBatch, beatRange: IntRange, alpha: Float) {
+    if (alpha <= 0f) return
+    val largeFont = main.defaultBorderedFontLarge
+    largeFont.scaleFont(camera)
+    val playalong: Playalong = this
+
+    val recommendedHeight = largeFont.getTextHeight(PlayalongChars.FILLED_A)
+    val recommendedWidth = largeFont.getTextWidth(PlayalongChars.FILLED_A)
+    val blockHeight = recommendedHeight * 1.5f
+    val blockWidth = recommendedWidth * 1.1f
+    val baseY = camera.position.y + 1.5f
+    val skillStarInputPair = playalong.skillStarInput
+    val skillStarInput = skillStarInputPair?.first
+    for ((beatAt, list) in playalong.inputActionsByBeat) {
+        val listSize = list.size
+        if (skillStarInput != null && skillStarInput.beat == beatAt) {
+            val bottomY = baseY + (blockHeight * listSize) / 2 - (-1 + 0.5f) * blockHeight
+            largeFont.setColor(1f, 1f, 0f, 1f * alpha)
+            val star = "★"
+            val width = largeFont.getTextWidth(star)
+            val height = largeFont.getTextHeight(star)
+            largeFont.draw(batch, star, skillStarInput.beat + (if (!skillStarInputPair.second) skillStarInput.duration else 0f) + width * 0.02f, bottomY + height / 2, 0f, Align.center, false)
+            largeFont.setColor(1f, 1f, 1f, 1f)
+        }
+        list.forEachIndexed { index, inputAction ->
+            if (inputAction.beat.roundToInt() > beatRange.last || (inputAction.beat + inputAction.duration).roundToInt() < beatRange.first) return@forEachIndexed
+            largeFont.setColor(1f, 1f, 1f, 1f * alpha)
+
+            val bottomY = baseY + (blockHeight * listSize) / 2 - (index + 0.5f) * blockHeight
+
+            // Backing line
+            if (!inputAction.isInstantaneous) {
+                batch.setColor(theme.trackLine.r, theme.trackLine.g, theme.trackLine.b, theme.trackLine.a * alpha)
+                batch.fillRect(inputAction.beat, bottomY - 0.5f, inputAction.duration, 1f)
+            }
+
+            val results = playalong.inputted[inputAction]
+            val inProgress = playalong.inputsInProgress[inputAction]
+            if (inProgress != null) largeFont.setColor(0.2f, 0.57f, 1f, 1f * alpha)
+            if (results != null && results.results.isNotEmpty()) {
+                if (!results.missed) {
+                    largeFont.setColor(0.2f, 1f, 0.2f, 1f * alpha)
+                    batch.setColor(0.2f, 1f, 0.2f, 1f * alpha)
+                } else {
+                    largeFont.setColor(1f, 0.15f, 0.15f, 1f * alpha)
+                    batch.setColor(1f, 0.15f, 0.15f, 1f * alpha)
+                }
+            } else {
+//                if (inputAction.method == PlayalongMethod.RELEASE_AND_HOLD) {
+//                    batch.setColor(0.75f, 0.35f, 1f, 1f * alpha)
+//                    largeFont.setColor(0.75f, 0.35f, 1f, 1f * alpha)
+//                }
+            }
+
+            // For non-instantaneous inputs, draw a long line (progress)
+            if (!inputAction.isInstantaneous) {
+                val defWidth = inputAction.duration
+                val width = if (inProgress != null) {
+                    batch.setColor(0.2f, 0.57f, 1f, 1f * alpha)
+                    largeFont.setColor(0.2f, 0.57f, 1f, 1f * alpha)
+                    remix.tempos.secondsToBeats(remix.tempos.beatsToSeconds((remix.beat - inputAction.beat)) - (if (inputAction.input.isTouchScreen) playalong.calibratedMouseOffset else playalong.calibratedKeyOffset))
+                } else if (results != null) {
+                    (defWidth + (remix.tempos.secondsToBeats(remix.tempos.beatsToSeconds(inputAction.beat + inputAction.duration) + results.results.last().offset) - (inputAction.beat + inputAction.duration)))
+                } else 0f
+                batch.fillRect(inputAction.beat, bottomY - 0.5f, width.coerceAtLeast(0f), 1f)
+            }
+
+            val x = inputAction.beat
+            val y = bottomY
+            val boxWidth = blockWidth
+            val boxHeight = blockHeight
+            val lastBatchColor = batch.packedColor
+            // Backing box
+            batch.setColor(0f, 0f, 0f, 0.4f * alpha)
+            batch.fillRect(x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight)
+            batch.setColor(1f, 1f, 1f, 0.75f * alpha)
+            val thinWidth = boxWidth * 0.05f
+            batch.fillRect(x - thinWidth / 2, y - boxHeight / 2, thinWidth, boxHeight)
+            batch.setColor(1f, 1f, 1f, 1f * alpha)
+
+            // Render text or texture
+            val trackDisplayText = if (inputAction.method.isRelease) inputAction.input.releaseTrackDisplayText else inputAction.input.trackDisplayText
+            val isTexID = if (inputAction.method.isRelease) inputAction.input.releaseTrackDisplayIsTexID else inputAction.input.trackDisplayIsTexID
+            if (isTexID) {
+                batch.packedColor = lastBatchColor
+                batch.draw(AssetRegistry.get<Texture>(trackDisplayText), x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight)
+                batch.setColor(1f, 1f, 1f, 1f)
+            } else {
+                val estHeight = largeFont.getTextHeight(trackDisplayText)
+                val scaleY = if (estHeight > recommendedHeight) {
+                    recommendedHeight / estHeight
+                } else 1f
+                largeFont.scaleMul(scaleY)
+                val estWidth = largeFont.getTextWidth(trackDisplayText)
+                val scaleX = if (estWidth > recommendedWidth) {
+                    recommendedWidth / estWidth
+                } else 1f
+                largeFont.scaleMul(scaleX)
+//                val width = largeFont.getTextWidth(trackDisplayText)
+                val height = largeFont.getTextHeight(trackDisplayText)
+                largeFont.draw(batch, trackDisplayText, x, y + height / 2, 0f, Align.center, false)
+                largeFont.setColor(1f, 1f, 1f, 1f)
+                largeFont.scaleMul(1f / scaleX)
+                largeFont.scaleMul(1f / scaleY)
+            }
+        }
+    }
+
+    batch.setColor(1f, 1f, 1f, 1f)
+    largeFont.unscaleFont()
+}

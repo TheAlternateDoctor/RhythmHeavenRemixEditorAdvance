@@ -5,6 +5,9 @@
 *.ear
 hs_err_pid*
 
+## Java EXE setup
+output/
+
 ## Robovm
 robovm-build/
 
@@ -58,6 +61,9 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
+
+## VSCode
+.vscode/
 
 ## Gradle
 

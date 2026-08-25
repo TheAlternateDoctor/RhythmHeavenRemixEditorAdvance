@@ -1,0 +1,689 @@
+package io.github.chrislo27.rhrefresh
+
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.Preferences
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
+import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Colors
+import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.utils.Align
+import io.github.chrislo27.rhrefresh.analytics.AnalyticsHandler
+import io.github.chrislo27.rhrefresh.init.DefaultAssetLoader
+import io.github.chrislo27.rhrefresh.midi.MidiHandler
+import io.github.chrislo27.rhrefresh.modding.ModdingGame
+import io.github.chrislo27.rhrefresh.modding.ModdingUtils
+import io.github.chrislo27.rhrefresh.news.ThumbnailFetcher
+import io.github.chrislo27.rhrefresh.patternstorage.PatternStorage
+import io.github.chrislo27.rhrefresh.playalong.Playalong
+import io.github.chrislo27.rhrefresh.screen.*
+import io.github.chrislo27.rhrefresh.screen.info.InfoScreen
+import io.github.chrislo27.rhrefresh.sfxdb.GameMetadata
+import io.github.chrislo27.rhrefresh.sfxdb.SFXDatabase
+import io.github.chrislo27.rhrefresh.soundsystem.BeadsSoundSystem
+import io.github.chrislo27.rhrefresh.soundsystem.SoundCache
+import io.github.chrislo27.rhrefresh.soundsystem.SoundStretch
+import io.github.chrislo27.rhrefresh.stage.GenericStage
+import io.github.chrislo27.rhrefresh.stage.LoadingIcon
+import io.github.chrislo27.rhrefresh.stage.bg.Background
+import io.github.chrislo27.rhrefresh.theme.LoadedThemes
+import io.github.chrislo27.rhrefresh.theme.Themes
+import io.github.chrislo27.rhrefresh.track.Remix
+import io.github.chrislo27.rhrefresh.util.JsonHandler
+import io.github.chrislo27.rhrefresh.util.ReleaseObject
+import io.github.chrislo27.rhrefresh.util.Semitones
+import io.github.chrislo27.toolboks.ResizeAction
+import io.github.chrislo27.toolboks.Toolboks
+import io.github.chrislo27.toolboks.ToolboksGame
+import io.github.chrislo27.toolboks.ToolboksScreen
+import io.github.chrislo27.toolboks.font.FreeTypeFont
+import io.github.chrislo27.toolboks.i18n.Localization
+import io.github.chrislo27.toolboks.logging.Logger
+import io.github.chrislo27.toolboks.registry.AssetRegistry
+import io.github.chrislo27.toolboks.registry.ScreenRegistry
+import io.github.chrislo27.toolboks.transition.TransitionScreen
+import io.github.chrislo27.toolboks.ui.UIPalette
+import io.github.chrislo27.toolboks.util.CloseListener
+import io.github.chrislo27.toolboks.util.MathHelper
+import io.github.chrislo27.toolboks.util.gdxutils.*
+import io.github.chrislo27.toolboks.version.Version
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.asynchttpclient.AsyncHttpClient
+import org.asynchttpclient.DefaultAsyncHttpClientConfig
+import org.asynchttpclient.Dsl.asyncHttpClient
+import org.lwjgl.glfw.GLFW
+import java.io.File
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.util.*
+import javax.sound.sampled.Mixer
+import kotlin.concurrent.thread
+import kotlin.system.measureNanoTime
+
+
+class RHREfreshApplication(logger: Logger, logToFile: File?)
+    : ToolboksGame(logger, logToFile, RHREfresh.VERSION, RHREfresh.DEFAULT_SIZE, ResizeAction.ANY_SIZE_RELOAD, RHREfresh.MINIMUM_SIZE), CloseListener {
+    
+    companion object {
+        lateinit var instance: RHREfreshApplication
+            private set
+        
+        var disableCloseWarning: Boolean = false
+        val httpClient: AsyncHttpClient = asyncHttpClient(DefaultAsyncHttpClientConfig.Builder()
+                                                                  .setThreadFactory {
+                                                                      Thread(it).apply {
+                                                                          isDaemon = true
+                                                                      }
+                                                                  }
+                                                                  .setFollowRedirect(true)
+                                                                  .setCompressionEnforced(true))
+        
+        private val TMP_MATRIX = Matrix4()
+        private const val RAINBOW_STR = "RAINBOW"
+        
+        init {
+            Colors.put("X", Color.CLEAR)
+            Colors.put("PICOSONG", Color.valueOf("26AB57"))
+        }
+    }
+
+    override var targetFramerate: Int
+        get() = RHREfresh.targetFramerate
+        set(value) {
+            RHREfresh.targetFramerate = value
+        }
+    val defaultFontLargeKey = "default_font_large"
+    val defaultFontMediumKey = "default_font_medium"
+    val defaultBorderedFontLargeKey = "default_bordered_font_large"
+    val timeSignatureFontKey = "time_signature"
+    
+    val defaultFontFTF: FreeTypeFont
+        get() = fonts[defaultFontKey]
+    val defaultBorderedFontFTF: FreeTypeFont
+        get() = fonts[defaultBorderedFontKey]
+    val defaultFontLargeFTF: FreeTypeFont
+        get() = fonts[defaultFontLargeKey]
+    val defaultFontMediumFTF: FreeTypeFont
+        get() = fonts[defaultFontMediumKey]
+    val defaultBorderedFontLargeFTF: FreeTypeFont
+        get() = fonts[defaultBorderedFontLargeKey]
+    val timeSignatureFontFTF: FreeTypeFont
+        get() = fonts[timeSignatureFontKey]
+    
+    val defaultFontLarge: BitmapFont
+        get() = defaultFontLargeFTF.font!!
+    val defaultFontMedium: BitmapFont
+        get() = defaultFontMediumFTF.font!!
+    val defaultBorderedFontLarge: BitmapFont
+        get() = defaultBorderedFontLargeFTF.font!!
+    val timeSignatureFont: BitmapFont
+        get() = timeSignatureFontFTF.font!!
+    
+    private val fontFileHandle: FileHandle by lazy { Gdx.files.internal("fonts/rodin_lat_cy_ja_ko_spec.ttf") }
+    private val fontAfterLoadFunction: FreeTypeFont.() -> Unit = {
+        this.font!!.apply {
+            setFixedWidthGlyphs("1234567890")
+            data.setLineHeight(lineHeight * 0.9f)
+            setUseIntegerPositions(true)
+            data.markupEnabled = true
+            data.missingGlyph = data.getGlyph('☒')
+        }
+    }
+    
+    val uiPalette: UIPalette by lazy {
+        UIPalette(defaultFontFTF, defaultFontLargeFTF, 1f,
+                  Color(1f, 1f, 1f, 1f),
+                  Color(0f, 0f, 0f, 0.75f),
+                  Color(0.25f, 0.25f, 0.25f, 0.75f),
+                  Color(0f, 0.5f, 0.5f, 0.75f))
+    }
+    
+    @Volatile
+    lateinit var preferences: Preferences
+        private set
+    
+    var versionTextWidth: Float = -1f
+        private set
+    
+    @Volatile
+    var githubVersion: Version = Version.RETRIEVING
+        private set
+    var secondsElapsed: Float = 0f
+        private set
+    @Volatile
+    var liveUsers: Int = -1
+        private set
+    
+    val settings: Settings = Settings(this)
+    private var lastWindowed: Pair<Int, Int> = RHREfresh.DEFAULT_SIZE.copy()
+    
+    private val rainbowColor: Color = Color(1f, 1f, 1f, 1f)
+    
+    lateinit var hueBar: Texture
+        private set
+
+    lateinit var volumeBar: Texture
+        private set
+    
+    override val programLaunchArguments: List<String>
+        get() = RHREfresh.launchArguments
+    
+    override fun getTitle(): String =
+            "${RHREfresh.TITLE} $versionString"
+    
+    override fun create() {
+        super.create()
+        Toolboks.LOGGER.info("${RHREfresh.TITLE} $versionString is starting...")
+        if (RHREfresh.portableMode) {
+            Toolboks.LOGGER.info("Running in portable mode")
+        }
+        val javaVersion = System.getProperty("java.version").trim()
+        Toolboks.LOGGER.info("Running on JRE $javaVersion")
+        
+        instance = this
+        
+        val windowHandle = (Gdx.graphics as Lwjgl3Graphics).window.windowHandle
+        GLFW.glfwSetWindowAspectRatio(windowHandle, 16, 9)
+        
+        // localization stuff
+        run {
+            Localization.loadBundlesFromLangFile()
+            if (RHREfresh.logMissingLocalizations) {
+                Localization.logMissingLocalizations()
+            }
+        }
+        
+        // font stuff
+        run {
+            fonts[defaultFontLargeKey] = createDefaultLargeFont()
+            fonts[defaultFontMediumKey] = createDefaultMediumFont()
+            fonts[defaultBorderedFontLargeKey] = createDefaultLargeBorderedFont()
+            fonts[timeSignatureFontKey] = FreeTypeFont(fontFileHandle, emulatedSize, createDefaultTTFParameter().apply {
+                size *= 6
+                characters = "0123456789-"
+                incremental = false
+            }).setAfterLoad {
+                this.font!!.apply {
+                    setFixedWidthGlyphs("0123456789")
+                }
+            }
+            fonts.loadUnloaded(defaultCamera.viewportWidth, defaultCamera.viewportHeight)
+            Toolboks.LOGGER.info("Loaded fonts (initial)")
+        }
+        
+        // Copy over SoundStretch executables
+        RHREfresh.SOUNDSTRETCH_FOLDER.mkdirs()
+        val currentOS = SoundStretch.currentOS
+        if (currentOS != SoundStretch.OS.UNSUPPORTED) {
+            Gdx.files.internal("soundstretch/${currentOS.executableName}").copyTo(RHREfresh.SOUNDSTRETCH_FOLDER)
+            RHREfresh.SOUNDSTRETCH_FOLDER.child(currentOS.executableName).file().apply {
+                setReadable(true)
+                setExecutable(true)
+            }
+            Toolboks.LOGGER.info("Copied SoundStretch executables successfully")
+        }
+        
+        // Generate hue bar
+        run {
+            val pixmap = Pixmap(360, 1, Pixmap.Format.RGBA8888)
+            val tmpColor = Color(1f, 1f, 1f, 1f)
+            for (i in 0 until 360) {
+                tmpColor.fromHsv(i.toFloat(), 1f, 1f)
+                pixmap.setColor(tmpColor)
+                pixmap.drawPixel(i, 0)
+            }
+            hueBar = Texture(pixmap).apply {
+                this.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+            }
+            Toolboks.LOGGER.info("Generated hue bar texture")
+        }
+        // Generate volume bar
+        run {
+            val pixmap = Pixmap(100, 100, Pixmap.Format.RGBA8888)
+            pixmap.setColor(Color(1f, 1f, 1f, 1f))
+            pixmap.fillTriangle(0, 100, 100, 100, 100, 0)
+            volumeBar = Texture(pixmap).apply {
+                this.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
+            }
+            Toolboks.LOGGER.info("Generated volume bar texture")
+        }
+        
+        // preferences
+        preferences = Gdx.app.getPreferences("RHREFRESH")
+        Toolboks.LOGGER.info("Loaded preferences")
+        
+        GlobalScope.launch {
+            Toolboks.LOGGER.info("Starting analytics")
+            val nano = measureNanoTime {
+                AnalyticsHandler.initAndIdentify(Gdx.app.getPreferences("RHRE3-analytics"))
+            }
+            Toolboks.LOGGER.info("Analytics started successfully in ${nano / 1000000.0} ms")
+        }
+        GameMetadata.setPreferencesInstance(preferences)
+        val lastVersion = Version.fromStringOrNull(preferences.getString(PreferenceKeys.LAST_VERSION, null) ?: "")
+        if (lastVersion != RHREfresh.VERSION) {
+            preferences.putInteger(PreferenceKeys.TIMES_SKIPPED_UPDATE, 0)
+        }
+        settings.load()
+        Toolboks.LOGGER.info("Loaded settings instance")
+        val backgroundPref = preferences.getString(PreferenceKeys.BACKGROUND, Background.defaultBackground.id)
+        GenericStage.backgroundImpl = Background.backgroundMap[backgroundPref] ?: Background.defaultBackground
+        Toolboks.LOGGER.info("Set background pref")
+        ModdingUtils.currentGame = ModdingGame.VALUES.find { it.id == preferences.getString(PreferenceKeys.ADVOPT_REF_RH_GAME, ModdingGame.DEFAULT_GAME.id) } ?: ModdingGame.DEFAULT_GAME
+        Toolboks.LOGGER.info("Set modding utils current game")
+        LoadingIcon.usePaddlerAnimation = preferences.getBoolean(PreferenceKeys.PADDLER_LOADING_ICON, false)
+        Toolboks.LOGGER.info("Set loading icon pref")
+        Semitones.pitchStyle = Semitones.PitchStyle.VALUES.find { it.name == preferences.getString(PreferenceKeys.ADVOPT_PITCH_STYLE, "") } ?: Semitones.pitchStyle
+        Toolboks.LOGGER.info("Loaded semitones pitch style from prefs")
+        val mixerName = preferences.getString(PreferenceKeys.SETTINGS_AUDIO_MIXER, "")
+        val mixer: Mixer? = BeadsSoundSystem.supportedMixers.firstOrNull { it.mixerInfo.name == mixerName }
+        BeadsSoundSystem.regenerateAudioContexts(mixer ?: BeadsSoundSystem.getDefaultMixer())
+        Toolboks.LOGGER.info("Loaded audio mixer from prefs: name=$mixerName, mixer found?=${mixer != null}")
+        Toolboks.LOGGER.info("Loaded audio volume from prefs")
+        Toolboks.LOGGER.info("Loaded persistent data from preferences")
+        
+        val discordRpcEnabled = preferences.getBoolean(PreferenceKeys.SETTINGS_DISCORD_RPC_ENABLED, true)
+        GlobalScope.launch {
+            Toolboks.LOGGER.info("Starting Discord RPC")
+            val nano = measureNanoTime {
+            }
+            Toolboks.LOGGER.info("Discord RPC started successfully in ${nano / 1000000.0} ms")
+        }
+        preferences.flush()
+        
+        // Asset registry
+        AssetRegistry.addAssetLoader(DefaultAssetLoader())
+        
+        // screens
+        run {
+            ScreenRegistry += "assetLoad" to AssetRegistryLoadingScreen(this)
+            
+            fun addOtherScreens() {
+                ScreenRegistry += "databaseUpdate" to GitUpdateScreen(this)
+                ScreenRegistry += "sfxdbLoad" to SFXDBLoadingScreen(this)
+                ScreenRegistry += "editor" to EditorScreen(this)
+                ScreenRegistry += "musicSelect" to MusicSelectScreen(this)
+                ScreenRegistry += "info" to InfoScreen(this)
+                ScreenRegistry += "newRemix" to NewRemixScreen(this)
+                ScreenRegistry += "saveRemix" to SaveRemixScreen(this)
+                ScreenRegistry += "openRemix" to OpenRemixScreen(this)
+                ScreenRegistry += "recoverRemix" to RecoverRemixScreen(this)
+                ScreenRegistry += "editorVersion" to EditorVersionScreen(this)
+                ScreenRegistry += "news" to NewsScreen(this)
+                ScreenRegistry += "advancedOptions" to AdvancedOptionsScreen(this)
+            }
+            
+            val nextScreenLambda: (() -> ToolboksScreen<*, *>?) = nextScreenLambda@{
+                defaultCamera.viewportWidth = RHREfresh.WIDTH.toFloat()
+                defaultCamera.viewportHeight = RHREfresh.HEIGHT.toFloat()
+                defaultCamera.update()
+    
+                // Slower json parsing happens here
+                Playalong.loadFromPrefs(preferences)
+                Toolboks.LOGGER.info("Loaded playalong prefs")
+                LoadedThemes.reloadThemes(preferences, true)
+                PatternStorage.load()
+                Toolboks.LOGGER.info("Loaded pattern storage")
+                
+                addOtherScreens()
+                loadWindowSettings()
+                dontShowResizeInfo = false
+                val nextScreen = ScreenRegistry[if (RHREfresh.skipGitScreen) "sfxdbLoad" else "databaseUpdate"]
+//                if (preferences.getString(PreferenceKeys.LAST_VERSION, null) == null) {
+//                    Gdx.net.openURI("https://rhre.readthedocs.io/en/latest/")
+//                }
+                return@nextScreenLambda nextScreen
+            }
+            setScreen(ScreenRegistry.getNonNullAsType<AssetRegistryLoadingScreen>("assetLoad")
+                              .setNextScreen(nextScreenLambda))
+            
+            RemixRecovery.addSelfToShutdownHooks()
+            Toolboks.LOGGER.info(
+                    "Can recover last remix: ${RemixRecovery.canBeRecovered()}; Should recover: ${RemixRecovery.shouldBeRecovered()}")
+        }
+        
+        thread(isDaemon = true, name = "Live User Count") {
+            Thread.sleep(2500L)
+            var failures = 0
+            fun failed() {
+                failures++
+                this.liveUsers = -1
+            }
+            do {
+                try {
+                    val req = httpClient.prepareGet("https://api.rhre.dev:10443/rhre3/live")
+                            .addHeader("User-Agent", "RHRE ${RHREfresh.VERSION}")
+                            .addHeader("X-Analytics-ID", AnalyticsHandler.getUUID())
+                            .execute().get()
+                    
+                    if (req.statusCode == 200) {
+                        val liveUsers = req.responseBody?.trim()?.toIntOrNull()
+                        if (liveUsers != null) {
+                            failures = 0
+                            if (!RHREfresh.noOnlineCounter)
+                                this.liveUsers = liveUsers.coerceAtLeast(0)
+                        } else {
+                            Toolboks.LOGGER.warn("Got no integer for return value (got ${req.responseBody})")
+                            failed()
+                        }
+                    } else {
+                        Toolboks.LOGGER.warn("Request status code is not 200, got ${req.statusCode}")
+                        failed()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    failed()
+                }
+                
+                Thread.sleep(60_000L * (failures + 1))
+            } while (!Thread.interrupted() && !RHREfresh.noOnlineCounter)
+            
+            if (RHREfresh.noOnlineCounter) {
+                this.liveUsers = 0
+                Toolboks.LOGGER.info("No online counter by request from launch args")
+            }
+        }
+        
+        GlobalScope.launch {
+            try {
+                fetchGithubVersion()
+                val v = githubVersion
+                if (!v.isUnknown) {
+                    if (v > RHREfresh.VERSION) {
+                        preferences.putInteger(PreferenceKeys.TIMES_SKIPPED_UPDATE,
+                                               preferences.getInteger(PreferenceKeys.TIMES_SKIPPED_UPDATE, 0) + 1)
+                    } else {
+                        preferences.putInteger(PreferenceKeys.TIMES_SKIPPED_UPDATE, 0)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    fun fetchGithubVersion() {
+        githubVersion = Version.RETRIEVING
+        val nano = System.nanoTime()
+        val obj = JsonHandler.fromJson<ReleaseObject>(httpClient.prepareGet(RHREfresh.RELEASE_API_URL).execute().get().responseBody)
+        
+        val ghVer = Version.fromStringOrNull(obj.tag_name!!) ?: Version.UNKNOWN
+        githubVersion = ghVer
+        Toolboks.LOGGER.info("Fetched editor version from GitHub in ${(System.nanoTime() - nano) / 1_000_000f} ms, is $githubVersion")
+    }
+    
+    override fun exceptionHandler(t: Throwable) {
+        val currentScreen = this.screen
+        AnalyticsHandler.track("Render Crash", mapOf(
+                "throwable" to t::class.java.canonicalName.take(1000),
+                "stackTrace" to StringWriter().apply {
+                    val pw = PrintWriter(this)
+                    t.printStackTrace(pw)
+                    pw.flush()
+                }.toString().take(1000),
+                "currentScreen" to (currentScreen?.javaClass?.canonicalName ?: "null").take(1000)
+                                                    ))
+        thread(start = true, isDaemon = true, name = "Crash Report Analytics Flusher") {
+            AnalyticsHandler.flush()
+        }
+        if (currentScreen !is CrashScreen) {
+            thread(start = true, isDaemon = true, name = "Crash Remix Recovery") {
+                RemixRecovery.saveRemixInRecovery()
+            }
+            setScreen(CrashScreen(this, t, currentScreen))
+        } else {
+            super.exceptionHandler(t)
+            Gdx.app.exit()
+        }
+    }
+    
+    override fun preRender() {
+        secondsElapsed += Gdx.graphics.deltaTime
+        rainbowColor.fromHsv(MathHelper.getSawtoothWave(2f) * 360f, 0.8f, 0.8f)
+        Colors.put(RAINBOW_STR, rainbowColor)
+        super.preRender()
+    }
+    
+    private var timeSinceResize: Float = 2f
+    private var dontShowResizeInfo = true
+    
+    override fun postRender() {
+        val screen = screen
+        
+        TMP_MATRIX.set(batch.projectionMatrix)
+        batch.projectionMatrix = defaultCamera.combined
+        batch.begin()
+        
+        if ((screen !is HidesVersionText || !screen.hidesVersionText) && screen !is TransitionScreen<*>) {
+            val font = defaultBorderedFont
+            font.data.setScale(0.5f)
+            
+            if (!githubVersion.isUnknown && githubVersion > RHREfresh.VERSION) {
+                font.color = Color.ORANGE
+            } else {
+                font.setColor(1f, 1f, 1f, 1f)
+            }
+            
+            val layout = font.draw(batch, RHREfresh.VERSION.toString(),
+                                   0f,
+                                   (font.capHeight) + (2f / RHREfresh.HEIGHT) * defaultCamera.viewportHeight,
+                                   defaultCamera.viewportWidth, Align.right, false)
+            versionTextWidth = layout.width
+            
+            font.setColor(1f, 1f, 1f, 1f)
+            font.data.setScale(1f)
+        }
+        
+        @Suppress("ConstantConditionIf")
+        if (RHREfresh.enableEarlyAccessMessage) {
+            val font = defaultBorderedFont
+            val height = 0.9f
+            val alpha = if (defaultCamera.getInputY() / defaultCamera.viewportHeight in (height - font.capHeight / defaultCamera.viewportHeight)..(height)) 0.6f else 1f
+            font.scaleMul(0.85f)
+            font.setColor(1f, 1f, 1f, alpha)
+            font.drawCompressed(batch, "Early-access version. Do not redistribute; do not publish video recordings. (Licensed to ${AnalyticsHandler.getUUID().takeUnless { it.isEmpty() }?.run { substring(24) }})",
+                                0f,
+                                height * defaultCamera.viewportHeight,
+                                defaultCamera.viewportWidth, Align.center)
+            font.setColor(1f, 1f, 1f, 1f)
+            
+            font.data.setScale(1f)
+        }
+        
+        if (timeSinceResize < 1.5f && !dontShowResizeInfo) {
+            val font = defaultBorderedFont
+            font.setColor(1f, 1f, 1f, 1f)
+            font.draw(batch, "${Gdx.graphics.width}x${Gdx.graphics.height}",
+                                   0f,
+                                   defaultCamera.viewportHeight * 0.5f + font.capHeight,
+                                   defaultCamera.viewportWidth, Align.center, false)
+        }
+        timeSinceResize += Gdx.graphics.deltaTime
+
+        batch.end()
+        batch.projectionMatrix = TMP_MATRIX
+        super.postRender()
+    }
+    
+    override fun dispose() {
+        super.dispose()
+        preferences.putString(PreferenceKeys.LAST_VERSION, RHREfresh.VERSION.toString())
+        preferences.putString(PreferenceKeys.MIDI_NOTE, preferences.getString(PreferenceKeys.MIDI_NOTE, Remix.DEFAULT_MIDI_NOTE))
+        preferences.putString(PreferenceKeys.PLAYALONG_CONTROLS, JsonHandler.toJson(Playalong.playalongControls))
+        preferences.putString(PreferenceKeys.PLAYALONG_CONTROLLER_MAPPINGS, JsonHandler.toJson(Playalong.playalongControllerMappings))
+        preferences.flush()
+        settings.persist()
+        try {
+            SFXDatabase.dispose()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        Themes.dispose()
+        ThumbnailFetcher.dispose()
+        persistWindowSettings()
+        RHREfresh.tmpMusic.emptyDirectory()
+        BeadsSoundSystem.dispose()
+        AnalyticsHandler.track("Close Program",
+                               mapOf("durationSeconds" to ((System.currentTimeMillis() - startTimeMillis) / 1000L)))
+        AnalyticsHandler.dispose()
+        MidiHandler.dispose()
+        SoundCache.unloadAll()
+        httpClient.close()
+    }
+    
+    override fun attemptClose(): Boolean {
+        val screenRequestedStop = (screen as? CloseListener)?.attemptClose() == false
+        return if (screenRequestedStop) {
+            false
+        } else {
+            // Close warning only if the editor screen has been entered at least once and if the preferences say so
+            if (!disableCloseWarning && EditorScreen.enteredEditor && preferences.getBoolean(PreferenceKeys.SETTINGS_CLOSE_WARNING, true) && this.screen !is CloseWarningScreen && this.screen !is CrashScreen && this.screen !is AutoUpdaterScreen) {
+                Gdx.app.postRunnable {
+                    setScreen(CloseWarningScreen(this, this.screen))
+                }
+                false
+            } else {
+                true
+            }
+        }
+    }
+    
+    fun persistWindowSettings() {
+        val isFullscreen = Gdx.graphics.isFullscreen
+        if (isFullscreen) {
+            preferences.putString(PreferenceKeys.WINDOW_STATE, "fs")
+        } else {
+//            preferences.putString(PreferenceKeys.WINDOW_STATE,
+//                                  "${(Gdx.graphics.width / Display.getPixelScaleFactor()).toInt()}x${(Gdx.graphics.height / Display.getPixelScaleFactor()).toInt()}")
+            // FIXME add pixel scale factor
+            preferences.putString(PreferenceKeys.WINDOW_STATE, "${Gdx.graphics.width}x${Gdx.graphics.height}")
+        }
+        
+        Toolboks.LOGGER.info("Persisting window settings as ${preferences.getString(PreferenceKeys.WINDOW_STATE)}")
+        
+        preferences.flush()
+    }
+    
+    fun loadWindowSettings() {
+        val str: String = preferences.getString(PreferenceKeys.WINDOW_STATE,
+                                                "${RHREfresh.WIDTH}x${RHREfresh.HEIGHT}").toLowerCase(Locale.ROOT)
+        if (str == "fs") {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+        } else {
+            val width: Int
+            val height: Int
+            if (!str.matches("\\d+x\\d+".toRegex())) {
+                width = RHREfresh.WIDTH
+                height = RHREfresh.HEIGHT
+            } else {
+                width = str.substringBefore('x').toIntOrNull()?.coerceAtLeast(160) ?: RHREfresh.WIDTH
+                height = str.substringAfter('x').toIntOrNull()?.coerceAtLeast(90) ?: RHREfresh.HEIGHT
+            }
+            
+            Gdx.graphics.setWindowedMode(width, height)
+        }
+    }
+    
+    fun attemptFullscreen() {
+        lastWindowed = Gdx.graphics.width to Gdx.graphics.height
+        Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
+    }
+    
+    fun attemptEndFullscreen() {
+        val last = lastWindowed
+        Gdx.graphics.setWindowedMode(last.first, last.second)
+    }
+    
+    fun attemptResetWindow() {
+        Gdx.graphics.setWindowedMode(RHREfresh.DEFAULT_SIZE.first, RHREfresh.DEFAULT_SIZE.second)
+    }
+    
+    override fun keyDown(keycode: Int): Boolean {
+        val res = super.keyDown(keycode)
+        if (!res) {
+            if (!Gdx.input.isControlDown() && !Gdx.input.isAltDown()) {
+                if (keycode == Input.Keys.F11) {
+                    if (!Gdx.input.isShiftDown()) {
+                        if (Gdx.graphics.isFullscreen) {
+                            attemptEndFullscreen()
+                        } else {
+                            attemptFullscreen()
+                        }
+                    } else {
+                        attemptResetWindow()
+                    }
+                    persistWindowSettings()
+                    return true
+                }
+            }
+        }
+        return res
+    }
+
+    override fun resize(width: Int, height: Int) {
+        super.resize(width, height)
+        if (!dontShowResizeInfo) timeSinceResize = 0f
+    }
+
+    private fun createDefaultTTFParameter(): FreeTypeFontGenerator.FreeTypeFontParameter {
+        return FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+            magFilter = Texture.TextureFilter.Linear
+            minFilter = Texture.TextureFilter.Linear
+            genMipMaps = false
+            incremental = true
+            size = 24
+            color = Color(1f, 1f, 1f, 1f)
+            borderColor = Color(0f, 0f, 0f, 1f)
+            characters = ""
+            hinting = FreeTypeFontGenerator.Hinting.AutoFull
+        }
+    }
+    
+    override fun createDefaultFont(): FreeTypeFont {
+        return FreeTypeFont(fontFileHandle, emulatedSize, createDefaultTTFParameter())
+                .setAfterLoad(fontAfterLoadFunction)
+    }
+    
+    override fun createDefaultBorderedFont(): FreeTypeFont {
+        return FreeTypeFont(fontFileHandle, emulatedSize, createDefaultTTFParameter()
+                .apply {
+                    borderWidth = 1.5f
+                })
+                .setAfterLoad(fontAfterLoadFunction)
+    }
+    
+    private fun createDefaultLargeFont(): FreeTypeFont {
+        return FreeTypeFont(fontFileHandle, emulatedSize, createDefaultTTFParameter()
+                .apply {
+                    size *= 4
+                    borderWidth *= 4
+                })
+                .setAfterLoad(fontAfterLoadFunction)
+    }
+    
+    private fun createDefaultMediumFont(): FreeTypeFont {
+        return FreeTypeFont(fontFileHandle, emulatedSize, createDefaultTTFParameter()
+                .apply {
+                    size *= 2
+                    borderWidth *= 2
+                })
+                .setAfterLoad(fontAfterLoadFunction)
+    }
+    
+    private fun createDefaultLargeBorderedFont(): FreeTypeFont {
+        return FreeTypeFont(fontFileHandle, emulatedSize, createDefaultTTFParameter()
+                .apply {
+                    borderWidth = 1.5f
+                    
+                    size *= 4
+                    borderWidth *= 4
+                })
+                .setAfterLoad(fontAfterLoadFunction)
+    }
+}

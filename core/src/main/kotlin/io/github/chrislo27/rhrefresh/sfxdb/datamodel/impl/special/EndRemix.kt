@@ -1,0 +1,19 @@
+package io.github.chrislo27.rhrefresh.sfxdb.datamodel.impl.special
+
+import io.github.chrislo27.rhrefresh.entity.model.special.EndRemixEntity
+import io.github.chrislo27.rhrefresh.sfxdb.Game
+import io.github.chrislo27.rhrefresh.sfxdb.datamodel.impl.CuePointer
+import io.github.chrislo27.rhrefresh.track.Remix
+
+
+class EndRemix(game: Game, id: String, deprecatedIDs: List<String>, name: String)
+    : SpecialDatamodel(game, id, deprecatedIDs, name, "", 0.125f) {
+
+    override fun createEntity(remix: Remix,
+                              cuePointer: CuePointer?): EndRemixEntity {
+        return EndRemixEntity(remix, this)
+    }
+
+    override fun dispose() {
+    }
+}

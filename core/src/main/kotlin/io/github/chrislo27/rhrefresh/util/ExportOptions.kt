@@ -1,0 +1,25 @@
+package io.github.chrislo27.rhrefresh.util
+
+
+data class ExportOptions(val bitrateKbps: Int, val sampleRate: Int, val madeWithComment: Boolean) {
+
+    companion object {
+        /**
+         * Standard output settings.
+         */
+        val DEFAULT = ExportOptions(320, 44100, true)
+        /**
+         * A lower bitrate for quick uploads.
+         */
+        val QUICKUPLOAD = ExportOptions(128, 44100, true)
+        /**
+         * Same as [DEFAULT] but with no comments.
+         */
+        val BLEND = DEFAULT.copy(madeWithComment = false)
+        /**
+         * A lower-quality lower-filesize option for the Challenge Train.
+         */
+        val CHALLENGE_TRAIN = ExportOptions(128, 44100, true)
+    }
+
+}

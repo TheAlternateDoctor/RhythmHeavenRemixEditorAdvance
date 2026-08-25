@@ -1,0 +1,54 @@
+package io.github.chrislo27.rhrefresh.editor.stage
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import io.github.chrislo27.rhrefresh.editor.Editor
+import io.github.chrislo27.rhrefresh.screen.EditorScreen
+import io.github.chrislo27.rhrefresh.track.PlayState
+import io.github.chrislo27.toolboks.i18n.Localization
+import io.github.chrislo27.toolboks.ui.Stage
+import io.github.chrislo27.toolboks.ui.TextField
+import io.github.chrislo27.toolboks.ui.UIElement
+import io.github.chrislo27.toolboks.ui.UIPalette
+import kotlin.math.roundToLong
+
+
+class JumpToField(val editor: Editor, palette: UIPalette, parent: UIElement<EditorScreen>,
+                  stage: Stage<EditorScreen>)
+    : TextField<EditorScreen>(palette, parent, stage) {
+
+    private var beat: Float = Float.MIN_VALUE
+
+    init {
+        canTypeText = { char ->
+            (char.isDigit() || char == '-') && text.length < if (text.startsWith("-")) 6 else 5
+        }
+        canPaste = false
+    }
+
+    override fun render(screen: EditorScreen, batch: SpriteBatch, shapeRenderer: ShapeRenderer) {
+        super.render(screen, batch, shapeRenderer)
+        if (!hasFocus) {
+            val oldBeat = beat.roundToLong()
+            beat = editor.camera.position.x
+
+            if (oldBeat != beat.roundToLong() || this.text.isEmpty()) {
+                this.text = "${beat.roundToLong()}"
+            }
+        }
+    }
+
+    override fun onTextChange(oldText: String) {
+        super.onTextChange(oldText)
+        if (!hasFocus || editor.remix.playState != PlayState.STOPPED)
+            return
+        val int = text.toIntOrNull() ?: return
+        editor.camera.position.x = int.toFloat()
+    }
+
+    override var tooltipText: String?
+        set(_) {}
+        get() {
+            return Localization["editor.jumpTo"]
+        }
+}

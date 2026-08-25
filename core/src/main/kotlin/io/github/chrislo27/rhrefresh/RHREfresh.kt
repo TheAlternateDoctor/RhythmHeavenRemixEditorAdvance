@@ -1,0 +1,97 @@
+package io.github.chrislo27.rhrefresh
+
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.files.FileHandle
+import io.github.chrislo27.rhrefresh.util.ExportOptions
+import io.github.chrislo27.toolboks.version.Version
+import java.time.LocalDate
+import java.time.Month
+import java.util.Locale
+
+
+object RHREfresh {
+
+    const val TITLE = "Rhythm Heaven Remix Editor Refresh"
+    val VERSION: Version = Version(4, 0, 0, "")
+    val EXPERIMENTAL: Boolean = VERSION.suffix.matches("DEVELOPMENT|SNAPSHOT(?:.)*|RC\\d+".toRegex())
+    val enableEarlyAccessMessage: Boolean = EXPERIMENTAL && VERSION.suffix != "DEVELOPMENT"
+    const val WIDTH = 1280
+    const val HEIGHT = 720
+    val DEFAULT_SIZE = WIDTH to HEIGHT
+    val MINIMUM_SIZE: Pair<Int, Int> = 640 to 360
+    val CURRENT_OS =
+        if(System.getProperty("os.name", "???")?.toLowerCase(Locale.ROOT)!!.contains("win")){
+            "Windows"
+        } else if(System.getProperty("os.name", "???")?.toLowerCase(Locale.ROOT)!!.contains("mac")){
+            "MacOS"
+        } else if(System.getProperty("os.name", "???")?.toLowerCase(Locale.ROOT)!!.startsWith("linux")){
+            "Linux"
+        } else {
+            "UNKNOWN"
+        }
+    val RHREFRESH_FOLDER: FileHandle by lazy {
+        (
+                if (portableMode) {
+                    Gdx.files.local(".rhrefresh/")
+                }else{
+                    if(CURRENT_OS.equals("Linux")){
+                        Gdx.files.external(".config/RHREfresh/")
+                    } else{
+                        Gdx.files.external(".rhrefresh/")
+                    }
+                }).apply(FileHandle::mkdirs)
+    }
+    val SOUNDSTRETCH_FOLDER: FileHandle by lazy { RHREFRESH_FOLDER.child("soundstretch/") }
+
+    val SUPPORTED_DECODING_SOUND_TYPES = listOf("ogg", "mp3", "wav")
+    val tmpMusic: FileHandle by lazy {
+        RHREFRESH_FOLDER.child("tmpMusic/").apply {
+            mkdirs()
+        }
+    }
+    const val REMIX_FILE_EXTENSION = "rhref"
+
+    const val GITHUB: String = "https://github.com/TheAlternateDoctor/RhythmHeavenRemixEditorRefresh"
+    const val GITHUB_RELEASES = "$GITHUB/releases"
+    const val GITHUB_SHORTLINK: String = "https://rhre.dev"
+    const val DATABASE_URL: String = "https://github.com/TheAlternateDoctor/RHRE-database.git"
+    const val DONATION_URL: String = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VA45DPLCC4958"
+    val DEV_DATABASE_BRANCH: String = "prototype"
+    val MASTER_DATABASE_BRANCH: String = "master"
+    val DATABASE_BRANCH: String = if (VERSION.suffix.startsWith("DEV")) {
+        DEV_DATABASE_BRANCH
+    } else {
+        MASTER_DATABASE_BRANCH
+    }
+    val DATABASE_CURRENT_VERSION: String = "https://raw.githubusercontent.com/TheAlternateDoctor/RHRE-database/$DATABASE_BRANCH/current.json"
+    const val DATABASE_RELEASES = "https://github.com/TheAlternateDoctor/RHRE-database/releases"
+    const val RELEASE_API_URL = "https://api.github.com/repos/TheAlternateDoctor/RhythmHeavenRemixEditor/releases/latest"
+    const val OUT_OF_MEMORY_DOC_LINK: String = "https://docs.rhre.dev/Out-of-memory-on-music/"
+    const val DOCS_URL: String = "https://rhre.readthedocs.io/en/latest/"
+
+    val RHRE_ANNIVERSARY: LocalDate = LocalDate.of(2016, Month.MAY, 29)
+    private val RHRE3_ANNIVERSARY: LocalDate = LocalDate.of(2017, Month.AUGUST, 30)
+    private val RHRE2_ANNIVERSARY: LocalDate = LocalDate.of(2016, Month.DECEMBER, 6)
+
+    var targetFramerate: Int = 60
+    var portableMode: Boolean = false
+    var skipGitScreen: Boolean = false
+    var forceGitFetch: Boolean = false
+    var forceGitCheck: Boolean = false
+    var verifySfxDb: Boolean = false
+    var immediateEvent: Int = 0
+    var noAnalytics: Boolean = false
+    var noOnlineCounter: Boolean = false
+    var outputGeneratedDatamodels: Boolean = false
+    var outputCustomSfx: Boolean = false
+    var showTapalongMarkersByDefault: Boolean = false
+    var exportOptions: ExportOptions = ExportOptions.DEFAULT
+    var midiRecording: Boolean = false
+    var logMissingLocalizations: Boolean = false
+    var disableCustomSounds: Boolean = false
+    var lc: String? = null
+    var triggerUpdateScreen: Boolean = false
+
+    lateinit var launchArguments: List<String>
+
+}

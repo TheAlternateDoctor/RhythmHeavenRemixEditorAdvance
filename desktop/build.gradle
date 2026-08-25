@@ -5,7 +5,7 @@ apply plugin: 'com.gradleup.shadow'
 
 sourceSets.main.java.srcDirs = [ "src/main/kotlin/" ]
 
-project.ext.mainClassName = "io.github.chrislo27.rhre3.DesktopLauncher"
+project.ext.mainClassName = "io.github.chrislo27.rhrefresh.DesktopLauncher"
 project.ext.assetsDir = new File("../core/assets");
 
 eclipse {
@@ -30,7 +30,7 @@ repositories {
 }
 
 shadowJar {
-    archiveBaseName = "RHREadv"
+    archiveBaseName = "RHREfresh"
     // classifier = "distribution"
     archiveVersion = this.version
 }
@@ -53,7 +53,7 @@ artifacts {
 
 jar {
     manifest {
-        attributes "Main-Class": "io.github.chrislo27.rhre3.desktop.DesktopLauncher"
+        attributes "Main-Class": "io.github.chrislo27.rhrefresh.desktop.DesktopLauncher"
     }
 
     // from {

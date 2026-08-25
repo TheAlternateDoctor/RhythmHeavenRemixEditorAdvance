@@ -30,7 +30,7 @@ It is a top-level object with the following fields:
 | `isAutosave` | boolean | Optional, defaults to false. | Whether this remix is an autosave. Autosaves are not autosaved. |
 | `midiInstruments` | integer | Optional, defaults to 0. | The number of midi instruments that were in the original midi. This is only used for the Glee Club visualization. Positive values only. |
 | `musicData` | music data object (see below) | N | The music data object. See its table below.
-| `textures` | array of strings | Optional and nullable, defaults to null | If not null, contains a list of hexadecimal hashes referring to the textures in the containing `rhre3` file. |
+| `textures` | array of strings | Optional and nullable, defaults to null | If not null, contains a list of hexadecimal hashes referring to the textures in the containing `rhrefresh` file. |
 | `entities` | array of entity objects (see below) | N | Contains the entities used in the remix. |
 | `trackers` | trackers object (see below) | N | Contains the trackers (tempo changes and music volume changes) used in the remix. |
 | `timeSignatures` | array of time signatures (see below) | N | Contains the time signatures used in the remix. |

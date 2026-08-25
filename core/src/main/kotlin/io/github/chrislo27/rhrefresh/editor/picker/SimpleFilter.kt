@@ -1,0 +1,43 @@
+package io.github.chrislo27.rhrefresh.editor.picker
+
+import io.github.chrislo27.rhrefresh.sfxdb.Game
+import io.github.chrislo27.rhrefresh.sfxdb.GameGroup
+import io.github.chrislo27.rhrefresh.sfxdb.SFXDatabase
+import io.github.chrislo27.rhrefresh.sfxdb.datamodel.Datamodel
+
+
+open class SimpleFilter(val groupFilter: (GameGroup) -> Boolean,
+                        val gameFilter: (Game) -> Boolean = { _ -> true },
+                        val datamodelFilter: (Datamodel) -> Boolean = { _ -> true }
+                       ) : Filter() {
+
+    var shouldUpdate: Boolean = true
+
+    override fun update() {
+        if (!shouldUpdate)
+            return
+        shouldUpdate = false
+
+        gameGroups as MutableList
+        gamesPerGroup as MutableMap
+        datamodelsPerGame as MutableMap
+
+        clearAll()
+
+        SFXDatabase.data.gameGroupsList.filterTo(gameGroups, groupFilter)
+        gameGroups.associateWithTo(gamesPerGroup) {
+            GameList().apply {
+                it.games.filterTo(this.list, gameFilter)
+            }
+        }
+        // would normally flatmap but this is faster
+        gamesPerGroup.values.forEach { gameList ->
+            gameList.list.associateWithTo(datamodelsPerGame) {
+                DatamodelList().apply {
+                    it.placeableObjects.filterTo(this.list, datamodelFilter)
+                }
+            }
+        }
+    }
+
+}

@@ -5,11 +5,8 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.utils.Align
-import io.github.chrislo27.rhre3.stage.ColourPicker
 import io.github.chrislo27.toolboks.ToolboksScreen
 import io.github.chrislo27.toolboks.registry.AssetRegistry
-import io.github.chrislo27.toolboks.ui.Label
 import io.github.chrislo27.toolboks.util.gdxutils.getInputX
 
 open class MovingArrow<S : ToolboksScreen<*, *>>
