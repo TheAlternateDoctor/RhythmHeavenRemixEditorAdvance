@@ -20,13 +20,17 @@ class DefaultAssetLoader : AssetRegistry.IAssetLoader {
             this.magFilter = Texture.TextureFilter.Linear
             this.minFilter = Texture.TextureFilter.Linear
         }
+        fun nearestTexture(): TextureLoader.TextureParameter = TextureLoader.TextureParameter().apply {
+            this.magFilter = Texture.TextureFilter.Nearest
+            this.minFilter = Texture.TextureFilter.Nearest
+        }
         
         listOf(16, 24, 32, 64, 128, 256, 512, 1024).forEach {
             AssetRegistry.loadAsset<Texture>("logo_$it", "images/icon/$it.png")
         }
         AssetRegistry.loadAsset<Texture>("logo_rhre2_128", "images/icon/rhre2/128.png")
         
-        AssetRegistry.loadAsset<Texture>("sfxdb_missing_icon", "images/gameicon/missing.png", linearTexture())
+        AssetRegistry.loadAsset<Texture>("sfxdb_missing_icon", "images/gameicon/missing.png", nearestTexture())
         (Language.VALUES - Language.UNKNOWN).forEach { lang ->
             AssetRegistry.loadAsset<Pixmap>("sfxdb_langicon_${lang.code}_pixmap", "images/gameicon/lang/${lang.code}.png")
         }

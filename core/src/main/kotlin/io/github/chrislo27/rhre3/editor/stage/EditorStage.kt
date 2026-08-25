@@ -1544,6 +1544,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 this.visible = field != null
                 if (value != null) {
                     this.label.image!!.setRegion(value.icon)
+                    this.label.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
                 } else {
                     this.selected = false
                 }
