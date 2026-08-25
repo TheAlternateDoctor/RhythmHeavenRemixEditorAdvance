@@ -58,6 +58,7 @@ object DesktopLauncher {
         val portable = arguments.portableMode
 
         // Copy the legacy folder over, so that the two can coexist
+        // Also copies the key to the new names
         if(!portable && !File(System.getProperty("user.home") + "/$RHREFRESH_FOLDER").exists()){
             val legacyFolder = File(System.getProperty("user.home") + "/.rhre3")
             val legacyAdvFolder = File(System.getProperty("user.home") + "/.rhre3adv")
@@ -69,6 +70,12 @@ object DesktopLauncher {
                 legacyFolder.copyRecursively(newFolder)
                 File(System.getProperty("user.home") + "/$RHREFRESH_FOLDER/customSounds").deleteRecursively()
             }
+            val prefFile = File(System.getProperty("user.home") + "/$RHREFRESH_FOLDER/prefs/RHRE3")
+            val prefFileRecovery = File(System.getProperty("user.home") + "/$RHREFRESH_FOLDER/prefs/RHRE3-recovery")
+            prefFile.copyTo(File(System.getProperty("user.home") + "/$RHREFRESH_FOLDER/prefs/RHREFRESH"))
+            prefFileRecovery.copyTo(File(System.getProperty("user.home") + "/$RHREFRESH_FOLDER/prefs/RHREFRESH-recovery"))
+            prefFile.delete()
+            prefFileRecovery.delete()
         }
 
         val app = RHREfreshApplication(logger, File(if (portable) "$RHREFRESH_FOLDER/logs/" else System.getProperty("user.home") + "/$RHREFRESH_FOLDER/logs/"))
