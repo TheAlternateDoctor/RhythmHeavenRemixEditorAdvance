@@ -1466,6 +1466,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     Toolboks.LOGGER.info("Gain set to "+ exp(6.908*it)/1000)
                     BeadsSoundSystem.audioContext.out.gain = (exp(6.908*it)/1000).toFloat()
                     main.preferences.putFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME, it)
+                    volumeButton.currentVolume = it
                 }
             }
             buttonBarStage.elements += volumeArrow

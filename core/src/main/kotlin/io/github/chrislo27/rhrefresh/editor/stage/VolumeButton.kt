@@ -27,8 +27,9 @@ class VolumeButton(val editor: Editor, palette: UIPalette,
         })
     }
 
+
     private val preferences = Gdx.app.getPreferences("RHREFRESH")
-    private var currentVolume = preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME)
+    var currentVolume = preferences.getFloat(PreferenceKeys.SETTINGS_AUDIO_VOLUME)
 
     override var tooltipText: String?
         set(_) {}
