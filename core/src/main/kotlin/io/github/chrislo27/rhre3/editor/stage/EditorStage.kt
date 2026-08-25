@@ -129,9 +129,9 @@ class EditorStage(parent: UIElement<EditorScreen>?,
         private set
     lateinit var playalongToggleButton: PlayalongToggleButton
         private set
-    lateinit var playbackSpeedCtrl: PlaybackSpeedControl
+    lateinit var manualButton: Button<EditorScreen>
         private set
-    private val advOptButtons: MutableList<UIElement<EditorScreen>> = mutableListOf()
+    lateinit var playbackSpeedCtrl: PlaybackSpeedControl
 
     val topOfMinimapBar: Float
         get() {
@@ -1382,39 +1382,35 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     }
             buttonBarStage.elements += UndoRedoButton(editor, true, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenWidth = size,
-                                  screenX = size * 4 + padding * 4)
+                                  screenX = size * 4 + padding * (4+1))
             }
             buttonBarStage.elements += UndoRedoButton(editor, false, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenWidth = size,
-                                  screenX = size * 5 + padding * 5)
+                                  screenX = size * 5 + padding * (5+1))
             }
             buttonBarStage.elements += MusicButton(editor, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenWidth = size,
-                                  screenX = size * 6 + padding * 6)
+                                  screenX = size * 6 + padding * (6+2))
             }
             buttonBarStage.elements += MetronomeButton(editor, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenWidth = size,
-                                  screenX = size * 7 + padding * 7)
+                                  screenX = size * 7 + padding * (7+2))
             }
             buttonBarStage.elements += TapalongToggleButton(editor, this@EditorStage, palette, buttonBarStage,
                                                             buttonBarStage).apply {
-                this.location.set(screenWidth = size, screenX = size * 8 + padding * 8)
+                this.location.set(screenWidth = size, screenX = size * 8 + padding * (8+2))
             }
             buttonBarStage.elements += ScrollModeButton(editor, palette, buttonBarStage,
                                                         buttonBarStage).apply {
-                this.location.set(screenWidth = size, screenX = size * 9 + padding * 9)
+                this.location.set(screenWidth = size, screenX = size * 9 + padding * (9+3))
             }
             buttonBarStage.elements += TrackChangeButton(editor, palette, buttonBarStage, buttonBarStage).apply {
-                this.location.set(screenWidth = size, screenX = size * 10 + padding * 10)
+                this.location.set(screenWidth = size, screenX = size * 10 + padding * (10+3))
             }
-            playalongToggleButton = PlayalongToggleButton(this@EditorStage, palette, buttonBarStage, buttonBarStage).apply {
-                this.location.set(screenWidth = size, screenX = size * 11 + padding * 11)
+            buttonBarStage.elements += SnapButton(editor, palette, buttonBarStage, buttonBarStage).apply {
+                this.location.set(screenWidth = size * 3,
+                    screenX = size * 11 + padding * (11+3))
             }
-            buttonBarStage.elements += playalongToggleButton
-            playbackSpeedCtrl = PlaybackSpeedControl(buttonBarStage, this@EditorStage, palette).apply {
-                this.location.set(screenWidth = size * 5 - padding * 3, screenX = size * 12 + padding * 12)
-            }
-            buttonBarStage.elements += playbackSpeedCtrl
 
             // right aligned
             // info button
@@ -1426,9 +1422,24 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 })
             }
 
+            newsButton = NewsButton(editor, palette, buttonBarStage, buttonBarStage).apply {
+                this.location.set(screenWidth = size,
+                    screenX = 1f - (size * 2 + padding))
+            }
+            buttonBarStage.elements += newsButton
+
+            manualButton = Button(palette, buttonBarStage, buttonBarStage).apply {
+                addLabel(ImageLabel(palette, this, this.stage).apply {
+                    this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_manual"))
+                })
+                this.location.set(screenWidth = size,
+                    screenX = 1f- (size * 3 + padding * 2))
+            }
+            buttonBarStage.elements += manualButton
+
             volumeButton = VolumeButton(editor, palette, buttonBarStage, buttonBarStage).apply{
                 this.location.set(screenWidth = size,
-                    screenX = 1f - (size * 3 + padding * 2))
+                    screenX = 1f - (size * 4 + padding * 3))
                 this.leftClickAction = { _, _ ->
                     val show = !volumeImage.visible
                     volumeImage.visible = show
@@ -1441,7 +1452,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 this.background = true
                 this.visible = false
                 this.image = TextureRegion(RHRE3Application.instance.volumeBar)
-                val endX = (size * 2 + padding * 2)
+                val endX = (size * 3 + padding * 3)
                 this.location.set(screenX = 1f - (size*6+endX),
                     screenY = -1.125f,
                     screenWidth = size*6)
@@ -1459,27 +1470,32 @@ class EditorStage(parent: UIElement<EditorScreen>?,
             }
             buttonBarStage.elements += volumeArrow
 
-            newsButton = NewsButton(editor, palette, buttonBarStage, buttonBarStage).apply {
-                this.location.set(screenWidth = size,
-                                  screenX = 1f - (size * 2 + padding))
-            }
-            buttonBarStage.elements += newsButton
             buttonBarStage.elements += PresentationModeButton(editor, this@EditorStage, palette, buttonBarStage,
                                                               buttonBarStage).apply {
                 this.location.set(screenWidth = size,
-                                  screenX = 1f - (size * 8 + padding * 7))
+                                  screenX = 1f - (size * 5 + padding * 4))
             }
-            buttonBarStage.elements += SnapButton(editor, palette, buttonBarStage, buttonBarStage).apply {
-                this.location.set(screenWidth = size * 3,
-                                  screenX = 1f - (size * 11 + padding * 8))
+
+            playalongToggleButton = PlayalongToggleButton(this@EditorStage, palette, buttonBarStage, buttonBarStage).apply {
+                this.location.set(screenWidth = size,
+                                  screenX = 1f- (size * 6 + padding * 5))
             }
+            buttonBarStage.elements += playalongToggleButton
+
             jumpToField = JumpToField(editor, palette, buttonBarStage, buttonBarStage).apply {
                 this.location.set(screenWidth = size * 4,
-                                  screenX = 1f - (size * 15 + padding * 9))
+                                  screenX = 1f - (size * 10 + padding * 6))
                 this.textAlign = Align.center
                 this.background = true
             }
             buttonBarStage.elements += jumpToField
+
+
+            playbackSpeedCtrl = PlaybackSpeedControl(buttonBarStage, this@EditorStage, palette).apply {
+                this.location.set(screenWidth = size * 5 - padding * 3,
+                    screenX = 1f- (size * 15 + padding * 4))
+            }
+            buttonBarStage.elements += playbackSpeedCtrl
         }
 
         this.updatePositions()
