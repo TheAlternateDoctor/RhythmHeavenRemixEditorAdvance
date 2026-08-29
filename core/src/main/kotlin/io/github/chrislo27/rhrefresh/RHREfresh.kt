@@ -11,6 +11,13 @@ import java.util.Locale
 
 object RHREfresh {
 
+    enum class OS{
+        WINDOWS,
+        LINUX,
+        MACOS,
+        UNKNOWN
+    }
+
     const val TITLE = "Rhythm Heaven Remix Editor Refresh"
     val VERSION: Version = Version(4, 0, 0, "")
     val EXPERIMENTAL: Boolean = VERSION.suffix.matches("DEVELOPMENT|SNAPSHOT(?:.)*|RC\\d+".toRegex())
@@ -21,20 +28,20 @@ object RHREfresh {
     val MINIMUM_SIZE: Pair<Int, Int> = 640 to 360
     val CURRENT_OS =
         if(System.getProperty("os.name", "???")?.toLowerCase(Locale.ROOT)!!.contains("win")){
-            "Windows"
+            OS.WINDOWS
         } else if(System.getProperty("os.name", "???")?.toLowerCase(Locale.ROOT)!!.contains("mac")){
-            "MacOS"
+            OS.MACOS
         } else if(System.getProperty("os.name", "???")?.toLowerCase(Locale.ROOT)!!.startsWith("linux")){
-            "Linux"
+            OS.LINUX
         } else {
-            "UNKNOWN"
+            OS.UNKNOWN
         }
     val RHREFRESH_FOLDER: FileHandle by lazy {
         (
                 if (portableMode) {
                     Gdx.files.local(".rhrefresh/")
                 }else{
-                    if(CURRENT_OS.equals("Linux")){
+                    if(CURRENT_OS == OS.LINUX){
                         Gdx.files.external(".config/RHREfresh/")
                     } else{
                         Gdx.files.external(".rhrefresh/")
@@ -91,6 +98,7 @@ object RHREfresh {
     var disableCustomSounds: Boolean = false
     var lc: String? = null
     var triggerUpdateScreen: Boolean = false
+    var remixPath: String = ""
 
     lateinit var launchArguments: List<String>
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.sun.jna.Platform
 import io.github.chrislo27.rhrefresh.PreferenceKeys
+import io.github.chrislo27.rhrefresh.RHREfresh
 import io.github.chrislo27.rhrefresh.RHREfreshApplication
 import io.github.chrislo27.rhrefresh.RemixRecovery
 import io.github.chrislo27.rhrefresh.analytics.AnalyticsHandler
@@ -13,6 +14,8 @@ import io.github.chrislo27.rhrefresh.editor.stage.Java32BitWarningStage
 import io.github.chrislo27.rhrefresh.editor.stage.StartupStage
 import io.github.chrislo27.rhrefresh.track.PlayState
 import io.github.chrislo27.toolboks.ToolboksScreen
+import io.github.chrislo27.toolboks.registry.ScreenRegistry
+import java.io.File
 
 
 class EditorScreen(main: RHREfreshApplication) : ToolboksScreen<RHREfreshApplication, EditorScreen>(main) {
@@ -55,6 +58,16 @@ class EditorScreen(main: RHREfreshApplication) : ToolboksScreen<RHREfreshApplica
         stage.updateFilters()
 
         editor.updateMessageLabel()
+
+        if(RHREfresh.remixPath != ""){
+            val screen = ScreenRegistry.getNonNullAsType<OpenRemixScreen>("openRemix")
+            editor.main.screen = screen
+            val remixFile = File(RHREfresh.remixPath)
+            RHREfresh.remixPath = "" //Resetting so we don't enter an infinite loop
+            screen.loadFile(remixFile)
+            main.screen = ScreenRegistry["editor"] // This forces the last checksum to be of a blank remix
+            main.screen = screen
+        }
     }
 
     override fun hide() {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
+import io.github.chrislo27.rhrefresh.RHREfresh
 import io.github.chrislo27.rhrefresh.editor.Editor
 import io.github.chrislo27.rhrefresh.editor.stage.EditorStage
 import io.github.chrislo27.rhrefresh.screen.EditorScreen
@@ -136,17 +137,19 @@ class ThemeChooserStage(val editor: Editor, val palette: UIPalette, parent: Edit
                 })
             }
 
-            this.elements += Button(palette, this, this.stage).apply {
-                this.location.set(0f, 0f, 0f, 1f, 346f - 34f, 0f, 34f, 0f)
-                this.addLabel(ImageLabel(palette, this, this.stage).apply {
-                    this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-                    this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
-                })
-                this.leftClickAction = { _, _ ->
-                    Desktop.getDesktop().open(LoadedThemes.THEMES_FOLDER.file())
+            if(RHREfresh.CURRENT_OS != RHREfresh.OS.MACOS) {
+                this.elements += Button(palette, this, this.stage).apply {
+                    this.location.set(0f, 0f, 0f, 1f, 346f - 34f, 0f, 34f, 0f)
+                    this.addLabel(ImageLabel(palette, this, this.stage).apply {
+                        this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
+                        this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
+                    })
+                    this.leftClickAction = { _, _ ->
+                        Desktop.getDesktop().open(LoadedThemes.THEMES_FOLDER.file())
+                    }
+                    this.tooltipTextIsLocalizationKey = true
+                    this.tooltipText = "editor.themeEditor.openContainingFolder"
                 }
-                this.tooltipTextIsLocalizationKey = true
-                this.tooltipText = "editor.themeEditor.openContainingFolder"
             }
         }
         this.elements += chooserButtonBar

@@ -3,6 +3,9 @@ package io.github.chrislo27.rhrefresh.desktop
 import com.beust.jcommander.Parameter
 
 class Arguments {
+
+    @Parameter(description = "remix.rhref", required = false)
+    var remixPath: String = ""
     
     @Parameter(names = ["--help", "-h", "-?"], description = "Prints this usage menu.", help = true)
     var printHelp: Boolean = false
@@ -69,5 +72,4 @@ class Arguments {
     // -----------------------------------------------------------
     @Parameter(names = ["--lc"], hidden = true)
     var lc: String? = null
-    
 }

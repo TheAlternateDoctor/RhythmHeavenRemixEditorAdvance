@@ -826,7 +826,9 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                     this.tooltipText = "editor.customSfx.openFolder"
                     this.visible = false
                 }
-                pickerStage.elements += customSoundsFolderButton
+                if(RHREfresh.CURRENT_OS != RHREfresh.OS.MACOS){
+                    pickerStage.elements += customSoundsFolderButton
+                }
 
                 for (y in 0 until Editor.ICON_COUNT_Y) {
                     for (x in 0 until Editor.ICON_COUNT_X + 3) {
@@ -1432,6 +1434,7 @@ class EditorStage(parent: UIElement<EditorScreen>?,
                 addLabel(ImageLabel(palette, this, this.stage).apply {
                     this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_manual"))
                 })
+                this.tooltipText = "Manual (not implemented)"
                 this.location.set(screenWidth = size,
                     screenX = 1f- (size * 3 + padding * 2))
             }

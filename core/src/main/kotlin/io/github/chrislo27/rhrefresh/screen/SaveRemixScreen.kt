@@ -110,7 +110,9 @@ class SaveRemixScreen(main: RHREfreshApplication)
                         persistDirectory(main, PreferenceKeys.FILE_CHOOSER_SAVE, newInitialDirectory)
                         GlobalScope.launch {
                             try {
-                                val correctFile = if (file.extension != RHREfresh.REMIX_FILE_EXTENSION)
+                                val correctFile = if (file.extension == "rhre3")
+                                    file.parentFile.resolve("${file.nameWithoutExtension}.${RHREfresh.REMIX_FILE_EXTENSION}")
+                                else if (file.extension != RHREfresh.REMIX_FILE_EXTENSION)
                                     file.parentFile.resolve("${file.name}.${RHREfresh.REMIX_FILE_EXTENSION}")
                                 else
                                     file

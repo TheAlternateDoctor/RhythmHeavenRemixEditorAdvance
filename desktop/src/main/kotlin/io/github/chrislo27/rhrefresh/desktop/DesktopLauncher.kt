@@ -33,10 +33,11 @@ object DesktopLauncher {
         } else{
             RHREFRESH_FOLDER = ".rhrefresh"
         }
-        
+
+        val arguments = Arguments()
+        val jcommander = JCommander.newBuilder().acceptUnknownOptions(false).addObject(arguments).build()
         try {
-            // Check for bad arguments but don't cause a full crash
-            JCommander.newBuilder().acceptUnknownOptions(false).addObject(Arguments()).build().parse(*args)
+            jcommander.parse(*args)
         } catch (e: ParameterException) {
             println("WARNING: Failed to parse arguments. Check below for details and help documentation. You may have strange parse results from ignoring unknown options.\n")
             e.printStackTrace()
@@ -44,11 +45,8 @@ object DesktopLauncher {
             printHelp(JCommander(Arguments()))
             println("\n\n")
         }
-        
-        val arguments = Arguments()
-        val jcommander = JCommander.newBuilder().acceptUnknownOptions(true).addObject(arguments).build()
-        jcommander.parse(*args)
-        
+
+
         if (arguments.printHelp) {
             printHelp(jcommander)
             return
@@ -128,8 +126,11 @@ object DesktopLauncher {
                     RHREfresh.disableCustomSounds = arguments.disableCustomSounds
                     RHREfresh.lc = arguments.lc
                     RHREfresh.triggerUpdateScreen = arguments.triggerUpdateScreen
+                    RHREfresh.remixPath = arguments.remixPath
                     LazySound.loadLazilyWithAssetManager = !arguments.lazySoundsForceLoad
-                    
+
+                    logger.info("Opening remix: "+ RHREfresh.remixPath)
+
                     val sizes: List<Int> = listOf(256, 128, 64, 32, 24, 16)
                     this.setWindowIcon(Files.FileType.Internal, *sizes.map { "images/icon/$it.png" }.toTypedArray())
                 }

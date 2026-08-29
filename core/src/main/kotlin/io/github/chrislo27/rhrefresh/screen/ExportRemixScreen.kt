@@ -180,7 +180,9 @@ class ExportRemixScreen(main: RHREfreshApplication)
             this.location.set(this@ExportRemixScreen.stage.backButton.location)
             this.location.set(screenX = 1f - this.location.screenWidth)
         }
-        stage.bottomStage.elements += folderButton
+        if(RHREfresh.CURRENT_OS != RHREfresh.OS.MACOS) {
+            stage.bottomStage.elements += folderButton
+        }
         copyGamesButton = object: Button<ExportRemixScreen>(palette, stage.bottomStage, stage.bottomStage){
             val strings: List<String> = listOf("Copy\ngames", "[CYAN]Copied![]", "No\ngames...")
             override fun onLeftClick(xPercent: Float, yPercent: Float) {

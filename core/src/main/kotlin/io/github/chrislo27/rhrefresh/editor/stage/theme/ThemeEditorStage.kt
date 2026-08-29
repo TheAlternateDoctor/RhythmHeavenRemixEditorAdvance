@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Base64Coder
 import io.github.chrislo27.rhrefresh.PreferenceKeys
+import io.github.chrislo27.rhrefresh.RHREfresh
 import io.github.chrislo27.rhrefresh.editor.Editor
 import io.github.chrislo27.rhrefresh.screen.EditorScreen
 import io.github.chrislo27.rhrefresh.stage.ColourPicker
@@ -246,18 +247,20 @@ class ThemeEditorStage(val editor: Editor, val palette: UIPalette, parent: Theme
                 this.tooltipText = "editor.themeEditor.editTexture"
             }
 
-            buttonBar.elements += Button(palette, buttonBar, buttonBar).apply {
-                this.location.set(0f, 0f, 0f, 1f, 34f * 3 + 4f * 3, 0f, 34f, 0f)
-                this.addLabel(ImageLabel(palette, this, this.stage).apply {
-                    this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-                    this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
-                })
-                this.tooltipTextIsLocalizationKey = true
-                this.tooltipText = "editor.themeEditor.openContainingFolder"
-                leftClickAction = { _, _ ->
-                    val f = themeFile
-                    if (f != null) {
-                        Desktop.getDesktop().open(f.parent().file())
+            if(RHREfresh.CURRENT_OS != RHREfresh.OS.MACOS) {
+                buttonBar.elements += Button(palette, buttonBar, buttonBar).apply {
+                    this.location.set(0f, 0f, 0f, 1f, 34f * 3 + 4f * 3, 0f, 34f, 0f)
+                    this.addLabel(ImageLabel(palette, this, this.stage).apply {
+                        this.renderType = ImageLabel.ImageRendering.ASPECT_RATIO
+                        this.image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
+                    })
+                    this.tooltipTextIsLocalizationKey = true
+                    this.tooltipText = "editor.themeEditor.openContainingFolder"
+                    leftClickAction = { _, _ ->
+                        val f = themeFile
+                        if (f != null) {
+                            Desktop.getDesktop().open(f.parent().file())
+                        }
                     }
                 }
             }

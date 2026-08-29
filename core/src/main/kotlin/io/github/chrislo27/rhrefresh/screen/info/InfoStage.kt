@@ -145,20 +145,24 @@ class InfoStage(parent: UIElement<InfoScreen>?, camera: OrthographicCamera, val 
             this.text = "SFXDB VERSION"
         }
         info.elements += dbVersionLabel
-        info.elements += Button(palette, info, info).apply {
-            this.location.set(screenX = 1f - (padding + buttonWidth),
-                              screenY = 1f - (padding + buttonHeight * 0.8f) * 3,
-                              screenWidth = buttonWidth * 0.085f,
-                              screenHeight = buttonHeight * 0.8f)
-            this.addLabel(ImageLabel(palette, this, this.stage).apply {
-                renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-                image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
-            })
-            this.leftClickAction = { _, _ ->
-                Desktop.getDesktop().open(SFXDatabase.CUSTOM_SFX_FOLDER.file())
+        if(RHREfresh.CURRENT_OS != RHREfresh.OS.MACOS) {
+            info.elements += Button(palette, info, info).apply {
+                this.location.set(
+                    screenX = 1f - (padding + buttonWidth),
+                    screenY = 1f - (padding + buttonHeight * 0.8f) * 3,
+                    screenWidth = buttonWidth * 0.085f,
+                    screenHeight = buttonHeight * 0.8f
+                )
+                this.addLabel(ImageLabel(palette, this, this.stage).apply {
+                    renderType = ImageLabel.ImageRendering.ASPECT_RATIO
+                    image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
+                })
+                this.leftClickAction = { _, _ ->
+                    Desktop.getDesktop().open(SFXDatabase.CUSTOM_SFX_FOLDER.file())
+                }
+                this.tooltipTextIsLocalizationKey = true
+                this.tooltipText = "editor.customSfx.openFolder"
             }
-            this.tooltipTextIsLocalizationKey = true
-            this.tooltipText = "editor.customSfx.openFolder"
         }
 
         // Donate button

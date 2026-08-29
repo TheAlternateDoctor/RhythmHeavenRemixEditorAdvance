@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Align
 import io.github.chrislo27.rhrefresh.PreferenceKeys
+import io.github.chrislo27.rhrefresh.RHREfresh
 import io.github.chrislo27.rhrefresh.RHREfreshApplication
 import io.github.chrislo27.rhrefresh.RemixRecovery
 import io.github.chrislo27.rhrefresh.analytics.AnalyticsHandler
@@ -230,18 +231,23 @@ class AdvancedOptionsScreen(main: RHREfreshApplication) : ToolboksScreen<RHREfre
         }
         centre.elements += reloadMetadataButton
         // Open containing folder for modding metadata
-        centre.elements += Button(palette, centre, centre).apply {
-            val width = buttonWidth * 0.09f
-            this.location.set(screenX = padding * 0.5f - width,
-                              screenY = padding * 8 + buttonHeight * 7,
-                              screenWidth = width,
-                              screenHeight = buttonHeight)
-            this.addLabel(ImageLabel(palette, this, this.stage).apply {
-                renderType = ImageLabel.ImageRendering.ASPECT_RATIO
-                image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
-            })
-            this.leftClickAction = { _, _ ->
-                Desktop.getDesktop().open(SFXDatabase.CUSTOM_MODDING_METADATA_FOLDER.file())
+
+        if(RHREfresh.CURRENT_OS != RHREfresh.OS.MACOS) {
+            centre.elements += Button(palette, centre, centre).apply {
+                val width = buttonWidth * 0.09f
+                this.location.set(
+                    screenX = padding * 0.5f - width,
+                    screenY = padding * 8 + buttonHeight * 7,
+                    screenWidth = width,
+                    screenHeight = buttonHeight
+                )
+                this.addLabel(ImageLabel(palette, this, this.stage).apply {
+                    renderType = ImageLabel.ImageRendering.ASPECT_RATIO
+                    image = TextureRegion(AssetRegistry.get<Texture>("ui_icon_folder"))
+                })
+                this.leftClickAction = { _, _ ->
+                    Desktop.getDesktop().open(SFXDatabase.CUSTOM_MODDING_METADATA_FOLDER.file())
+                }
             }
         }
 
