@@ -99,6 +99,7 @@ object RHREfresh {
     var lc: String? = null
     var triggerUpdateScreen: Boolean = false
     var remixPath: String = ""
+    var triggerFolderChangeScreen: Boolean = false
 
     lateinit var launchArguments: List<String>
 

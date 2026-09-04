@@ -317,6 +317,7 @@ class RHREfreshApplication(logger: Logger, logToFile: File?)
                 ScreenRegistry += "editorVersion" to EditorVersionScreen(this)
                 ScreenRegistry += "news" to NewsScreen(this)
                 ScreenRegistry += "advancedOptions" to AdvancedOptionsScreen(this)
+                ScreenRegistry += "folderChangeWarning" to FolderChangeWarningScreen(this)
             }
             
             val nextScreenLambda: (() -> ToolboksScreen<*, *>?) = nextScreenLambda@{
@@ -334,7 +335,16 @@ class RHREfreshApplication(logger: Logger, logToFile: File?)
                 addOtherScreens()
                 loadWindowSettings()
                 dontShowResizeInfo = false
-                val nextScreen = ScreenRegistry[if (RHREfresh.skipGitScreen) "sfxdbLoad" else "databaseUpdate"]
+                val nextScreen = ScreenRegistry[
+                    if(RHREfresh.triggerFolderChangeScreen || !preferences.getBoolean(PreferenceKeys.PASSED_FOLDER_CHANGE_WARNING)){
+                        "folderChangeWarning"
+                    } else if (RHREfresh.skipGitScreen){
+                        "sfxdbLoad"
+                    }
+                    else {
+                        "databaseUpdate"
+                    }
+                ]
 //                if (preferences.getString(PreferenceKeys.LAST_VERSION, null) == null) {
 //                    Gdx.net.openURI("https://rhre.readthedocs.io/en/latest/")
 //                }

@@ -59,6 +59,7 @@ class Arguments {
     
     @Parameter(names = ["--trigger-update-screen"], description = "Triggers the \"new version available\" screen on startup. Requires that the latest version be known, however.")
     var triggerUpdateScreen: Boolean = false
+
     
     // -----------------------------------------------------------
     
@@ -68,6 +69,8 @@ class Arguments {
     var eventImmediateAnniversaryLikeNew: Boolean = false
     @Parameter(names = ["--immmediate-xmas"], hidden = true)
     var eventImmediateXmas: Boolean = false
+    @Parameter(names = ["--trigger-folder-change-screen"], hidden = true)
+    var triggerFolderChangeScreen: Boolean = false
 
     // -----------------------------------------------------------
     @Parameter(names = ["--lc"], hidden = true)

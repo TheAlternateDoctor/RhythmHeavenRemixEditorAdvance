@@ -73,4 +73,5 @@ object PreferenceKeys {
     val PLAYALONG_SFX_MONSTER_ACE = "playalongSfxMonsterAce"
     val EVENT_PREFIX = "event_"
 
+    val PASSED_FOLDER_CHANGE_WARNING = "passedFolderChangeWarning"
 }

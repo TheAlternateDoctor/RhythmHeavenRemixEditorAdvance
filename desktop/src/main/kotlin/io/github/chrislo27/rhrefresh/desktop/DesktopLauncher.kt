@@ -7,7 +7,6 @@ import com.beust.jcommander.JCommander
 import com.beust.jcommander.ParameterException
 import io.github.chrislo27.rhrefresh.RHREfresh
 import io.github.chrislo27.rhrefresh.RHREfreshApplication
-import io.github.chrislo27.rhrefresh.soundsystem.SoundStretch.OS
 import io.github.chrislo27.toolboks.desktop.ToolboksDesktopLauncher3
 import io.github.chrislo27.toolboks.lazysound.LazySound
 import io.github.chrislo27.toolboks.logging.Logger
@@ -126,6 +125,7 @@ object DesktopLauncher {
                     RHREfresh.disableCustomSounds = arguments.disableCustomSounds
                     RHREfresh.lc = arguments.lc
                     RHREfresh.triggerUpdateScreen = arguments.triggerUpdateScreen
+                    RHREfresh.triggerFolderChangeScreen = arguments.triggerFolderChangeScreen
                     RHREfresh.remixPath = arguments.remixPath
                     LazySound.loadLazilyWithAssetManager = !arguments.lazySoundsForceLoad
 
