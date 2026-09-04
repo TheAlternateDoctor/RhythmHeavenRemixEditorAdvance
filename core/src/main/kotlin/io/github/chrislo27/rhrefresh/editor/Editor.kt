@@ -34,6 +34,7 @@ import io.github.chrislo27.rhrefresh.entity.model.*
 import io.github.chrislo27.rhrefresh.entity.model.cue.CueEntity
 import io.github.chrislo27.rhrefresh.entity.model.multipart.EquidistantEntity
 import io.github.chrislo27.rhrefresh.entity.model.multipart.KeepTheBeatEntity
+import io.github.chrislo27.rhrefresh.entity.model.multipart.RandomCueEntity
 import io.github.chrislo27.rhrefresh.entity.model.special.PlayalongEntity
 import io.github.chrislo27.rhrefresh.entity.model.special.ShakeEntity
 import io.github.chrislo27.rhrefresh.entity.model.special.SubtitleEntity
@@ -1098,6 +1099,10 @@ class Editor(val main: RHREfreshApplication, stageCamera: OrthographicCamera, at
                                     } else if (clickOccupation.stretchType == StretchRegion.RIGHT) {
                                         entity.bounds.width = (nearestSnap - oldBound.x - (rootBound.maxX - oldBound.maxX)).coerceAtLeast(
                                                 IStretchable.MIN_STRETCH)
+                                    }
+
+                                    if(entity is RandomCueEntity){
+                                        entity.updateBounds()
                                     }
                                 }
                             }

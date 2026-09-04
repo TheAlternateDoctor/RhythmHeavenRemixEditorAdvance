@@ -207,6 +207,8 @@ class RandomCueObject : NamedIDObject() {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     var responseIDs: List<String> = listOf()
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    var stretchable: Boolean = false
 
 }
 

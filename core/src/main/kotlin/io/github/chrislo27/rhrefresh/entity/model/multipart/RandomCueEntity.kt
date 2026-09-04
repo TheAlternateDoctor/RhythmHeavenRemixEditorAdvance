@@ -5,10 +5,13 @@ import com.badlogic.gdx.math.Rectangle
 import io.github.chrislo27.rhrefresh.editor.Editor
 import io.github.chrislo27.rhrefresh.entity.Entity
 import io.github.chrislo27.rhrefresh.entity.model.ISoundDependent
+import io.github.chrislo27.rhrefresh.entity.model.IStretchable
 import io.github.chrislo27.rhrefresh.entity.model.IVolumetric
 import io.github.chrislo27.rhrefresh.entity.model.MultipartEntity
+import io.github.chrislo27.rhrefresh.entity.model.cue.CueEntity
 import io.github.chrislo27.rhrefresh.sfxdb.SFXDatabase
 import io.github.chrislo27.rhrefresh.sfxdb.datamodel.Datamodel
+import io.github.chrislo27.rhrefresh.sfxdb.datamodel.impl.Cue
 import io.github.chrislo27.rhrefresh.sfxdb.datamodel.impl.CuePointer
 import io.github.chrislo27.rhrefresh.sfxdb.datamodel.impl.RandomCue
 import io.github.chrislo27.rhrefresh.theme.Theme
@@ -17,7 +20,7 @@ import io.github.chrislo27.toolboks.util.gdxutils.random
 
 
 class RandomCueEntity(remix: Remix, datamodel: RandomCue)
-    : MultipartEntity<RandomCue>(remix, datamodel) {
+    : MultipartEntity<RandomCue>(remix, datamodel), IStretchable {
 
     private data class DatamodelPointer(val datamodel: Datamodel, val ptr: CuePointer)
 
@@ -30,6 +33,8 @@ class RandomCueEntity(remix: Remix, datamodel: RandomCue)
         bounds.width = datamodel.cues.map(CuePointer::duration).maxOrNull() ?: error(
                 "RandomCue datamodel ${datamodel.id} has no internal cues")
     }
+
+    override val isStretchable: Boolean = datamodel.stretchable
 
     private fun reroll() {
         val thisSemitone = semitone
@@ -56,6 +61,16 @@ class RandomCueEntity(remix: Remix, datamodel: RandomCue)
         // Re-set semitone and volume so it takes effect in the internals
         semitone = thisSemitone
         volumePercent = thisVolume
+    }
+
+    fun updateBounds(){
+        for(entity in createdEntities){
+            entity.updateBounds {
+                entity.bounds.x = this.bounds.x
+                entity.bounds.width = this.bounds.width
+                entity.bounds.y = this.bounds.y
+            }
+        }
     }
 
     override fun getRenderColor(editor: Editor, theme: Theme): Color {

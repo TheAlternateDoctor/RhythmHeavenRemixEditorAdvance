@@ -44,7 +44,7 @@ fun NamedIDObject.mapToDatamodel(baseFileHandle: FileHandle, game: Game, objID: 
                     obj.name, obj.subtext, obj.cues.mapToDatamodel(game.id), obj.stretchable)
         is RandomCueObject ->
             RandomCue(game, objID, obj.deprecatedIDs,
-                      obj.name, obj.subtext, obj.cues.mapToDatamodel(game.id), obj.responseIDs.starSubstitution())
+                      obj.name, obj.subtext, obj.cues.mapToDatamodel(game.id), obj.responseIDs.starSubstitution(), obj.stretchable)
         is EndRemixObject ->
             EndRemix(game, objID, obj.deprecatedIDs, obj.name)
         is SubtitleEntityObject ->
